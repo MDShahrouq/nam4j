@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/2p.jar"/>
+	<classpathentry kind="lib" path="lib/mysqlDAO.jar"/>
+	<classpathentry kind="lib" path="lib/sip2peer/server.jar"/>
+	<classpathentry kind="lib" path="lib/sip2peer/sip.jar"/>
+	<classpathentry kind="lib" path="lib/sip2peer/sip2peer-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/tuprolog-extensions.jar"/>
+	<classpathentry kind="lib" path="lib/tuprolog-ide.jar"/>
+	<classpathentry kind="lib" path="lib/tuprolog.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
