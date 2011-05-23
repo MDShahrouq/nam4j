@@ -1,52 +1,38 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
-
 import java.util.HashMap;
 
 public interface IServiceConsumer {
 
 	/**
-     * set the Service Consumer name.
-     *
-     * @param name.
-     */
-	void setName(String name);
-	
-	/**
-     * get the Service Consumer name.
-     *
-     * @return the name of the Service Consumer.
-     */
-	String getName();
-	
-	/**
-     * set the Service Consumer id.
-     *
-     * @param id.
-     */
-	void setId(String id);
-	
-	/**
-     * get the Service Consumer id.
-     *
-     * @return the id of the Service Consumer.
-     */
-	String getId();
-	
-	/**
-     * get the Services List from Service Consumer.
-     *
-     * @return the List of Services.
-     */
-	HashMap<String, Service> getServices();
-	
-	/**
-     * get the Service from available Services by id.
+     * Adds a consumable service to the hashmap.
      *
      * @param id
-     * @return the Service.
+     * @param service
      */
-	Service getService(String id);
+	void addConsumableService(String id, Service service);
+	
+	/**
+     * Removes a consumable service, given its id in the hash map.
+     *
+     * @param id
+     */
+	void removeConsumableService(String id);
+	
+	/**
+     * Returns the list of consumable services.
+     *
+     * @return the list of consumable services
+     */
+	HashMap<String, Service> getConsumableServices();
+	
+	/**
+     * Returns the consumable service, given its id in the hash map.
+     *
+     * @param id
+     * @return the consumable service
+     */
+	Service getConsumableService(String id);
 
 }

@@ -1,57 +1,37 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
-
 import java.util.HashMap;
 
 public interface IContextProvider {
-
-	/**
-     * set the Context Provider name.
-     *
-     * @param name.
-     */
-	void setName(String name);
 	
 	/**
-     * get the Context Provider name.
+     * Adds a provided context event to the hashmap.
      *
-     * @return the name of the Context Provider.
+     * @param id
+     * @param contextEvent
      */
-	String getName();
+	void addProvidedContextEvent(String id, ContextEvent contextEvent);
 	
 	/**
-     * set the Context Provider id.
+     * Removes a provided context event, given its id in the hash map.
      *
-     * @param id.
+     * @param id
      */
-	void setId(String id);
+	void removeProvidedContextEvent(String id);
 	
 	/**
-     * get the Context Provider id.
+     * Returns the list of provided context events.
      *
-     * @return the id of the Context Provider.
+     * @return the list of provided context events
      */
-	String getId();
+	HashMap<String, ContextEvent> getProvidedContextEvents();
 	
 	/**
-     * get the Context Events List from Context Provider.
+     * Returns the provided context event, given its id in the hash map.
      *
-     * @return the List of Context Events.
+     * @param id
+     * @return the provided context event
      */
-	HashMap<String, ContextEvent> getContextEvents();
-	
-	/**
-     * add Context Event to Context Provider.
-     *
-     *@param contextEvent.
-     */
-	void addContextEvent(ContextEvent contextEvent);
-	
-	/**
-     * remove contextEvent from Context Provider by id.
-     *
-     *@param id.
-     */
-	void removeContextEvent(String id);
+	ContextEvent getProvidedContextEvent(String id);
 }

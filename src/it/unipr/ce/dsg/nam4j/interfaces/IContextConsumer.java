@@ -5,47 +5,35 @@ import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import java.util.HashMap;
 
 public interface IContextConsumer {
-
-	/**
-     * set the Context Consumer name.
-     *
-     * @param name.
-     */
-	void setName(String name);
 	
 	/**
-     * get the Context Consumer name.
-     *
-     * @return the name of the Context Consumer.
-     */
-	String getName();
-	
-	/**
-     * set the Context Consumer id.
-     *
-     * @param id.
-     */
-	void setId(String id);
-	
-	/**
-     * get the Context Consumer id.
-     *
-     * @return the id of the Context Consumer.
-     */
-	String getId();
-	
-	/**
-     * get the Context Events List from Context Consumer.
-     *
-     * @return the List of Context Events.
-     */
-	HashMap<String, ContextEvent> getContextEvents();
-	
-	/**
-     * get the Context Event from available Context Events by id.
+     * Adds a consumable context event to the hashmap.
      *
      * @param id
-     * @return the Context Event.
+     * @param contextEvent
      */
-	ContextEvent getContextEvent(String id);
+	void addConsumableContextEvent(String id, ContextEvent contextEvent);
+	
+	/**
+     * Removes a consumable context event, given its id in the hash map.
+     *
+     * @param id
+     */
+	void removeConsumableContextEvent(String id);
+	
+	/**
+     * Returns the list of context events.
+     *
+     * @return the list of context events
+     */
+	HashMap<String, ContextEvent> getConsumableContextEvents();
+	
+	/**
+     * Returns the consumable context event, given its id in the hash map.
+     *
+     * @param id
+     * @return the consumable context event
+     */
+	ContextEvent getConsumableContextEvent(String id);
+	
 }
