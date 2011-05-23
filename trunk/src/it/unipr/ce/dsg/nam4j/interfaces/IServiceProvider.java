@@ -1,57 +1,38 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
-
 import java.util.HashMap;
 
 public interface IServiceProvider {
 
 	/**
-     * set the Service Provider name.
-     *
-     * @param name.
+     * Adds a provided service to the hashmap.
+     * 
+     * @param id
+     * @param service.
      */
-	void setName(String name);
+	void addProvidedService(String id, Service service);
 	
 	/**
-     * get the Service Provider name.
-     *
-     * @return the name of the Service Provider.
-     */
-	String getName();
-	
-	/**
-     * set the Service Provider id.
+     * Removes a provided service, given its id in the hash map.
      *
      * @param id.
      */
-	void setId(String id);
+	void removeProvidedService(String id);
 	
 	/**
-     * get the Service Provider id.
+     * Returns the list of provided services.
      *
-     * @return the id of the Service Provider.
+     * @return the list of provided services
      */
-	String getId();
+	HashMap<String, Service> getProvidedServices();
 	
 	/**
-     * get the Services List from Service Provider.
+     * Returns the provided service, given its id in the hash map.
      *
-     * @return the list of Services.
+     * @param id
+     * @return the provided service
      */
-	HashMap<String, Service> getServices();
+	Service getProvidedService(String id);
 	
-	/**
-     * add Service to Service Provider.
-     *
-     *@param service.
-     */
-	void addService(Service service);
-	
-	/**
-     * remove Service from Service Provider by id.
-     *
-     *@param id.
-     */
-	void removeService(String id);
 }
