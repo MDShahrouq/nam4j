@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 public abstract class FunctionalModule implements IFunctionalModule {
 
+	NetworkedAutonomicMachine nam = null;
 	String id = "functionalModule";
 	String name = "Functional Module";
 	
@@ -15,6 +16,18 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	HashMap<String,ContextEvent> providedContextEvents = new HashMap<String,ContextEvent>();
 	HashMap<String,Service> consumableServices = new HashMap<String,Service>();
 	HashMap<String,Service> providedServices = new HashMap<String,Service>();
+	
+	public FunctionalModule(NetworkedAutonomicMachine nam) {
+		this.nam = nam;
+	}
+	
+	public NetworkedAutonomicMachine getNam() {
+		return nam;
+	}
+
+	public void setNam(NetworkedAutonomicMachine nam) {
+		this.nam = nam;
+	}
 	
 	public void setId(String id) {
 		this.id = id;
@@ -114,6 +127,13 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	
 	public Service getProvidedService(String id) {
 		return providedServices.get(id);
+	}
+	
+	
+	/*
+	 * Generic service execution method
+	 */
+	public void execute(String serviceRequest) {
 	}
 
 }
