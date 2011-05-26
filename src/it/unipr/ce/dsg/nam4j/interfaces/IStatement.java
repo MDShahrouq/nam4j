@@ -1,5 +1,7 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
+import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
+
 public interface IStatement {
 
 	/**
@@ -28,54 +30,54 @@ public interface IStatement {
      *
      * @return the content of the Subject.
      */
-	Object getSubject();
+	 Parameter getSubject();
 	
 	/**
      * set the Subject Content.
      *
      * @param subject.
      */
-	void setSubject(Object subject);
+	void setSubject(Parameter subject);
 	
 	/**
      * get the Object Content.
      *
      * @return the content of the Object.
      */
-	Object getObject();
+	Parameter getObject();
 	
 	/**
      * set the Object Content.
      *
      * @param object.
      */
-	void setObject(Object object);
+	void setObject(Parameter object);
 	
 	/**
      * get the Location Content.
      *
      * @return the content of the Location.
      */
-	Object getLocation();
+	Parameter getLocation();
 	
 	/**
      * set the Location Content.
      *
      * @param location.
      */
-	void setLocation(Object location);
+	void setLocation(Parameter location);
 	
 	/**
      * get the Action Content.
      *
      * @return the content of the Action.
      */
-	Object getAction();
+	Parameter getAction();
 	
 	/**
      * set the Action Content.
      *
      * @param action.
      */
-	void setAction(Object action);
+	void setAction(Parameter action);
 }
