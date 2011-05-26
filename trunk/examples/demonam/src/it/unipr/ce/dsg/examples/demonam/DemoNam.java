@@ -23,5 +23,6 @@ public class DemoNam extends NetworkedAutonomicMachine {
 				+ demonam.getFunctionalModules().size() 
 				+ " functional modules");
 		demonam.rfm.subscribeToContextEvents();
+		demonam.rfm.publishContextEvents();
 	}
 }
