@@ -1,5 +1,7 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
+import com.google.gson.Gson;
+
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 
@@ -15,9 +17,22 @@ public class ChordFunctionalModule extends FunctionalModule {
 		Notify notifyService = new Notify();
 		notifyService.setId("s1");
 		this.addProvidedService(notifyService.getId(), notifyService);
+		
+		Temperature temperature = new Temperature();
+		temperature.setId("i21");
+		temperature.setValue("20");
+		
 		Publish publishService = new Publish();
 		publishService.setId("s2");
+		publishService.addInput(temperature);
 		this.addProvidedService(publishService.getId(), publishService);
+		
+		Gson gson = new Gson();
+		String json = gson.toJson(temperature);
+		System.out.println("JSON temperature = " + json);
+		json = gson.toJson(publishService);
+		System.out.println("JSON publishService = " + json);
+		
 		Subscribe subscribeService = new Subscribe();
 		subscribeService.setId("s3");
 		this.addProvidedService(subscribeService.getId(), subscribeService);
