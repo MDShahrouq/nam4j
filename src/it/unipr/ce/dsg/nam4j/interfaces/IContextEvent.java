@@ -3,34 +3,6 @@ package it.unipr.ce.dsg.nam4j.interfaces;
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 
 public interface IContextEvent extends IStatement{
-
-	/**
-     * set the Context Event name.
-     *
-     * @param name.
-     */
-	void setName(String name);
-	
-	/**
-     * get the Context Event name.
-     *
-     * @return the name of the Context Event.
-     */
-	String getName();
-	
-	/**
-     * set the Context Event id.
-     *
-     * @param id.
-     */
-	void setId(String id);
-	
-	/**
-     * get the Context Event id.
-     *
-     * @return the id of the Context Event.
-     */
-	String getId();
 	
 	/**
      * set the timestamp for the Context Event formatted in.

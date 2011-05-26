@@ -8,13 +8,12 @@ public abstract class Service implements IService {
 	String id = "service";
 	String name = "Service";
 	
-	HashMap<String,Input> inputs = new HashMap<String,Input>();
-	HashMap<String,Output> outputs = new HashMap<String,Output>();
+	HashMap<String,Parameter> inputs = new HashMap<String,Parameter>();
+	HashMap<String,Parameter> outputs = new HashMap<String,Parameter>();
 	HashMap<String,Effect> effects = new HashMap<String,Effect>();
 	HashMap<String,Precondition> preconditions = new HashMap<String,Precondition>();
 	
-	@Override
-	public void setName(String name) {
+	protected void setName(String name) {
 		this.name = name;
 	}
 
@@ -34,17 +33,17 @@ public abstract class Service implements IService {
 	}
 
 	@Override
-	public HashMap<String,Input> getInputs() {
+	public HashMap<String,Parameter> getInputs() {
 		return inputs;
 	}
 
 	@Override
-	public Input getInput(String id) {
+	public Parameter getInput(String id) {
 		return inputs.get(inputs.get(id));
 	}
 
 	@Override
-	public void addInput(Input input) {
+	public void addInput(Parameter input) {
 		inputs.put(input.getId(),input);
 	}
 
@@ -54,17 +53,17 @@ public abstract class Service implements IService {
 	}
 
 	@Override
-	public HashMap<String,Output> getOutputs() {
+	public HashMap<String,Parameter> getOutputs() {
 		return outputs;
 	}
 
 	@Override
-	public Output getOutput(String id) {
+	public Parameter getOutput(String id) {
 		return outputs.get(id);
 	}
 
 	@Override
-	public void addOutput(Output output) {
+	public void addOutput(Parameter output) {
 		outputs.put(output.getId(),output);
 	}
 

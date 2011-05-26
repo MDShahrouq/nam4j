@@ -3,13 +3,6 @@ package it.unipr.ce.dsg.nam4j.interfaces;
 public interface IStatement {
 
 	/**
-     * set the Subject name.
-     *
-     * @param name.
-     */
-	void setName(String name);
-	
-	/**
      * get the Subject name.
      *
      * @return the name of the Subject.

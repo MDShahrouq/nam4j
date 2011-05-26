@@ -1,21 +1,13 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
+import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
 import it.unipr.ce.dsg.nam4j.impl.service.Effect;
-import it.unipr.ce.dsg.nam4j.impl.service.Input;
-import it.unipr.ce.dsg.nam4j.impl.service.Output;
 import it.unipr.ce.dsg.nam4j.impl.service.Precondition;
 
 import java.util.HashMap;
 
 public interface IService {
 
-	/**
-     * set the Service name.
-     *
-     * @param name.
-     */
-	void setName(String name);
-	
 	/**
      * get the Service name.
      *
@@ -42,7 +34,7 @@ public interface IService {
      *
      * @return the List of Input.
      */
-	HashMap<String, Input> getInputs();
+	HashMap<String, Parameter> getInputs();
 	
 	/**
      * get the Input of the Service by id.
@@ -50,14 +42,14 @@ public interface IService {
      * @param id.
      * @return the Input.
      */
-	Input getInput(String id);
+	Parameter getInput(String id);
 	
 	/**
      * add Input to Service.
      *
      *@param input.
      */
-	void addInput(Input input);
+	void addInput(Parameter input);
 	
 	/**
      * remove Input from Service by id.
@@ -71,7 +63,7 @@ public interface IService {
      *
      * @return the List of Outputs.
      */
-	HashMap<String, Output> getOutputs();
+	HashMap<String, Parameter> getOutputs();
 	
 	/**
      * get the Output of the Service by id.
@@ -79,14 +71,14 @@ public interface IService {
      * @param id.
      * @return the Output.
      */
-	Output getOutput(String id);
+	Parameter getOutput(String id);
 	
 	/**
      * add Output to Service.
      *
      *@param output.
      */
-	void addOutput(Output output);
+	void addOutput(Parameter output);
 	
 	/**
      * remove Output from Service by id.
