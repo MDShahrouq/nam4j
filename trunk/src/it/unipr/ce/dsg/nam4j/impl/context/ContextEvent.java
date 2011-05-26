@@ -1,7 +1,7 @@
 package it.unipr.ce.dsg.nam4j.impl.context;
 
 import java.text.SimpleDateFormat;
-
+import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
 import it.unipr.ce.dsg.nam4j.interfaces.IContextEvent;
 
 public abstract class ContextEvent implements IContextEvent {
@@ -11,59 +11,52 @@ public abstract class ContextEvent implements IContextEvent {
 	String id = "contextEvent";
 	String name = "Context Event";
 	String timestamp = null;
+	String temporalValidity = null;
 	String producerId = null;
 	
-	Object subject = null;
-	Object object = null;
-	Object action = null;
-	Object location = null;
+	Parameter subject = null;
+	Parameter object = null;
+	Parameter action = null;
+	Parameter location = null;
 	
 	@Override
-	public Object getSubject() {
+	public Parameter getSubject() {
 		return subject;
 	}
 
-	@Override
-	public void setSubject(Object subject) {
+	public void setSubject(Parameter subject) {
 		this.subject = subject;
 
 	}
 
-	@Override
-	public Object getObject() {
+	public Parameter getObject() {
 		return object;
 	}
 
-	@Override
-	public void setObject(Object object) {
+	public void setObject(Parameter object) {
 		this.object = object;
 
 	}
 
-	@Override
-	public Object getLocation() {
+	public Parameter getLocation() {
 		return location;
 	}
 
-	@Override
-	public void setLocation(Object location) {
+	public void setLocation(Parameter location) {
 		this.location = location;
 
 	}
 
-	@Override
-	public Object getAction() {
+	public Parameter getAction() {
 		return action;
 	}
 
-	@Override
-	public void setAction(Object action) {
+	public void setAction(Parameter action) {
 		this.action = action;
 
 	}
 
-	@Override
-	public void setName(String name) {
+	protected void setName(String name) {
 		this.name = name;
 
 	}
@@ -86,8 +79,7 @@ public abstract class ContextEvent implements IContextEvent {
 
 	@Override
 	public void setTimestamp(String timestamp) {
-		// TODO Auto-generated method stub
-
+		this.timestamp = timestamp;
 	}
 
 	@Override
@@ -97,14 +89,12 @@ public abstract class ContextEvent implements IContextEvent {
 
 	@Override
 	public void setTemporalValidity(String temporalValidity) {
-		// TODO Auto-generated method stub
-
+		this.temporalValidity = temporalValidity;
 	}
 
 	@Override
 	public String getTemporalValidity() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.temporalValidity;
 	}
 
 	@Override
