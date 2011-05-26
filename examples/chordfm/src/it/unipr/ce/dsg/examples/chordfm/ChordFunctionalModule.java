@@ -1,9 +1,11 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
-import com.google.gson.Gson;
-
+import it.unipr.ce.dsg.examples.ontology.Notify;
+import it.unipr.ce.dsg.examples.ontology.Publish;
+import it.unipr.ce.dsg.examples.ontology.Subscribe;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
+
 
 public class ChordFunctionalModule extends FunctionalModule {
 
@@ -18,20 +20,9 @@ public class ChordFunctionalModule extends FunctionalModule {
 		notifyService.setId("s1");
 		this.addProvidedService(notifyService.getId(), notifyService);
 		
-		Temperature temperature = new Temperature();
-		temperature.setId("i21");
-		temperature.setValue("20");
-		
 		Publish publishService = new Publish();
 		publishService.setId("s2");
-		publishService.addInput(temperature);
 		this.addProvidedService(publishService.getId(), publishService);
-		
-		Gson gson = new Gson();
-		String json = gson.toJson(temperature);
-		System.out.println("JSON temperature = " + json);
-		json = gson.toJson(publishService);
-		System.out.println("JSON publishService = " + json);
 		
 		Subscribe subscribeService = new Subscribe();
 		subscribeService.setId("s3");
@@ -50,8 +41,8 @@ public class ChordFunctionalModule extends FunctionalModule {
 		System.out.println("LOOKUP");
 	}
 	
-	public void publish(String item) {
-		System.out.println("PUBLISH");
+	public void publish(String data) {
+		System.out.println("PUBLISH " + data);
 	}
 	
 	public void subscribe(String fmId, String item) {
@@ -63,6 +54,10 @@ public class ChordFunctionalModule extends FunctionalModule {
 		if (serviceRequest.contains("Subscribe")) {
 			String[] tokens = serviceRequest.split(" ");
 			this.subscribe(tokens[0], tokens[2]);
+		}
+		if (serviceRequest.contains("Publish")) {
+			String[] tokens = serviceRequest.split(" ");
+			this.publish(tokens[2]);
 		}
 	}
 }
