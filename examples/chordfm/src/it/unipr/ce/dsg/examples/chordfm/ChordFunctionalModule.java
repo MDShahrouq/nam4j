@@ -29,39 +29,50 @@ public class ChordFunctionalModule extends FunctionalModule {
 		this.addProvidedService(subscribeService.getId(), subscribeService);
 	}
 	
-	public void join() {
+	private void join() {
 		System.out.println("JOIN");
 	}
 	
-	public void leave() {
+	private void leave() {
 		System.out.println("LEAVE");
 	}
 	
-	public void lookup(String item) {
-		System.out.println("LOOKUP");
+	private void lookup(String item) {
+		Thread t = new Thread(new LookupRunnable(item), "Lookup thread");
+		System.out.println("Child thread: " + t);
+		t.start();
 	}
 	
-	public void publish(String data) {
-		System.out.println("PUBLISH " + data);
+	private void publish(String item) {
+		Thread t = new Thread(new PublishRunnable(item), "Publish thread");
+		System.out.println("Child thread: " + t);
+		t.start();
 	}
 	
-	public void subscribe(String fmId, String item) {
+	private void subscribe(String fmId, String item) {
 		System.out.println(fmId + " SUBSCRIBE to " + item);
 		// http://sites.google.com/site/gson/gson-user-guide
 	}
 	
 	public void execute(String serviceRequest) {
-		if (serviceRequest.contains("Subscribe")) {
+		if (serviceRequest.contains("Join")) {
+			this.join();
+		}
+		if (serviceRequest.contains("Leave")) {
+			this.leave();
+		}
+		if (serviceRequest.contains("Lookup")) {
 			String[] tokens = serviceRequest.split(" ");
-			this.subscribe(tokens[0], tokens[2]);
+			this.lookup(tokens[2]);
 		}
 		if (serviceRequest.contains("Publish")) {
 			String[] tokens = serviceRequest.split(" ");
 			this.publish(tokens[2]);
 		}
+		if (serviceRequest.contains("Subscribe")) {
+			String[] tokens = serviceRequest.split(" ");
+			this.subscribe(tokens[0], tokens[2]);
+		}
 	}
 
-	public void run() {
-		// ...
-	}
 }
