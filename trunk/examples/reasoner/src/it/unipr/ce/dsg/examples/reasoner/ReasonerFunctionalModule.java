@@ -96,29 +96,7 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	}
 	
 	public void startLookupProcess() {
-		Thread t = new Thread(this, "Child thread");
-		System.out.println("Child thread: " + t);
-		t.start();
-		try {
-			Thread.sleep(3000);
-		}
-		catch (InterruptedException e) {
-			System.out.println("main thread interrupted");
-		}
-		System.out.println("end main thread");
-	}
-
-	public void run() {
-		try {
-			for (int i = 5; i > 0; i--) {
-				System.out.println("call Lookup " + i);
-				Thread.sleep(1000);
-			}
-		}
-		catch (InterruptedException e) {
-			System.out.println("child thread interrupted");
-		}
-		System.out.println("end child thread");
+		// call Lookup service on local ChordFunctionalModule
 	}
 	
 }
