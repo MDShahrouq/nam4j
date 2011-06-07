@@ -25,6 +25,8 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 		TemperatureNotification tempNotif = new TemperatureNotification();
 		tempNotif.setObject(temperature);
 		this.addProvidedContextEvent("c1", tempNotif);
+		
+		// TODO search for lookup service 
 	}
 	
 	// the reasoner exposes a notify service that is called by chordfm
@@ -33,7 +35,7 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 		System.out.println(this.getId() + "notified about " + item);
 	}
 	
-	// the following method should be private and executed preiodically
+	// the following method should be private and executed periodically
 	public void subscribeToContextEvents() {
 		// look into other functional modules, looking for requested service
 	    Collection<FunctionalModule> c = this.getNam().getFunctionalModules().values();
@@ -91,6 +93,32 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	    			fm.execute(this.getId() + " Publish " + json); 
 	    	}  	
 	    }
+	}
+	
+	public void startLookupProcess() {
+		Thread t = new Thread(this, "Child thread");
+		System.out.println("Child thread: " + t);
+		t.start();
+		try {
+			Thread.sleep(3000);
+		}
+		catch (InterruptedException e) {
+			System.out.println("main thread interrupted");
+		}
+		System.out.println("end main thread");
+	}
+
+	public void run() {
+		try {
+			for (int i = 5; i > 0; i--) {
+				System.out.println("call Lookup " + i);
+				Thread.sleep(1000);
+			}
+		}
+		catch (InterruptedException e) {
+			System.out.println("child thread interrupted");
+		}
+		System.out.println("end child thread");
 	}
 	
 }
