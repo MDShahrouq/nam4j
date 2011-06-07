@@ -60,4 +60,8 @@ public class ChordFunctionalModule extends FunctionalModule {
 			this.publish(tokens[2]);
 		}
 	}
+
+	public void run() {
+		// ...
+	}
 }
