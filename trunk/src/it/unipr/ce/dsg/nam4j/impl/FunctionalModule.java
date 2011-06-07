@@ -6,7 +6,7 @@ import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import java.util.HashMap;
 
 
-public abstract class FunctionalModule implements IFunctionalModule {
+public abstract class FunctionalModule implements IFunctionalModule, Runnable {
 
 	NetworkedAutonomicMachine nam = null;
 	String id = "functionalModule";
