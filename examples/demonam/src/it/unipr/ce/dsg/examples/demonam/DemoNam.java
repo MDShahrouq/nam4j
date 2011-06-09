@@ -1,13 +1,15 @@
 package it.unipr.ce.dsg.examples.demonam;
 
 import it.unipr.ce.dsg.examples.chordfm.ChordFunctionalModule;
-import it.unipr.ce.dsg.examples.reasoner.ReasonerFunctionalModule;
+import it.unipr.ce.dsg.examples.reasonerfm.ReasonerFunctionalModule;
+import it.unipr.ce.dsg.examples.sensorfm.SensorFunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 
 public class DemoNam extends NetworkedAutonomicMachine {
 
 	ChordFunctionalModule cfm = null;
 	ReasonerFunctionalModule rfm = null;
+	SensorFunctionalModule sfm = null;
 	
 	public DemoNam() {
 		this.setId("demonam");
@@ -15,6 +17,8 @@ public class DemoNam extends NetworkedAutonomicMachine {
 		this.addFunctionalModule(cfm);
 		rfm = new ReasonerFunctionalModule(this);
 		this.addFunctionalModule(rfm);
+		sfm = new SensorFunctionalModule(this);
+		this.addFunctionalModule(sfm);
 	}
 	
 	public static void main(String[] args) {
@@ -23,7 +27,7 @@ public class DemoNam extends NetworkedAutonomicMachine {
 				+ demonam.getFunctionalModules().size() 
 				+ " functional modules");
 
-		//demonam.rfm.subscribeToContextEvents();
-		demonam.rfm.publishContextEvents();
+		demonam.sfm.startPublishProcess();
+		demonam.rfm.startLookupProcess();
 	}
 }
