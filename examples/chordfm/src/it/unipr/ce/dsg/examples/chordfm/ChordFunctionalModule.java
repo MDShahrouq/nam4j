@@ -1,5 +1,6 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
+import it.unipr.ce.dsg.examples.ontology.Lookup;
 import it.unipr.ce.dsg.examples.ontology.Notify;
 import it.unipr.ce.dsg.examples.ontology.Publish;
 import it.unipr.ce.dsg.examples.ontology.Subscribe;
@@ -16,16 +17,21 @@ public class ChordFunctionalModule extends FunctionalModule {
 		System.out.println("I am " + this.getId() + " and I own to " + nam.getId());
 		
 		// create Service objects and add to providedServices hashmap
+		
+		Lookup lookupService = new Lookup();
+		lookupService.setId("s1");
+		this.addProvidedService(lookupService.getId(), lookupService);
+		
 		Notify notifyService = new Notify();
-		notifyService.setId("s1");
+		notifyService.setId("s2");
 		this.addProvidedService(notifyService.getId(), notifyService);
 		
 		Publish publishService = new Publish();
-		publishService.setId("s2");
+		publishService.setId("s3");
 		this.addProvidedService(publishService.getId(), publishService);
 		
 		Subscribe subscribeService = new Subscribe();
-		subscribeService.setId("s3");
+		subscribeService.setId("s4");
 		this.addProvidedService(subscribeService.getId(), subscribeService);
 	}
 	

@@ -6,7 +6,6 @@ public class Temperature extends Parameter {
 	
 	public Temperature() {
 		this.setName("Temperature");
-		this.setValue("0");
 	}
 	
 }
