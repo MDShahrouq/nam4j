@@ -57,7 +57,6 @@ public class ChordFunctionalModule extends FunctionalModule {
 	
 	private void subscribe(String fmId, String item) {
 		System.out.println(fmId + " SUBSCRIBE to " + item);
-		// http://sites.google.com/site/gson/gson-user-guide
 	}
 	
 	public void execute(String serviceRequest) {
