@@ -1,5 +1,6 @@
 package it.unipr.ce.dsg.examples.sensorfm;
 
+import it.unipr.ce.dsg.examples.ontology.Room;
 import it.unipr.ce.dsg.examples.ontology.Temperature;
 import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
@@ -22,8 +23,7 @@ public class ProvideTemperatureRunnable implements Runnable {
 		
 		// call publish service passing json message
 		// look into other functional modules, looking for requested service
-		Collection<FunctionalModule> c = sfm.getNam()
-				.getFunctionalModules().values();
+		Collection<FunctionalModule> c = sfm.getNam().getFunctionalModules().values();
 		Iterator<FunctionalModule> itr = c.iterator();
 		String serviceName = null;
 		FunctionalModule fm = null;
@@ -51,13 +51,13 @@ public class ProvideTemperatureRunnable implements Runnable {
 			temperature.setValue("20");
 
 			TemperatureNotification tempNotif = new TemperatureNotification();
+			Room room = new Room();
+			room.setValue("bedroom");
+			tempNotif.setLocation(room);
 			tempNotif.setObject(temperature);
 
-			// to json
 			Gson gson = new Gson();
-			String json = gson.toJson(temperature);
-			System.out.println("JSON temperature = " + json);
-			json = gson.toJson(tempNotif);
+			String json = gson.toJson(tempNotif);
 			System.out.println("JSON tempNotif = " + json);
 
 			fm.execute(sfm.getId() + " Publish " + json);
