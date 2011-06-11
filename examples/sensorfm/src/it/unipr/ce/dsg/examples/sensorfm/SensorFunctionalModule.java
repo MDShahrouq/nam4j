@@ -15,7 +15,7 @@ public class SensorFunctionalModule extends FunctionalModule {
 
 	public void startPublishProcess() {
 		Thread t = new Thread(new ProvideTemperatureRunnable(this), "Provide temperature thread");
-		System.out.println("Child thread: " + t);
+		//System.out.println("Child thread: " + t);
 		t.start();
 	}
 }

@@ -45,13 +45,13 @@ public class ChordFunctionalModule extends FunctionalModule {
 	
 	private void lookup(String item) {
 		Thread t = new Thread(new LookupRunnable(item), "Lookup thread");
-		System.out.println("Child thread: " + t);
+		//System.out.println("Child thread: " + t);
 		t.start();
 	}
 	
 	private void publish(String item) {
 		Thread t = new Thread(new PublishRunnable(item), "Publish thread");
-		System.out.println("Child thread: " + t);
+		//System.out.println("Child thread: " + t);
 		t.start();
 	}
 	
