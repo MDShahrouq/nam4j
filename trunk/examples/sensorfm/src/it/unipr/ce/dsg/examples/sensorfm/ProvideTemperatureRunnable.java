@@ -32,41 +32,34 @@ public class ProvideTemperatureRunnable implements Runnable {
 			tempfm = itr.next();
 			if (tempfm.getName().equals(sfm.getName()))
 				continue;
-			System.out.println("Temp FM: " + tempfm.getName());
+			//System.out.println("Temp FM: " + tempfm.getName());
 			Collection<Service> cc = tempfm.getProvidedServices().values();
 			Iterator<Service> itrr = cc.iterator();
 			while (itrr.hasNext()) {
 				serviceName = itrr.next().getName();
-				System.out.println("Service: " + serviceName);
+				//System.out.println("Service: " + serviceName);
 				if (serviceName.equals("Publish")) {
 					fm = tempfm;
-					System.out.println("FM: " + fm.getName());
+					//System.out.println("FM: " + fm.getName());
 				}
 			}
 		}
-		
-		for (int i = 0; i < 5; i++) {
-			Temperature temperature = new Temperature();
-			temperature.setId("i21");
-			temperature.setValue("20");
 
-			TemperatureNotification tempNotif = new TemperatureNotification();
-			Room room = new Room();
-			room.setValue("bedroom");
-			tempNotif.setLocation(room);
-			tempNotif.setObject(temperature);
+		Temperature temperature = new Temperature();
+		temperature.setId("i21");
+		temperature.setValue("20");
 
-			Gson gson = new Gson();
-			String json = gson.toJson(tempNotif);
-			System.out.println("JSON tempNotif = " + json);
+		TemperatureNotification tempNotif = new TemperatureNotification();
+		Room room = new Room();
+		room.setValue("bedroom");
+		tempNotif.setLocation(room);
+		tempNotif.setObject(temperature);
 
-			fm.execute(sfm.getId() + " Publish " + json);
-			
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		Gson gson = new Gson();
+		String json = gson.toJson(tempNotif);
+		System.out.println("JSON tempNotif = " + json);
+
+		fm.execute(sfm.getId() + " Publish " + json);
+
 	}
 }
