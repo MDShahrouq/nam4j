@@ -28,6 +28,6 @@ public class DemoNam extends NetworkedAutonomicMachine {
 				+ " functional modules");
 
 		demonam.sfm.startPublishProcess();
-		demonam.rfm.startLookupProcess();
+		//demonam.rfm.startLookupProcess();
 	}
 }
