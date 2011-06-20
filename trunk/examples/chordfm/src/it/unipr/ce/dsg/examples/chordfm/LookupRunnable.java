@@ -18,7 +18,7 @@ public class LookupRunnable implements Runnable {
 		
 		System.out.println("Service: Lookup " + item);
 		
-		// TODO extract resource info from item
+		// TODO now extract resource info from item
 		
 		ResourceDescriptor rd = new ResourceDescriptor();
 		rd.setType("type"); // type of resource
