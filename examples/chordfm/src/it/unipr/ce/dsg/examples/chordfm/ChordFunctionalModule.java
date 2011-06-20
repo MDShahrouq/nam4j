@@ -1,15 +1,25 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
+import java.math.BigInteger;
+import java.util.Random;
+
 import it.unipr.ce.dsg.examples.ontology.Lookup;
 import it.unipr.ce.dsg.examples.ontology.Notify;
 import it.unipr.ce.dsg.examples.ontology.Publish;
 import it.unipr.ce.dsg.examples.ontology.Subscribe;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
+import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
+import it.unipr.ce.dsg.s2pchord.ChordPeer;
+import it.unipr.ce.dsg.s2pchord.eventlistener.ChordEventListener;
+import it.unipr.ce.dsg.s2pchord.util.SHA1;
+import it.unipr.dsg.s2pchord.resource.ResourceDescriptor;
 
 
-public class ChordFunctionalModule extends FunctionalModule {
+public class ChordFunctionalModule extends FunctionalModule implements ChordEventListener {
 
+	private ChordPeer chordPeer = null;
+	
 	public ChordFunctionalModule(NetworkedAutonomicMachine nam) {
 		super(nam);
 		this.setId("cfm");
@@ -33,6 +43,19 @@ public class ChordFunctionalModule extends FunctionalModule {
 		Subscribe subscribeService = new Subscribe();
 		subscribeService.setId("s4");
 		this.addProvidedService(subscribeService.getId(), subscribeService);
+		
+		Random ran = new Random();
+		int port = 1024 + ran.nextInt(9999-1024);
+		int bitNumber = 160;
+		try {
+			int unL = ran.nextInt(bitNumber);
+			String key = SHA1.convertToHex(SHA1.calculateSHA1(BigInteger.valueOf(unL + System.currentTimeMillis()).toString(16)));
+			chordPeer = new ChordPeer("config/chordPeer.cfg", key, key, port, bitNumber);
+			chordPeer.startPeer();
+			chordPeer.setChordEventListener(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void join() {
@@ -44,13 +67,13 @@ public class ChordFunctionalModule extends FunctionalModule {
 	}
 	
 	private void lookup(String item) {
-		Thread t = new Thread(new LookupRunnable(item), "Lookup thread");
+		Thread t = new Thread(new LookupRunnable(item, chordPeer), "Lookup thread");
 		//System.out.println("Child thread: " + t);
 		t.start();
 	}
 	
 	private void publish(String item) {
-		Thread t = new Thread(new PublishRunnable(item), "Publish thread");
+		Thread t = new Thread(new PublishRunnable(item, chordPeer), "Publish thread");
 		//System.out.println("Child thread: " + t);
 		t.start();
 	}
@@ -78,6 +101,16 @@ public class ChordFunctionalModule extends FunctionalModule {
 			String[] tokens = serviceRequest.split(" ");
 			this.subscribe(tokens[0], tokens[2]);
 		}
+	}
+
+	@Override
+	public void searchResultEvent(String resourceKey, ResourceDescriptor rd, PeerDescriptor responsiblePeer, PeerDescriptor ownerPeer) {
+		System.out.println("Received a Search Result Event Notification for resource: " + resourceKey + " Resource Descriptor Key: " + rd.getKey() +" with responsible: " + responsiblePeer.getKey() + " and owner: " + ownerPeer.getKey());
+	}
+
+	@Override
+	public void publishResultEvent(ResourceDescriptor rd, PeerDescriptor responsiblePeer, PeerDescriptor ownerPeer) {
+		System.out.println("Received a Publish Result Event Notification for resource: " + rd.getKey() + " with responsible: " + responsiblePeer.getKey() + " and owner: " + ownerPeer.getKey());	
 	}
 
 }
