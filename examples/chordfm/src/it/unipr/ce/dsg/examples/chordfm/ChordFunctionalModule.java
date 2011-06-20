@@ -44,6 +44,7 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 		subscribeService.setId("s4");
 		this.addProvidedService(subscribeService.getId(), subscribeService);
 		
+		// create and start ChordPeer
 		Random ran = new Random();
 		int port = 1024 + ran.nextInt(9999-1024);
 		int bitNumber = 160;
