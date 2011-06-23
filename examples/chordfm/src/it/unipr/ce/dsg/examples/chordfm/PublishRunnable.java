@@ -1,5 +1,7 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
+import java.util.Random;
+
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
 import it.unipr.dsg.s2pchord.resource.Resource;
 import it.unipr.dsg.s2pchord.resource.ResourceDescriptor;
@@ -19,12 +21,25 @@ public class PublishRunnable implements Runnable {
 		
 		System.out.println("Service: Publish " + item);
 		
-		// TODO now extract resource info from item
+		// TODO we should extract resource info from item, but now for simplicity we use a trick
+		
+		String location = null;
+		Random ran = new Random(System.currentTimeMillis());
+		int i = ran.nextInt(4);
+		if (i == 0)
+			location = "kitchen";
+		else if (i == 1)
+			location = "livingroom";
+		else if (i == 2)
+			location = "bathroom";
+		else if (i == 3)
+			location = "bedroom";
 		
 		ResourceDescriptor rd = new ResourceDescriptor();
-		rd.setType("type"); // type of resource
+		rd.setType("ContextEvent"); // type of resource
 		rd.setResourceOwner(cp.getMyNetPeerInfo());
-		rd.addParameter(new ResourceParameter("parName", "parValue")); //name and value to be published
+		rd.addParameter(new ResourceParameter("Object", "Temperature")); //name and value to be published
+		rd.addParameter(new ResourceParameter("Location", location));
 		rd.generateResourceKey();	
 		String resourceKey = rd.getKey();
 		System.out.println("Generated Resource String: " + resourceKey);

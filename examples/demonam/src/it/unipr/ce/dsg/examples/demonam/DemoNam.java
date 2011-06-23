@@ -1,5 +1,7 @@
 package it.unipr.ce.dsg.examples.demonam;
 
+import java.util.Random;
+
 import it.unipr.ce.dsg.examples.chordfm.ChordFunctionalModule;
 import it.unipr.ce.dsg.examples.reasonerfm.ReasonerFunctionalModule;
 import it.unipr.ce.dsg.examples.sensorfm.SensorFunctionalModule;
@@ -26,8 +28,11 @@ public class DemoNam extends NetworkedAutonomicMachine {
 		System.out.println("Demonam has " 
 				+ demonam.getFunctionalModules().size() 
 				+ " functional modules");
-
-		demonam.sfm.startPublishProcess();
-		//demonam.rfm.startLookupProcess();
+		Random ran = new Random(System.currentTimeMillis());
+		int i = ran.nextInt(2);
+		if (i == 0)
+			demonam.sfm.startPublishProcess();
+		else
+			demonam.rfm.startLookupProcess();
 	}
 }
