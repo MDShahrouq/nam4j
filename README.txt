@@ -8,3 +8,6 @@ config/chordPeer.cfg:
 bootstrap_peer=bootstrap@ip.add.re.ss:5080
 
 3) run the DemoNam
+
+X - publish "Temperature x"  where x is a random room among (bedroom, kitchen, livingroom, bathroom)
+X - search for "Temperature x"  where x is a random room among (bedroom, kitchen, livingroom, bathroom)
