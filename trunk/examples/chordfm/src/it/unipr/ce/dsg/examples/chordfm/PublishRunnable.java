@@ -36,9 +36,11 @@ public class PublishRunnable implements Runnable {
 			location = "bedroom";
 		
 		ResourceDescriptor rd = new ResourceDescriptor();
-		rd.setType("ContextEvent"); // type of resource
+		rd.setType("TemperatureNotification"); // type of resource
 		rd.setResourceOwner(cp.getMyNetPeerInfo());
-		rd.addParameter(new ResourceParameter("Object", "Temperature")); //name and value to be published
+		rd.addParameter(new ResourceParameter("Subject", "Temperature")); 
+		rd.addParameter(new ResourceParameter("Action", ""));
+		rd.addParameter(new ResourceParameter("Object", ""));
 		rd.addParameter(new ResourceParameter("Location", location));
 		rd.generateResourceKey();	
 		String resourceKey = rd.getKey();
