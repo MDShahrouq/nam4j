@@ -53,7 +53,7 @@ public class ProvideTemperatureRunnable implements Runnable {
 		Room room = new Room();
 		room.setValue("some location");
 		tempNotif.setLocation(room);
-		tempNotif.setObject(temperature);
+		tempNotif.setSubject(temperature);
 
 		Gson gson = new Gson();
 		String json = gson.toJson(tempNotif);

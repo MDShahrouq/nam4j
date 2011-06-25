@@ -46,7 +46,7 @@ public class SearchTemperatureRunnable implements Runnable {
 			
 		Temperature temperature = new Temperature();
 		TemperatureNotification tempNotif = new TemperatureNotification();
-		tempNotif.setObject(temperature);
+		tempNotif.setSubject(temperature);
 
 		Gson gson = new Gson();
 		String json = gson.toJson(tempNotif);
