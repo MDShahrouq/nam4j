@@ -7,6 +7,7 @@ import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 import com.google.gson.Gson;
@@ -54,10 +55,12 @@ public class ProvideTemperatureRunnable implements Runnable {
 		room.setValue("some location");
 		tempNotif.setLocation(room);
 		tempNotif.setSubject(temperature);
+		Date timestamp = new Date();
+		tempNotif.setTimestamp(timestamp.toString());
 
 		Gson gson = new Gson();
 		String json = gson.toJson(tempNotif);
-		System.out.println("JSON tempNotif = " + json);
+		System.out.println("ProvideTemperature: JSON tempNotif = " + json);
 
 		fm.execute(sfm.getId() + " Publish " + json);
 	}
