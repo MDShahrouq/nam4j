@@ -3,6 +3,8 @@ package it.unipr.ce.dsg.examples.reasonerfm;
 import java.util.Collection;
 import java.util.Iterator;
 
+import com.google.gson.Gson;
+
 import it.unipr.ce.dsg.examples.ontology.Temperature;
 import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
@@ -32,7 +34,7 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	}
 	
 	// the following method should be private and executed periodically
-	public void subscribeToContextEvents() {
+	public void subscribeToTemperatureNotifications() {
 		// search other functional modules, looking for requested service
 	    Collection<FunctionalModule> c = this.getNam().getFunctionalModules().values();
 	    Iterator<FunctionalModule> itr = c.iterator();
@@ -48,14 +50,20 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	    	while(itrr.hasNext()) {
 	    		serviceName = itrr.next().getName();
 	    		System.out.println("Service: " + serviceName);
-	    		if (serviceName.equals("Subscribe"))
-	    			fm.execute(this.getId() + " Subscribe Temperature"); // FIXME should use a JSON message..
+	    		if (serviceName.equals("Subscribe")) {
+	    			Temperature temperature = new Temperature();
+	    			TemperatureNotification tempNotif = new TemperatureNotification();
+	    			tempNotif.setSubject(temperature);
+	    			Gson gson = new Gson();
+	    			String json = gson.toJson(tempNotif);
+	    			fm.execute(this.getId(), "Subscribe", json); 
+	    		}
 	    	}  	
 	    }
 	}
 	
 
-	public void startLookupProcess() {
+	public void startTemperatureNotificationLookupProcess() {
 		// create and start a thread that periodically looks up for Temperature notification events
 		Thread t = new Thread(new SearchTemperatureRunnable(this), "Search temperature thread");
 		//System.out.println("Child thread: " + t);

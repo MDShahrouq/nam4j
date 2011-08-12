@@ -50,9 +50,10 @@ public class ProvideTemperatureRunnable implements Runnable {
 		temperature.setId("i21");
 		temperature.setValue("20");
 
+		//TemperatureNotification tempNotif = new TemperatureNotification();
 		TemperatureNotification tempNotif = new TemperatureNotification();
 		Room room = new Room();
-		room.setValue("some location");
+		room.setValue("kitchen");
 		tempNotif.setLocation(room);
 		tempNotif.setSubject(temperature);
 		Date timestamp = new Date();
@@ -62,6 +63,6 @@ public class ProvideTemperatureRunnable implements Runnable {
 		String json = gson.toJson(tempNotif);
 		System.out.println("ProvideTemperature: JSON tempNotif = " + json);
 
-		fm.execute(sfm.getId() + " Publish " + json);
+		fm.execute(sfm.getId(), "Publish", json);
 	}
 }
