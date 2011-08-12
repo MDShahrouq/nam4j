@@ -116,5 +116,5 @@ Publish (extends service)
 Room (extends Parameter)
 Subscribe (extends Service)
 Temperature (extends Parameter)
-temperatureNotification (describes a context event)
+TemperatureNotification (describes a context event)
 }}}
