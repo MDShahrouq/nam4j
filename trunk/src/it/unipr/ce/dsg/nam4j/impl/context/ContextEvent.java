@@ -4,10 +4,10 @@ import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
 import it.unipr.ce.dsg.nam4j.interfaces.IContextEvent;
 
 
-public abstract class ContextEvent implements IContextEvent {
+public class ContextEvent implements IContextEvent {
 
 	String id = "contextEvent";
-	String name = "Context Event";
+	String name = "ContextEvent";
 	String timestamp = null;
 	String temporalValidity = null;
 	String producerId = null;
@@ -16,6 +16,8 @@ public abstract class ContextEvent implements IContextEvent {
 	Parameter action = null;
 	Parameter location = null;
 	
+	public ContextEvent() {
+	}
 	
 	public Parameter getSubject() {
 		return subject;

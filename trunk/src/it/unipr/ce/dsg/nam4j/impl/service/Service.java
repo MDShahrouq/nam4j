@@ -3,7 +3,7 @@ package it.unipr.ce.dsg.nam4j.impl.service;
 import java.util.HashMap;
 import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
-public abstract class Service implements IService {
+public class Service implements IService {
 
 	String id = "service";
 	String name = "Service";
@@ -12,6 +12,9 @@ public abstract class Service implements IService {
 	HashMap<String,Parameter> outputs = new HashMap<String,Parameter>();
 	HashMap<String,Effect> effects = new HashMap<String,Effect>();
 	HashMap<String,Precondition> preconditions = new HashMap<String,Precondition>();
+	
+	public Service() {
+	}
 	
 	protected void setName(String name) {
 		this.name = name;

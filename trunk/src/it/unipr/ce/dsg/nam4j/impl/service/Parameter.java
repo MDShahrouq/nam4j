@@ -2,11 +2,14 @@ package it.unipr.ce.dsg.nam4j.impl.service;
 
 import it.unipr.ce.dsg.nam4j.interfaces.IParameter;
 
-public abstract class Parameter implements IParameter {
+public class Parameter implements IParameter {
 
 	String id = "param";
 	String name = "Parameter";
 	String value = "value";
+	
+	public Parameter() {
+	}
 	
 	/**
      * set the Parameter name.
