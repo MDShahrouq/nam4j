@@ -49,7 +49,7 @@ exposing the method {{{startPublishProcess()}}}, that once called detaches a thr
 
 {{{
 ProvideTemperatureRunnable implements Runnable
-]}}
+}}}
 
 Such a class implements the functional logic of the sensorfm. Its {{{run()}}} method looks for a {{{Publish}}} service within those exposed by the functional modules of the NAM. Then it creates a context event (instance of {{{TemperatureNotification}}}), turns it into a JSON message, and publish the latter using the {{{Publish}}} service.  
 
