@@ -80,8 +80,41 @@ Its {{{run()}}} method looks for a {{{Lookup}}} service within those exposed by 
 
 
 = chordfm =
-This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. 
+This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. It is based on a Chord implementation that uses Sip2Peer as networking middleware.
 
+There are three classes. the main one is
+
+{{{
+ChordFunctionalModule extends FunctionalModule implements ChordEventListener
+}}}
+
+that provides the following services:
+
+{{{
+Lookup lookupService = new Lookup();
+Notify notifyService = new Notify();
+Publish publishService = new Publish();
+Subscribe subscribeService = new Subscribe();
+}}}
+
+When one these services is called, a thread is detached, executing the code implemented in the following classes:
+
+{{{
+LookupRunnable implements Runnable (to be fixed)
+NotifyRunnable implements Runnable (TODO)
+PublishRunnable implements Runnable (to be fixed)
+SubscribeRunnable implements Runnable (TODO)
+}}}
 
 = ontology = 
-This folder contains the code that implements the domain ontology of the demo.
+This folder contains the code that implements the domain ontology of the demo. The following classes have been implemented:
+
+{{{
+Lookup (extends Service)
+Notify (extends Service)
+Publish (extends service)
+Room (extends Parameter)
+Subscribe (extends Service)
+Temperature (extends Parameter)
+temperatureNotification (describes a context event)
+}}}
