@@ -1,0 +1,36 @@
+#summary NAM4J first tutorial.
+
+= Introduction =
+
+No NAM4J binary release is currently available, but you can get the source code from svn.
+
+Folder src/ contains the middleware, that includes 5 packages:
+{{{
+it.unipr.ce.dsg.nam4j.interfaces
+it.unipr.ce.dsg.nam4j.impl
+it.unipr.ce.dsg.nam4j.impl.context
+it.unipr.ce.dsg.nam4j.impl.resource
+it.unipr.ce.dsg.nam4j.impl.service
+}}}
+
+Folder examples/ contains demo code. In details:
+  * demonam/ contains the code that implements a NAM
+  * sensorfm/ contains the code that implements a functional module that simulates a sensor
+  * reasonerfm/ contains the code that implements a functional module that acts as a reasoner
+  * chordfm/ contains the code that implements a functional module that provides Chord-based overlay functionalities
+  * ontology/ contains the code that implements the domain ontology of the demo
+ 
+
+= demonam =
+
+
+= sensorfm =
+
+
+= reasonerfm =
+
+
+= chordfm =
+
+
+= ontology = 
