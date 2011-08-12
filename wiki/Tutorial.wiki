@@ -45,7 +45,7 @@ This folder contains the code that implements a functional module that simulates
 SensorFunctionalModule extends FunctionalModule
 }}}
 
-exposing the method {{{startPublishProcess()}}}, that once called detaches a thread that runs an instance of
+exposing the method {{{startTemperatureNotificationProcess()}}}, that once called detaches a thread that runs an instance of
 
 {{{
 ProvideTemperatureRunnable implements Runnable
@@ -55,11 +55,24 @@ Such a class implements the functional logic of the sensorfm. Its {{{run()}}} me
 
 
 = reasonerfm =
-This folder cntains the code that implements a functional module that acts as a reasoner.
+This folder contains the code that implements a functional module that acts as a reasoner.
 
 
 = chordfm =
-This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. 
+This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. The main one is
+
+{{{
+ReasonerFunctionalModule extends FunctionalModule
+}}}
+
+exposing the methods
+
+{{{
+subscribeToTemperatureNotifications()
+startTemperatureNotificationLookupProcess()
+}}}
+
+
 
 
 = ontology = 
