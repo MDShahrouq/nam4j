@@ -31,8 +31,8 @@ public class DemoNam extends NetworkedAutonomicMachine {
 		Random ran = new Random(System.currentTimeMillis());
 		int i = ran.nextInt(2);
 		if (i == 0)
-			demonam.sfm.startPublishProcess();
+			demonam.sfm.startTemperatureNotificationProcess();
 		else
-			demonam.rfm.startLookupProcess();
+			demonam.rfm.startTemperatureNotificationLookupProcess();
 	}
 }

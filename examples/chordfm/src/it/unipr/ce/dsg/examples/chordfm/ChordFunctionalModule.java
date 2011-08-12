@@ -83,24 +83,21 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 		System.out.println(fmId + " SUBSCRIBE to " + item);
 	}
 	
-	public void execute(String serviceRequest) {
-		if (serviceRequest.contains("Join")) {
+	public void execute(String requestorId, String requestedService, String parameters) {
+		if (requestedService.equals("Join")) {
 			this.join();
 		}
-		if (serviceRequest.contains("Leave")) {
+		if (requestedService.equals("Leave")) {
 			this.leave();
 		}
-		if (serviceRequest.contains("Lookup")) {
-			String[] tokens = serviceRequest.split(" ");
-			this.lookup(tokens[2]);
+		if (requestedService.equals("Lookup")) {
+			this.lookup(parameters);
 		}
-		if (serviceRequest.contains("Publish")) {
-			String[] tokens = serviceRequest.split(" ");
-			this.publish(tokens[2]);
+		if (requestedService.equals("Publish")) {
+			this.publish(parameters);
 		}
-		if (serviceRequest.contains("Subscribe")) {
-			String[] tokens = serviceRequest.split(" ");
-			this.subscribe(tokens[0], tokens[2]);
+		if (requestedService.equals("Subscribe")) {
+			this.subscribe(requestorId, parameters);
 		}
 	}
 

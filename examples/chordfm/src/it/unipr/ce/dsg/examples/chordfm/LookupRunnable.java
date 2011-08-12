@@ -1,10 +1,11 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
-import java.util.Random;
-
+import com.google.gson.Gson;
+import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
 import it.unipr.dsg.s2pchord.resource.ResourceDescriptor;
 import it.unipr.dsg.s2pchord.resource.ResourceParameter;
+
 
 public class LookupRunnable implements Runnable {
 
@@ -20,33 +21,26 @@ public class LookupRunnable implements Runnable {
 		
 		System.out.println("Service: Lookup " + item);
 		
-		// TODO we should extract resource info from item, but now for simplicity we use a trick
-		
-		String location = null;
-		Random ran = new Random(System.currentTimeMillis());
-		int i = ran.nextInt(4);
-		if (i == 0)
-			location = "kitchen";
-		else if (i == 1)
-			location = "livingroom";
-		else if (i == 2)
-			location = "bathroom";
-		else if (i == 3)
-			location = "bedroom";
+		Gson gson = new Gson();
+		ContextEvent ce = gson.fromJson(item, ContextEvent.class);
 		
 		ResourceDescriptor rd = new ResourceDescriptor();
-		rd.setType("TemperatureNotification"); // type of resource
+		if (ce.getName() != null)
+			rd.setType(ce.getName()); // type of resource
 		rd.setResourceOwner(cp.getMyNetPeerInfo());
-		rd.addParameter(new ResourceParameter("Subject", "Temperature"));
-		rd.addParameter(new ResourceParameter("Action", ""));
-		rd.addParameter(new ResourceParameter("Object", ""));
-		rd.addParameter(new ResourceParameter("Location", location));
+		if (ce.getSubject() != null)
+			rd.addParameter(new ResourceParameter("Subject", ce.getSubject().getName()));
+		if (ce.getAction() != null)
+			rd.addParameter(new ResourceParameter("Action", ce.getAction().getName()));
+		if (ce.getObject() != null)
+			rd.addParameter(new ResourceParameter("Object", ce.getObject().getName()));
+		if (ce.getLocation() != null)
+			rd.addParameter(new ResourceParameter("Location", ce.getLocation().getName()));
 		rd.generateResourceKey();	
 		String resourceKey = rd.getKey();
 		System.out.println("Generated Resource String: " + resourceKey);
 		System.out.println("Generated Resource Descriptor: " +  rd.resourceDescriptorString());
-		cp.searchResource(resourceKey);
-		
+		cp.searchResource(resourceKey);	
 	}
 
 }
