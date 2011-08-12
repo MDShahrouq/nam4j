@@ -35,7 +35,7 @@ this.addFunctionalModule(sfm);
 }}}
 
 whose details are given in the following sections.
-In the {{{main()}}} method, DemoNam randomly starts either a publication process (using its sensorfm) or a lookup process (using its reasonerfm).
+In the {{{main()}}} method, {{{DemoNam}}} randomly starts either a publication process (using its sensorfm) or a lookup process (using its reasonerfm).
 
 
 = sensorfm =
