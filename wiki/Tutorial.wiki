@@ -13,29 +13,24 @@ it.unipr.ce.dsg.nam4j.impl.resource
 it.unipr.ce.dsg.nam4j.impl.service
 }}}
 
-Folder examples/ contains demo code. In details:
+Folder examples/ contains demo code. Details are given below.
 
-  * demonam/ contains the code that implements a NAM
-
-  * sensorfm/ contains the code that implements a functional module that simulates a sensor
-
-  * reasonerfm/ contains the code that implements a functional module that acts as a reasoner
-
-  * chordfm/ contains the code that implements a functional module that provides Chord-based overlay functionalities
-
-  * ontology/ contains the code that implements the domain ontology of the demo
- 
 
 = demonam =
+This folder contains the code that implements a NAM.
 
 
 = sensorfm =
+This folder contains the code that implements a functional module that simulates a sensor.
 
 
 = reasonerfm =
+This folder cntains the code that implements a functional module that acts as a reasoner.
 
 
 = chordfm =
+This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. 
 
 
 = ontology = 
+This folder contains the code that implements the domain ontology of the demo.
