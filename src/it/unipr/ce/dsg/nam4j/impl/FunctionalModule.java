@@ -133,7 +133,7 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	/*
 	 * Generic service execution method
 	 */
-	public void execute(String serviceRequest) {
+	public void execute(String requestorId, String requestedService, String parameters) {
 	}
 
 }
