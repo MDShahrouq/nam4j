@@ -17,7 +17,25 @@ Folder examples/ contains demo code. Details are given below.
 
 
 = demonam =
-This folder contains the code that implements a NAM.
+This folder contains the code that implements a NAM. There is a unique class
+
+{{{
+DemoNam extends NetworkedAutonomicMachine
+}}}
+
+The constructor instantiates three functional modules: 
+
+{{{
+cfm = new ChordFunctionalModule(this);
+this.addFunctionalModule(cfm);
+rfm = new ReasonerFunctionalModule(this);
+this.addFunctionalModule(rfm);
+sfm = new SensorFunctionalModule(this);
+this.addFunctionalModule(sfm);
+}}}
+
+whose details are given in the following sections.
+In the {{{main()}}} method, DemoNam randomly starts either a publication process (using its sensorfm) or a lookup process (using its reasonerfm).
 
 
 = sensorfm =
