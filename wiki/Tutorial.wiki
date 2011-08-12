@@ -55,11 +55,7 @@ Such a class implements the functional logic of the sensorfm. Its {{{run()}}} me
 
 
 = reasonerfm =
-This folder contains the code that implements a functional module that acts as a reasoner.
-
-
-= chordfm =
-This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. The main one is
+This folder contains the code that implements a functional module that acts as a reasoner. There are two classes. The main one is
 
 {{{
 ReasonerFunctionalModule extends FunctionalModule
@@ -72,7 +68,19 @@ subscribeToTemperatureNotifications()
 startTemperatureNotificationLookupProcess()
 }}}
 
+The first method looks for a {{{Subscribe}}} service within those exposed by the functional modules of the NAM. If such a service is found, it is used to subscribe to instances of {{{TemperatureNotification}}} context events that may be published within the network.
 
+The second method detaches a thread that runs an instance of
+
+{{{
+LookupRunnable implements Runnable
+}}}
+
+Its {{{run()}}} method looks for a {{{Lookup}}} service within those exposed by the functional modules of the NAM. If such a a service is found, it is used to search for the latest instance of {{{TemperatureNotification}}} context event that may have been published within the network.
+
+
+= chordfm =
+This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. 
 
 
 = ontology = 
