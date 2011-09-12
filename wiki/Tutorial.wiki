@@ -80,7 +80,7 @@ Its {{{run()}}} method looks for a {{{Lookup}}} service within those exposed by 
 
 
 = chordfm =
-This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. It is based on a Chord implementation that uses *Sip2Peer* as networking middleware.
+This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. It is based on a Chord implementation that uses Sip2Peer as networking middleware.
 
 There are three classes. the main one is
 
@@ -112,7 +112,7 @@ This folder contains the code that implements the domain ontology of the demo. T
 {{{
 Lookup (extends Service)
 Notify (extends Service)
-Publish (extends service)
+Publish (extends Service)
 Room (extends Parameter)
 Subscribe (extends Service)
 Temperature (extends Parameter)
