@@ -4,8 +4,8 @@ import it.unipr.ce.dsg.nam4j.interfaces.IResourceDescriptor;
 
 public class ResourceDescriptor implements IResourceDescriptor {
 
-	String id = "resourceDescriptor";
 	String name = "ResourceDescriptor";
+	String id = "ResourceId";
 	
 	public ResourceDescriptor() {
 	}
