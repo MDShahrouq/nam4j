@@ -63,7 +63,7 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	}
 	
 
-	public void startTemperatureNotificationLookupProcess() {
+	public void startTemperatureNotificationLookup() {
 		// create and start a thread that periodically looks up for Temperature notification events
 		Thread t = new Thread(new SearchTemperatureRunnable(this), "Search temperature thread");
 		//System.out.println("Child thread: " + t);

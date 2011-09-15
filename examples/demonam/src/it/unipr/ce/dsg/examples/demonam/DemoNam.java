@@ -5,11 +5,14 @@ import java.util.Random;
 import it.unipr.ce.dsg.examples.chordfm.ChordFunctionalModule;
 import it.unipr.ce.dsg.examples.reasonerfm.ReasonerFunctionalModule;
 import it.unipr.ce.dsg.examples.sensorfm.SensorFunctionalModule;
+import it.unipr.ce.dsg.examples.taskmanagerfm.TaskManagerFunctionalModule;
+import it.unipr.ce.dsg.examples.taskmanagerfm.UPCPFTaskDescriptor;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 
 public class DemoNam extends NetworkedAutonomicMachine {
 
 	ChordFunctionalModule cfm = null;
+	TaskManagerFunctionalModule tmfm = null;
 	ReasonerFunctionalModule rfm = null;
 	SensorFunctionalModule sfm = null;
 	
@@ -17,6 +20,8 @@ public class DemoNam extends NetworkedAutonomicMachine {
 		this.setId("demonam");
 		cfm = new ChordFunctionalModule(this);
 		this.addFunctionalModule(cfm);
+		tmfm = new TaskManagerFunctionalModule(this);
+		this.addFunctionalModule(tmfm);
 		rfm = new ReasonerFunctionalModule(this);
 		this.addFunctionalModule(rfm);
 		sfm = new SensorFunctionalModule(this);
@@ -28,11 +33,17 @@ public class DemoNam extends NetworkedAutonomicMachine {
 		System.out.println("Demonam has " 
 				+ demonam.getFunctionalModules().size() 
 				+ " functional modules");
+		
+		UPCPFTaskDescriptor amiTask = new UPCPFTaskDescriptor("AmITask", "T1");
+		amiTask.setState("UNSTARTED");
+		demonam.tmfm.addTaskDescriptor(amiTask);
+		demonam.tmfm.startTaskManagement();
+		
 		Random ran = new Random(System.currentTimeMillis());
 		int i = ran.nextInt(2);
 		if (i == 0)
-			demonam.sfm.startTemperatureNotificationProcess();
+			demonam.sfm.startTemperatureNotification();
 		else
-			demonam.rfm.startTemperatureNotificationLookupProcess();
+			demonam.rfm.startTemperatureNotificationLookup();
 	}
 }
