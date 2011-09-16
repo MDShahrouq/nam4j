@@ -23,11 +23,13 @@ This folder contains the code that implements a NAM. There is a unique class
 DemoNam extends NetworkedAutonomicMachine
 }}}
 
-The constructor instantiates three functional modules: 
+The constructor instantiates four functional modules: 
 
 {{{
 cfm = new ChordFunctionalModule(this);
 this.addFunctionalModule(cfm);
+tmfm = new TaskManagerFunctionalModule(this);
+this.addFunctionalModule(tmfm);
 rfm = new ReasonerFunctionalModule(this);
 this.addFunctionalModule(rfm);
 sfm = new SensorFunctionalModule(this);
@@ -35,48 +37,7 @@ this.addFunctionalModule(sfm);
 }}}
 
 whose details are given in the following sections.
-In the {{{main()}}} method, {{{DemoNam}}} randomly starts either a publication process (using its sensorfm) or a lookup process (using its reasonerfm).
-
-
-= sensorfm =
-This folder contains the code that implements a functional module that simulates a temperature sensor. There are two classes. The main one is
-
-{{{
-SensorFunctionalModule extends FunctionalModule
-}}}
-
-exposing the method {{{startTemperatureNotificationProcess()}}}, that once called detaches a thread that runs an instance of
-
-{{{
-ProvideTemperatureRunnable implements Runnable
-}}}
-
-Such a class implements the functional logic of the sensorfm. Its {{{run()}}} method looks for a {{{Publish}}} service within those exposed by the functional modules of the NAM. Then it creates a context event (instance of {{{TemperatureNotification}}}), turns it into a JSON message, and publish the latter using the {{{Publish}}} service.  
-
-
-= reasonerfm =
-This folder contains the code that implements a functional module that acts as a reasoner. There are two classes. The main one is
-
-{{{
-ReasonerFunctionalModule extends FunctionalModule
-}}}
-
-exposing the methods
-
-{{{
-subscribeToTemperatureNotifications()
-startTemperatureNotificationLookupProcess()
-}}}
-
-The first method looks for a {{{Subscribe}}} service within those exposed by the functional modules of the NAM. If such a service is found, it is used to subscribe to instances of {{{TemperatureNotification}}} context events that may be published within the network.
-
-The second method detaches a thread that runs an instance of
-
-{{{
-LookupRunnable implements Runnable
-}}}
-
-Its {{{run()}}} method looks for a {{{Lookup}}} service within those exposed by the functional modules of the NAM. If such a a service is found, it is used to search for the latest instance of {{{TemperatureNotification}}} context event that may have been published within the network.
+In the {{{main()}}} method, {{{DemoNam}}} starts the task manager thread (with one task called "AmITask"), then randomly starts either a temperature notification thread or a temperature notification lookup thread.
 
 
 = chordfm =
@@ -105,6 +66,51 @@ NotifyRunnable implements Runnable (TODO)
 PublishRunnable implements Runnable (to be fixed)
 SubscribeRunnable implements Runnable (TODO)
 }}}
+
+
+= taskmanagerfm =
+
+
+= sensorfm =
+This folder contains the code that implements a functional module that simulates a temperature sensor. There are two classes. The main one is
+
+{{{
+SensorFunctionalModule extends FunctionalModule
+}}}
+
+exposing the method {{{startTemperatureNotification()}}}, that once called detaches a thread that runs an instance of
+
+{{{
+ProvideTemperatureRunnable implements Runnable
+}}}
+
+Such a class implements the functional logic of the sensorfm. Its {{{run()}}} method looks for a {{{Publish}}} service within those exposed by the functional modules of the NAM. Then it creates a context event (instance of {{{TemperatureNotification}}}), turns it into a JSON message, and publish the latter using the {{{Publish}}} service.  
+
+
+= reasonerfm =
+This folder contains the code that implements a functional module that acts as a reasoner. There are two classes. The main one is
+
+{{{
+ReasonerFunctionalModule extends FunctionalModule
+}}}
+
+exposing the methods
+
+{{{
+subscribeToTemperatureNotifications()
+startTemperatureNotificationLookup()
+}}}
+
+The first method looks for a {{{Subscribe}}} service within those exposed by the functional modules of the NAM. If such a service is found, it is used to subscribe to instances of {{{TemperatureNotification}}} context events that may be published within the network.
+
+The second method detaches a thread that runs an instance of
+
+{{{
+LookupRunnable implements Runnable
+}}}
+
+Its {{{run()}}} method looks for a {{{Lookup}}} service within those exposed by the functional modules of the NAM. If such a a service is found, it is used to search for the latest instance of {{{TemperatureNotification}}} context event that may have been published within the network.
+
 
 = ontology = 
 This folder contains the code that implements the domain ontology of the demo. The following classes have been implemented:
