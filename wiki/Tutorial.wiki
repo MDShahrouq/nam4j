@@ -77,7 +77,7 @@ This folder contains the code that implements a functional module that manages t
   * PAUSED
   * FAILED
 
-The task manager is work in progress. It should start service threads according to a task description (alleviating the NAM's {{{main()}}} method from doing it (see above description of {{{demonam}}}). In general, task managers of different NAMs should be able to talk each others in order to run distributed tasks.
+The task manager is work in progress. It should start service threads according to a task description (alleviating the NAM's {{{main()}}} method from doing it - see previous description of {{{demonam}}}). In general, task managers of different NAMs should be able to talk each others in order to run distributed tasks.
 
 
 = sensorfm =
