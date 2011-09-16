@@ -4,7 +4,7 @@
 
 No NAM4J binary release is currently available, but you can get the source code from svn.
 
-Folder src/ contains the middleware, that includes 5 packages:
+Folder src/ contains the middleware, that includes 6 packages:
 {{{
 it.unipr.ce.dsg.nam4j.interfaces
 it.unipr.ce.dsg.nam4j.impl
