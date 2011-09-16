@@ -61,14 +61,23 @@ Subscribe subscribeService = new Subscribe();
 When one these services is called, a thread is detached, executing the code implemented in the following classes:
 
 {{{
-LookupRunnable implements Runnable (to be fixed)
+LookupRunnable implements Runnable
 NotifyRunnable implements Runnable (TODO)
-PublishRunnable implements Runnable (to be fixed)
+PublishRunnable implements Runnable
 SubscribeRunnable implements Runnable (TODO)
 }}}
 
 
 = taskmanagerfm =
+This folder contains the code that implements a functional module that manages tasks described by the {{{UPCPFTaskDescriptor}}}, i.e. tasks that may be in one of the following states:
+
+  * UNSTARTED
+  * PROCESSING
+  * COMPLETED
+  * PAUSED
+  * FAILED
+
+The task manager is work in progress. It should start service threads according to a task description (alleviating the NAM's {{{main()}}} method from doing it (see above description of {{{demonam}}}). In general, task managers of different NAMs should be able to talk each others in order to run distributed tasks.
 
 
 = sensorfm =
