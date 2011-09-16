@@ -11,6 +11,7 @@ it.unipr.ce.dsg.nam4j.impl
 it.unipr.ce.dsg.nam4j.impl.context
 it.unipr.ce.dsg.nam4j.impl.resource
 it.unipr.ce.dsg.nam4j.impl.service
+it.unipr.ce.dsg.nam4j.impl.task
 }}}
 
 Folder examples/ contains demo code. Details are given below.
