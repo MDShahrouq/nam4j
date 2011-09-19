@@ -78,8 +78,8 @@ This folder contains the code that implements a functional module that manages t
   * PAUSED
   * FAILED
 
-The task manager is work in progress. It should start service threads according to a task description (alleviating the NAM's {{{main()}}} method from doing it - see previous description of {{{demonam}}}). In general, task managers of different NAMs should be able to talk each others in order to run distributed tasks.
-
+The task manager is very simple. Like other functional modules, It does run in a separate thread. For each task (one, in this case) it looks for services that are necessary for the PROCESSING task. If the task is UNSTARTED or PAUSED, and processing services are available, the task manager changes the state of the task to PROCESSING. the check is performed every 10 seconds. If the task is in PROCESSING state but services are not available, the state of the task is set to PAUSED. 
+Of course, more complex task management strategies could be implemented.
 
 = sensorfm =
 This folder contains the code that implements a functional module that simulates a temperature sensor. There are two classes. The main one is
