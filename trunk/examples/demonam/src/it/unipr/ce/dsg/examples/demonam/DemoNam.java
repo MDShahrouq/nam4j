@@ -36,14 +36,16 @@ public class DemoNam extends NetworkedAutonomicMachine {
 		
 		UPCPFTaskDescriptor amiTask = new UPCPFTaskDescriptor("AmITask", "T1");
 		amiTask.setState("UNSTARTED");
+		amiTask.addProcessingService("Publish");
+		amiTask.addProcessingService("Lookup");
 		demonam.tmfm.addTaskDescriptor(amiTask);
 		demonam.tmfm.startTaskManagement();
 		
 		Random ran = new Random(System.currentTimeMillis());
 		int i = ran.nextInt(2);
-		if (i == 0)
+		if (i == 0) 
 			demonam.sfm.startTemperatureNotification();
-		else
+		else 
 			demonam.rfm.startTemperatureNotificationLookup();
 	}
 }

@@ -14,7 +14,7 @@ import com.google.gson.Gson;
 
 public class ProvideTemperatureRunnable implements Runnable {
 	
-	SensorFunctionalModule sfm = null;
+	private SensorFunctionalModule sfm = null;
 	
 	public ProvideTemperatureRunnable(SensorFunctionalModule sfm) {
 		this.sfm = sfm;
