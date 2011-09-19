@@ -6,12 +6,7 @@ import it.unipr.ce.dsg.nam4j.impl.task.TaskDescriptor;
 
 public class UPCPFTaskDescriptor extends TaskDescriptor {
 
-	/*
-	public UPCPFTaskDescriptor(String name, String id,
-			ArrayList<String> allowedStates) {
-		super(name, id, allowedStates);
-	}
-	*/
+	private ArrayList<String> processingServices = null;
 	
 	public UPCPFTaskDescriptor(String name, String id) {
 		super(name, id);
@@ -22,6 +17,15 @@ public class UPCPFTaskDescriptor extends TaskDescriptor {
 		allowedStates.add("PAUSED");
 		allowedStates.add("FAILED");
 		this.setAllowedStates(allowedStates);
+		processingServices = new ArrayList<String>();
+	}
+	
+	public void addProcessingService(String serviceName) {
+		processingServices.add(serviceName);
+	}
+	
+	public ArrayList<String> getProcessingServices() {
+		return processingServices;
 	}
 
 }
