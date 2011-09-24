@@ -38,7 +38,7 @@ this.addFunctionalModule(sfm);
 }}}
 
 whose details are given in the following sections.
-In the {{{main()}}} method, {{{DemoNam}}} starts the task manager thread (with one task called "AmITask").
+In the {{{main()}}} method, {{{DemoNam}}} starts the task manager thread (with one task called "AmITask"). If the argument to the {{{main()}}} method is {{{NOTIFICATION}}}, the NAM acts as a context publisher. If the argument is {{{LOOKUP}}}, the NAM acts as a context consumer.
 
 
 = chordfm =
