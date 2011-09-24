@@ -38,7 +38,7 @@ this.addFunctionalModule(sfm);
 }}}
 
 whose details are given in the following sections.
-In the {{{main()}}} method, {{{DemoNam}}} starts the task manager thread (with one task called "AmITask"), then randomly starts either a temperature notification thread or a temperature notification lookup thread.
+In the {{{main()}}} method, {{{DemoNam}}} starts the task manager thread (with one task called "AmITask").
 
 
 = chordfm =
@@ -79,6 +79,7 @@ This folder contains the code that implements a functional module that manages t
   * FAILED
 
 The task manager is very simple. Like other functional modules, It does run in a separate thread. For each task (one, in this case) it looks for services that are necessary for the PROCESSING task. If the task is UNSTARTED or PAUSED, and processing services are available, the task manager changes the state of the task to PROCESSING. the check is performed every 10 seconds. If the task is in PROCESSING state but services are not available, the state of the task is set to PAUSED. 
+The check is repeated every 10 seconds.
 Of course, more complex task management strategies could be implemented.
 
 = sensorfm =
@@ -94,7 +95,7 @@ exposing the method {{{startTemperatureNotification()}}}, that once called detac
 ProvideTemperatureRunnable implements Runnable
 }}}
 
-Such a class implements the functional logic of the sensorfm. Its {{{run()}}} method looks for a {{{Publish}}} service within those exposed by the functional modules of the NAM. Then it creates a context event (instance of {{{TemperatureNotification}}}), turns it into a JSON message, and publish the latter using the {{{Publish}}} service.  
+Such a class implements the functional logic of the sensorfm. Its {{{run()}}} method looks for a {{{Publish}}} service within those exposed by the functional modules of the NAM. Then it creates a context event (instance of {{{TemperatureNotification}}}), turns it into a JSON message, and publish the latter using the {{{Publish}}} service (with period 20 seconds).  
 
 
 = reasonerfm =
@@ -119,7 +120,7 @@ The second method detaches a thread that runs an instance of
 LookupRunnable implements Runnable
 }}}
 
-Its {{{run()}}} method looks for a {{{Lookup}}} service within those exposed by the functional modules of the NAM. If such a a service is found, it is used to search for the latest instance of {{{TemperatureNotification}}} context event that may have been published within the network.
+Its {{{run()}}} method looks for a {{{Lookup}}} service within those exposed by the functional modules of the NAM. If such a a service is found, it is used to search for the latest instance of {{{TemperatureNotification}}} context event that may have been published within the network (with period 20 seconds).
 
 
 = ontology = 
