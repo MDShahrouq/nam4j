@@ -52,7 +52,14 @@ public class SearchTemperatureRunnable implements Runnable {
 		String json = gson.toJson(tempNotif);
 		System.out.println("JSON tempNotif = " + json);
 
-		fm.execute(rfm.getId(), "Lookup", json);
+		while (true) {
+			fm.execute(rfm.getId(), "Lookup", json);
+			try {
+				Thread.sleep(20000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
