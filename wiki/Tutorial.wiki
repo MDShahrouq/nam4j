@@ -2,7 +2,7 @@
 
 = Introduction =
 
-No NAM4J binary release is currently available, but you can get the source code from svn.
+You can get the source code from svn (unless a binary version is released).
 
 Folder src/ contains the middleware, that includes 6 packages:
 {{{
