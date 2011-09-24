@@ -63,6 +63,13 @@ public class ProvideTemperatureRunnable implements Runnable {
 		String json = gson.toJson(tempNotif);
 		System.out.println("ProvideTemperature: JSON tempNotif = " + json);
 
-		fm.execute(sfm.getId(), "Publish", json);
+		while (true) {
+			fm.execute(sfm.getId(), "Publish", json);
+			try {
+				Thread.sleep(20000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

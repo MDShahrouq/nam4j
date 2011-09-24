@@ -1,7 +1,5 @@
 package it.unipr.ce.dsg.examples.demonam;
 
-import java.util.Random;
-
 import it.unipr.ce.dsg.examples.chordfm.ChordFunctionalModule;
 import it.unipr.ce.dsg.examples.reasonerfm.ReasonerFunctionalModule;
 import it.unipr.ce.dsg.examples.sensorfm.SensorFunctionalModule;
@@ -41,11 +39,9 @@ public class DemoNam extends NetworkedAutonomicMachine {
 		demonam.tmfm.addTaskDescriptor(amiTask);
 		demonam.tmfm.startTaskManagement();
 		
-		Random ran = new Random(System.currentTimeMillis());
-		int i = ran.nextInt(2);
-		if (i == 0) 
+		if (args[0].equals("NOTIFICATION")) 
 			demonam.sfm.startTemperatureNotification();
-		else 
+		else if (args[0].equals("LOOKUP"))
 			demonam.rfm.startTemperatureNotificationLookup();
 	}
 }
