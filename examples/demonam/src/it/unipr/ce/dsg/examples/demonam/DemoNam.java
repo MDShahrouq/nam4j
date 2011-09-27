@@ -10,6 +10,38 @@ import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 public class DemoNam extends NetworkedAutonomicMachine {
 
 	ChordFunctionalModule cfm = null;
+	public ChordFunctionalModule getCfm() {
+		return cfm;
+	}
+
+	public void setCfm(ChordFunctionalModule cfm) {
+		this.cfm = cfm;
+	}
+
+	public TaskManagerFunctionalModule getTmfm() {
+		return tmfm;
+	}
+
+	public void setTmfm(TaskManagerFunctionalModule tmfm) {
+		this.tmfm = tmfm;
+	}
+
+	public ReasonerFunctionalModule getRfm() {
+		return rfm;
+	}
+
+	public void setRfm(ReasonerFunctionalModule rfm) {
+		this.rfm = rfm;
+	}
+
+	public SensorFunctionalModule getSfm() {
+		return sfm;
+	}
+
+	public void setSfm(SensorFunctionalModule sfm) {
+		this.sfm = sfm;
+	}
+
 	TaskManagerFunctionalModule tmfm = null;
 	ReasonerFunctionalModule rfm = null;
 	SensorFunctionalModule sfm = null;
@@ -28,6 +60,7 @@ public class DemoNam extends NetworkedAutonomicMachine {
 	
 	public static void main(String[] args) {
 		DemoNam demonam = new DemoNam();
+		
 		System.out.println("Demonam has " 
 				+ demonam.getFunctionalModules().size() 
 				+ " functional modules");
@@ -36,12 +69,12 @@ public class DemoNam extends NetworkedAutonomicMachine {
 		amiTask.setState("UNSTARTED");
 		amiTask.addProcessingService("Publish");
 		amiTask.addProcessingService("Lookup");
-		demonam.tmfm.addTaskDescriptor(amiTask);
-		demonam.tmfm.startTaskManagement();
+		demonam.getTmfm().addTaskDescriptor(amiTask);
+		demonam.getTmfm().startTaskManagement();
 		
 		if (args[0].equals("NOTIFICATION")) 
-			demonam.sfm.startTemperatureNotification();
+			demonam.getSfm().startTemperatureNotification();
 		else if (args[0].equals("LOOKUP"))
-			demonam.rfm.startTemperatureNotificationLookup();
+			demonam.getRfm().startTemperatureNotificationLookup();
 	}
 }
