@@ -51,7 +51,7 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 		try {
 			int unL = ran.nextInt(bitNumber);
 			String key = SHA1.convertToHex(SHA1.calculateSHA1(BigInteger.valueOf(unL + System.currentTimeMillis()).toString(16)));
-			chordPeer = new ChordPeer("config/chordPeer.cfg", key, key, port, bitNumber);
+			chordPeer = new ChordPeer("config/chordPeer.cfg", key, key, port, bitNumber, false);
 			chordPeer.startPeer();
 			chordPeer.setChordEventListener(this);
 		} catch (Exception e) {
