@@ -72,9 +72,15 @@ public class DemoNam extends NetworkedAutonomicMachine {
 		demonam.getTmfm().addTaskDescriptor(amiTask);
 		demonam.getTmfm().startTaskManagement();
 		
+		/*
+		 * args[0]: either NOTIFICATION or LOOKUP
+		 * args[1]: a location name, e.g. Building1-Apartment3-Kitchen
+		 * args[2]: a temperature value, e.g. 22
+		 */
+		
 		if (args[0].equals("NOTIFICATION")) 
-			demonam.getSfm().startTemperatureNotification();
+			demonam.getSfm().startTemperatureNotification(args[1], args[2]);
 		else if (args[0].equals("LOOKUP"))
-			demonam.getRfm().startTemperatureNotificationLookup();
+			demonam.getRfm().startTemperatureNotificationLookup(args[3]);
 	}
 }

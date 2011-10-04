@@ -1,21 +1,48 @@
 package it.unipr.ce.dsg.examples.reasonerfm;
 
+import it.unipr.ce.dsg.examples.ontology.Room;
 import it.unipr.ce.dsg.examples.ontology.Temperature;
 import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Random;
+import java.util.Scanner;
 
 import com.google.gson.Gson;
 
 public class SearchTemperatureRunnable implements Runnable {
 
 	ReasonerFunctionalModule rfm = null;
+	String locationsFileName = "nowhere";
+	ArrayList<String> locations = null;
+	Random r = null;
 	
-	public SearchTemperatureRunnable(ReasonerFunctionalModule rfm) {
+	public SearchTemperatureRunnable(ReasonerFunctionalModule rfm, String locationsFileName) {
 		this.rfm = rfm;
+		this.locationsFileName = locationsFileName;
+		r = new Random(987654321);
+		
+		locations = new ArrayList<String>();
+		FileReader reader = null;
+		try {
+			reader = new FileReader(this.locationsFileName);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		Scanner in = new Scanner(reader);
+		while (in.hasNextLine()) {
+			 String line = in.nextLine();     
+			 locations.add(line);       
+		}
+		in.close();
+		System.out.println("Number of locations = " + locations.size());
 	}
 	
 	public void run() {
@@ -47,12 +74,16 @@ public class SearchTemperatureRunnable implements Runnable {
 		Temperature temperature = new Temperature();
 		TemperatureNotification tempNotif = new TemperatureNotification();
 		tempNotif.setSubject(temperature);
-
+		Room room = new Room();
 		Gson gson = new Gson();
-		String json = gson.toJson(tempNotif);
-		System.out.println("JSON tempNotif = " + json);
-
+	
 		while (true) {
+			// pick a random location among those allowed
+			room.setValue(locations.get(r.nextInt(locations.size())));
+			tempNotif.setLocation(room);
+			String json = gson.toJson(tempNotif);
+			System.out.println("JSON tempNotif = " + json);
+			
 			fm.execute(rfm.getId(), "Lookup", json);
 			try {
 				Thread.sleep(20000);

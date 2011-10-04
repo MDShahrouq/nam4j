@@ -1,14 +1,16 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
 
 import it.unipr.ce.dsg.examples.ontology.Lookup;
-import it.unipr.ce.dsg.examples.ontology.Notify;
 import it.unipr.ce.dsg.examples.ontology.Publish;
 import it.unipr.ce.dsg.examples.ontology.Subscribe;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
+import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
 import it.unipr.ce.dsg.s2pchord.eventlistener.ChordEventListener;
@@ -32,16 +34,12 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 		lookupService.setId("s1");
 		this.addProvidedService(lookupService.getId(), lookupService);
 		
-		Notify notifyService = new Notify();
-		notifyService.setId("s2");
-		this.addProvidedService(notifyService.getId(), notifyService);
-		
 		Publish publishService = new Publish();
-		publishService.setId("s3");
+		publishService.setId("s2");
 		this.addProvidedService(publishService.getId(), publishService);
 		
 		Subscribe subscribeService = new Subscribe();
-		subscribeService.setId("s4");
+		subscribeService.setId("s3");
 		this.addProvidedService(subscribeService.getId(), subscribeService);
 		
 		// create and start ChordPeer
@@ -103,7 +101,34 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 
 	@Override
 	public void searchResultEvent(String resourceKey, ResourceDescriptor rd, PeerDescriptor responsiblePeer, PeerDescriptor ownerPeer) {
-		System.out.println("Received a Search Result Event Notification for resource: " + resourceKey + " Resource Descriptor Key: " + rd.getKey() +" with responsible: " + responsiblePeer.getKey() + " and owner: " + ownerPeer.getKey());
+		// look into other functional modules, looking for requested service
+		Collection<FunctionalModule> c = this.getNam().getFunctionalModules().values();
+		Iterator<FunctionalModule> itr = c.iterator();
+		String serviceName = null;
+		FunctionalModule fm = null;
+		FunctionalModule tempfm = null;
+		while (itr.hasNext()) {
+			tempfm = itr.next();
+			if (tempfm.getName().equals(this.getName()))
+				continue;
+			// System.out.println("Temp FM: " + tempfm.getName());
+			Collection<Service> cc = tempfm.getProvidedServices().values();
+			Iterator<Service> itrr = cc.iterator();
+			while (itrr.hasNext()) {
+				serviceName = itrr.next().getName();
+				// System.out.println("Service: " + serviceName);
+				if (serviceName.equals("Notify")) {
+					fm = tempfm;
+					// System.out.println("FM: " + fm.getName());
+				}
+			}
+		}
+		String parameters = "Received a Search Result Event Notification for resource: " + resourceKey 
+				+ " Resource Descriptor Key: " + rd.getKey() 
+				+ " with responsible: " + responsiblePeer.getKey() 
+				+ " and owner: " + ownerPeer.getKey();
+		
+		fm.execute(this.getId(), "Notify", parameters);
 	}
 
 	@Override

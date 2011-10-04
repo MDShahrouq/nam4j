@@ -35,7 +35,7 @@ public class LookupRunnable implements Runnable {
 		if (ce.getObject() != null)
 			rd.addParameter(new ResourceParameter("Object", ce.getObject().getName()));
 		if (ce.getLocation() != null)
-			rd.addParameter(new ResourceParameter("Location", ce.getLocation().getName()));
+			rd.addParameter(new ResourceParameter("Location", ce.getLocation().getValue()));
 		rd.generateResourceKey();	
 		String resourceKey = rd.getKey();
 		System.out.println("Generated Resource String: " + resourceKey);
