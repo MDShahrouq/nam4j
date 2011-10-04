@@ -15,10 +15,16 @@ import com.google.gson.Gson;
 public class ProvideTemperatureRunnable implements Runnable {
 	
 	private SensorFunctionalModule sfm = null;
+	private String locationName = "nowhere";
+	private String temperatureValue = "0";
 	
-	public ProvideTemperatureRunnable(SensorFunctionalModule sfm) {
+	
+	public ProvideTemperatureRunnable(SensorFunctionalModule sfm, String locationName, String temperatureValue) {
 		this.sfm = sfm;
+		this.locationName = locationName;
+		this.temperatureValue = temperatureValue;
 	}
+	
 	
 	public void run() {
 		
@@ -48,12 +54,12 @@ public class ProvideTemperatureRunnable implements Runnable {
 
 		Temperature temperature = new Temperature();
 		temperature.setId("i21");
-		temperature.setValue("20");
+		temperature.setValue(this.temperatureValue);
 
 		//TemperatureNotification tempNotif = new TemperatureNotification();
 		TemperatureNotification tempNotif = new TemperatureNotification();
 		Room room = new Room();
-		room.setValue("kitchen");
+		room.setValue(locationName);
 		tempNotif.setLocation(room);
 		tempNotif.setSubject(temperature);
 		Date timestamp = new Date();

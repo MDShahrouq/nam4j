@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import com.google.gson.Gson;
 
+import it.unipr.ce.dsg.examples.ontology.Notify;
 import it.unipr.ce.dsg.examples.ontology.Temperature;
 import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
@@ -19,6 +20,10 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 		this.setName("ReasonerFunctionalModule");
 		System.out.println("I am " + this.getId() + " and I own to " + nam.getId());
 
+		Notify notifyService = new Notify();
+		notifyService.setId("s1");
+		this.addProvidedService(notifyService.getId(), notifyService);
+		
 		// create Context objects 
 		// and add to providedContextEvents and consumableContextEvents
 		Temperature temperature = new Temperature();
@@ -27,10 +32,19 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 		this.addProvidedContextEvent("c1", tempNotif); 
 	}
 	
-	// the reasoner exposes a notify service that is called by chordfm
+	
+	// the reasoner exposes a notify service that is called 
 	// when a context event of interest is called
-	public void notify(String item) {
-		System.out.println(this.getId() + "notified about " + item);
+	public void notify(String parameters) {
+		System.out.println(this.getId() + "notified about:\n " + parameters);
+		// TODO parse parameters...
+	}
+	
+	
+	public void execute(String requestorId, String requestedService, String parameters) {
+		if (requestedService.equals("Notify")) {
+			this.notify(parameters);
+		}
 	}
 	
 	// the following method should be private and executed periodically
@@ -63,9 +77,9 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	}
 	
 
-	public void startTemperatureNotificationLookup() {
+	public void startTemperatureNotificationLookup(String locationsFileName) {
 		// create and start a thread that periodically looks up for Temperature notification events
-		Thread t = new Thread(new SearchTemperatureRunnable(this), "Search temperature thread");
+		Thread t = new Thread(new SearchTemperatureRunnable(this, locationsFileName), "Search temperature thread");
 		//System.out.println("Child thread: " + t);
 		t.start();
 	}

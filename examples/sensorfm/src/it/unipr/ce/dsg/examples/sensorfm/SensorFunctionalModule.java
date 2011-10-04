@@ -13,8 +13,8 @@ public class SensorFunctionalModule extends FunctionalModule {
 		System.out.println("I am " + this.getId() + " and I own to " + nam.getId());
 	}
 
-	public void startTemperatureNotification() {
-		Thread t = new Thread(new ProvideTemperatureRunnable(this), "Provide temperature thread");
+	public void startTemperatureNotification(String locationName, String temperatureValue) {
+		Thread t = new Thread(new ProvideTemperatureRunnable(this, locationName, temperatureValue), "Provide temperature thread");
 		t.start();
 	}
 }
