@@ -38,8 +38,12 @@ this.addFunctionalModule(sfm);
 }}}
 
 whose details are given in the following sections.
-In the {{{main()}}} method, {{{DemoNam}}} starts the task manager thread (with one task called "AmITask"). If the argument to the {{{main()}}} method is {{{NOTIFICATION}}}, the NAM acts as a context publisher. If the argument is {{{LOOKUP}}}, the NAM acts as a context consumer.
+In the {{{main()}}} method, {{{DemoNam}}} starts the task manager thread (with one task called "AmITask"). If the first argument to the {{{main()}}} method is {{{NOTIFICATION}}}, the NAM acts as a context publisher. If the first argument is {{{LOOKUP}}}, the NAM acts as a context consumer.
 
+If the NAM is a context publisher, the second argument must be a location name, and the third argument must be a numeric value representing a temperature.
+
+If the NAM is a context consumer, the fourth argument must be the path of a text file containing a list of location names. The NAM will periodically search for the most recent temperature notification related to one of those locations (randomly selected).
+ 
 
 = chordfm =
 This folder contains the code that implements a functional module that provides Chord-based overlay functionalities. It is based on a Chord implementation that uses Sip2Peer as networking middleware.
@@ -54,7 +58,6 @@ that provides the following services:
 
 {{{
 Lookup lookupService = new Lookup();
-Notify notifyService = new Notify();
 Publish publishService = new Publish();
 Subscribe subscribeService = new Subscribe();
 }}}
@@ -63,10 +66,11 @@ When one these services is called, a thread is detached, executing the code impl
 
 {{{
 LookupRunnable implements Runnable
-NotifyRunnable implements Runnable (TODO)
 PublishRunnable implements Runnable
 SubscribeRunnable implements Runnable (TODO)
 }}}
+
+After a successful lookup, the chordfm searches for the Notify service provided by the Lookup caller, to send the response.
 
 
 = taskmanagerfm =
@@ -121,6 +125,18 @@ LookupRunnable implements Runnable
 }}}
 
 Its {{{run()}}} method looks for a {{{Lookup}}} service within those exposed by the functional modules of the NAM. If such a a service is found, it is used to search for the latest instance of {{{TemperatureNotification}}} context event that may have been published within the network (with period 20 seconds).
+
+The reasonerfm provides the following service:
+
+{{{
+Notify notifyService = new Notify();
+}}}
+
+When such a service is called, a thread is detached, executing the code implemented in the following classe:
+
+{{{
+NotifyRunnable implements Runnable (TODO)
+}}}
 
 
 = ontology = 
