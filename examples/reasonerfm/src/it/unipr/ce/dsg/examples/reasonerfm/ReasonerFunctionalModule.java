@@ -36,8 +36,8 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	// the reasoner exposes a notify service that is called 
 	// when a context event of interest is called
 	public void notify(String parameters) {
-		System.out.println(this.getId() + "notified about:\n " + parameters);
-		// TODO parse parameters...
+		Thread t = new Thread(new NotifyRunnable(parameters), "Notify thread");
+		t.start();
 	}
 	
 	
