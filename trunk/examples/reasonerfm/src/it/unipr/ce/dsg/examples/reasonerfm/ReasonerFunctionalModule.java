@@ -14,11 +14,14 @@ import it.unipr.ce.dsg.nam4j.impl.service.Service;
 
 public class ReasonerFunctionalModule extends FunctionalModule {
 
+	private ReasonerLogger rLogger = null;
+	
 	public ReasonerFunctionalModule(NetworkedAutonomicMachine nam) {
 		super(nam);
 		this.setId("rfm");
 		this.setName("ReasonerFunctionalModule");
-		System.out.println("I am " + this.getId() + " and I own to " + nam.getId());
+		this.rLogger = new ReasonerLogger("log/");
+		rLogger.log("I am " + this.getId() + " and I own to " + nam.getId());
 
 		Notify notifyService = new Notify();
 		notifyService.setId("s1");
@@ -33,10 +36,15 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	}
 	
 	
+	public ReasonerLogger getLogger() {
+		return rLogger;
+	}
+	
+	
 	// the reasoner exposes a notify service that is called 
 	// when a context event of interest is called
 	public void notify(String parameters) {
-		Thread t = new Thread(new NotifyRunnable(parameters), "Notify thread");
+		Thread t = new Thread(new NotifyRunnable(this, parameters), "Notify thread");
 		t.start();
 	}
 	
