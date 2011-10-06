@@ -21,12 +21,14 @@ import it.unipr.dsg.s2pchord.resource.ResourceDescriptor;
 public class ChordFunctionalModule extends FunctionalModule implements ChordEventListener {
 
 	private ChordPeer chordPeer = null;
+	private ChordLogger cLogger = null;
 	
 	public ChordFunctionalModule(NetworkedAutonomicMachine nam) {
 		super(nam);
 		this.setId("cfm");
 		this.setName("ChordFunctionalModule");
-		System.out.println("I am " + this.getId() + " and I own to " + nam.getId());
+		this.cLogger = new ChordLogger("log/");
+		this.cLogger.log("I am " + this.getId() + " and I own to " + nam.getId());
 		
 		// create Service objects and add to providedServices hashmap
 		
@@ -57,6 +59,10 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 		}
 	}
 	
+	public ChordLogger getLogger() {
+		return cLogger;
+	}
+	
 	private void join() {
 		System.out.println("JOIN");
 	}
@@ -66,14 +72,12 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 	}
 	
 	private void lookup(String item) {
-		Thread t = new Thread(new LookupRunnable(item, chordPeer), "Lookup thread");
-		//System.out.println("Child thread: " + t);
+		Thread t = new Thread(new LookupRunnable(this, item, chordPeer), "Lookup thread");
 		t.start();
 	}
 	
 	private void publish(String item) {
-		Thread t = new Thread(new PublishRunnable(item, chordPeer), "Publish thread");
-		//System.out.println("Child thread: " + t);
+		Thread t = new Thread(new PublishRunnable(this, item, chordPeer), "Publish thread");
 		t.start();
 	}
 	
@@ -133,7 +137,7 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 
 	@Override
 	public void publishResultEvent(ResourceDescriptor rd, PeerDescriptor responsiblePeer, PeerDescriptor ownerPeer) {
-		System.out.println("Received a Publish Result Event Notification for resource: " + rd.getKey() + " with responsible: " + responsiblePeer.getKey() + " and owner: " + ownerPeer.getKey());	
+		cLogger.log("Received a Publish Result Event Notification for resource: " + rd.getKey() + " with responsible: " + responsiblePeer.getKey() + " and owner: " + ownerPeer.getKey());	
 	}
 
 }
