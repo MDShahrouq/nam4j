@@ -19,7 +19,9 @@ public class ProvideTemperatureRunnable implements Runnable {
 	private String temperatureValue = "0";
 	
 	
-	public ProvideTemperatureRunnable(SensorFunctionalModule sfm, String locationName, String temperatureValue) {
+	public ProvideTemperatureRunnable(SensorFunctionalModule sfm, 
+			String locationName, 
+			String temperatureValue) {
 		this.sfm = sfm;
 		this.locationName = locationName;
 		this.temperatureValue = temperatureValue;
@@ -56,7 +58,6 @@ public class ProvideTemperatureRunnable implements Runnable {
 		temperature.setId("i21");
 		temperature.setValue(this.temperatureValue);
 
-		//TemperatureNotification tempNotif = new TemperatureNotification();
 		TemperatureNotification tempNotif = new TemperatureNotification();
 		Room room = new Room();
 		room.setValue(locationName);
@@ -67,7 +68,7 @@ public class ProvideTemperatureRunnable implements Runnable {
 
 		Gson gson = new Gson();
 		String json = gson.toJson(tempNotif);
-		System.out.println("ProvideTemperature: JSON tempNotif = " + json);
+		sfm.getLogger().log(tempNotif);
 
 		while (true) {
 			fm.execute(sfm.getId(), "Publish", json);
