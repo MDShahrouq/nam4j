@@ -42,7 +42,7 @@ public class SearchTemperatureRunnable implements Runnable {
 			 locations.add(line);       
 		}
 		in.close();
-		System.out.println("Number of locations = " + locations.size());
+		rfm.getLogger().log("The number of locations is " + locations.size());
 	}
 	
 	public void run() {
@@ -82,7 +82,7 @@ public class SearchTemperatureRunnable implements Runnable {
 			room.setValue(locations.get(r.nextInt(locations.size())));
 			tempNotif.setLocation(room);
 			String json = gson.toJson(tempNotif);
-			System.out.println("JSON tempNotif = " + json);
+			rfm.getLogger().log(tempNotif);
 			
 			fm.execute(rfm.getId(), "Lookup", json);
 			try {
