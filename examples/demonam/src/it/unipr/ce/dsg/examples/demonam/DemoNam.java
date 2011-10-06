@@ -46,41 +46,44 @@ public class DemoNam extends NetworkedAutonomicMachine {
 	ReasonerFunctionalModule rfm = null;
 	SensorFunctionalModule sfm = null;
 	
-	public DemoNam() {
+	public DemoNam(String configuration) {
 		this.setId("demonam");
 		cfm = new ChordFunctionalModule(this);
 		this.addFunctionalModule(cfm);
 		tmfm = new TaskManagerFunctionalModule(this);
 		this.addFunctionalModule(tmfm);
-		rfm = new ReasonerFunctionalModule(this);
-		this.addFunctionalModule(rfm);
-		sfm = new SensorFunctionalModule(this);
-		this.addFunctionalModule(sfm);
+		if (configuration.equals("LOOKUP")) {
+			rfm = new ReasonerFunctionalModule(this);
+			this.addFunctionalModule(rfm);
+		}
+		else if (configuration.equals("NOTIFICATION")) {
+			sfm = new SensorFunctionalModule(this);
+			this.addFunctionalModule(sfm);
+		}
 	}
 	
 	public static void main(String[] args) {
-		DemoNam demonam = new DemoNam();
-		
-		System.out.println("Demonam has " 
-				+ demonam.getFunctionalModules().size() 
-				+ " functional modules");
+		DemoNam demonam = new DemoNam(args[0]);
 		
 		UPCPFTaskDescriptor amiTask = new UPCPFTaskDescriptor("AmITask", "T1");
 		amiTask.setState("UNSTARTED");
-		amiTask.addProcessingService("Publish");
-		amiTask.addProcessingService("Lookup");
-		demonam.getTmfm().addTaskDescriptor(amiTask);
-		demonam.getTmfm().startTaskManagement();
-		
+			
 		/*
 		 * args[0]: either NOTIFICATION or LOOKUP
 		 * args[1]: a location name, e.g. Building1-Apartment3-Kitchen
 		 * args[2]: a temperature value, e.g. 22
 		 */
 		
-		if (args[0].equals("NOTIFICATION")) 
+		if (args[0].equals("NOTIFICATION")) {
 			demonam.getSfm().startTemperatureNotification(args[1], args[2]);
-		else if (args[0].equals("LOOKUP"))
+			amiTask.addProcessingService("Publish");
+		}
+		else if (args[0].equals("LOOKUP")) { 
 			demonam.getRfm().startTemperatureNotificationLookup(args[3]);
+			amiTask.addProcessingService("Lookup");
+		}
+		
+		demonam.getTmfm().addTaskDescriptor(amiTask);
+		demonam.getTmfm().startTaskManagement();
 	}
 }
