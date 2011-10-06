@@ -10,17 +10,14 @@ import java.util.Iterator;
 public class ManageTasksRunnable implements Runnable {
 
 	private TaskManagerFunctionalModule tmfm = null;
-	private TaskManagerLogger tmLogger = null;
 	
-	public ManageTasksRunnable(TaskManagerFunctionalModule tmfm, 
-			TaskManagerLogger tmLogger) {
+	public ManageTasksRunnable(TaskManagerFunctionalModule tmfm) {
 		this.tmfm = tmfm;
-		this.tmLogger = tmLogger;
 	}
 	
 	@Override
 	public void run() {
-		System.out.println("Task manager thread. \n Number of tasks = " + tmfm.getTasks().size());
+		tmfm.getLogger().log("Number of tasks = " + tmfm.getTasks().size());
 		
 		while (true) {
 			for (int i = 0; i<tmfm.getTasks().size(); i++) {
@@ -57,7 +54,7 @@ public class ManageTasksRunnable implements Runnable {
 						}
 					}
 					if (!found) {
-						tmLogger.log("Missing processing service for task "
+						tmfm.getLogger().log("Missing processing service for task "
 								+ utd.getName());
 						if (utd.getState().equals("PROCESSING"))
 							utd.setState("PAUSED");

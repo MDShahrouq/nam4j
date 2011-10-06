@@ -43,8 +43,12 @@ public class TaskManagerFunctionalModule extends FunctionalModule {
 		return json;
 	}
 	
+	public TaskManagerLogger getLogger() {
+		return tmLogger;
+	}
+	
 	public void startTaskManagement() {
-		Thread t = new Thread(new ManageTasksRunnable(this, tmLogger), "Perform task management");
+		Thread t = new Thread(new ManageTasksRunnable(this), "Perform task management");
 		t.start();
 	}
 }

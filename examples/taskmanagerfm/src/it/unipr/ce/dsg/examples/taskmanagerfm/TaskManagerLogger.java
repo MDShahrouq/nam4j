@@ -20,7 +20,6 @@ public class TaskManagerLogger {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void log(Object logMessage) {
