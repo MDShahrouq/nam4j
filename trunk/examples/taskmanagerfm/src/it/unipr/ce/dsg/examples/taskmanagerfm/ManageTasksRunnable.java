@@ -10,9 +10,12 @@ import java.util.Iterator;
 public class ManageTasksRunnable implements Runnable {
 
 	private TaskManagerFunctionalModule tmfm = null;
+	private TaskManagerLogger tmLogger = null;
 	
-	public ManageTasksRunnable(TaskManagerFunctionalModule tmfm) {
+	public ManageTasksRunnable(TaskManagerFunctionalModule tmfm, 
+			TaskManagerLogger tmLogger) {
 		this.tmfm = tmfm;
+		this.tmLogger = tmLogger;
 	}
 	
 	@Override
@@ -54,7 +57,7 @@ public class ManageTasksRunnable implements Runnable {
 						}
 					}
 					if (!found) {
-						System.out.println("Missing processing service for task "
+						tmLogger.log("Missing processing service for task "
 								+ utd.getName());
 						if (utd.getState().equals("PROCESSING"))
 							utd.setState("PAUSED");
