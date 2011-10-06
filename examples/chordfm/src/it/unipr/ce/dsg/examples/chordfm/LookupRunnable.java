@@ -9,17 +9,19 @@ import it.unipr.dsg.s2pchord.resource.ResourceParameter;
 
 public class LookupRunnable implements Runnable {
 
+	ChordFunctionalModule cfm = null;
 	private String item = null;
 	private ChordPeer cp = null;
 	
-	public LookupRunnable(String item, ChordPeer cp) {
+	public LookupRunnable(ChordFunctionalModule cfm, String item, ChordPeer cp) {
+		this.cfm = cfm;
 		this.item = item;
 		this.cp = cp;
 	}
 	
 	public void run() {
 		
-		System.out.println("Service: Lookup " + item);
+		cfm.getLogger().log("Service: Lookup " + item);
 		
 		Gson gson = new Gson();
 		ContextEvent ce = gson.fromJson(item, ContextEvent.class);
@@ -38,8 +40,8 @@ public class LookupRunnable implements Runnable {
 			rd.addParameter(new ResourceParameter("Location", ce.getLocation().getValue()));
 		rd.generateResourceKey();	
 		String resourceKey = rd.getKey();
-		System.out.println("Generated Resource String: " + resourceKey);
-		System.out.println("Generated Resource Descriptor: " +  rd.resourceDescriptorString());
+		cfm.getLogger().log("Generated Resource String: " + resourceKey);
+		cfm.getLogger().log("Generated Resource Descriptor: " +  rd.resourceDescriptorString());
 		cp.searchResource(resourceKey);	
 	}
 
