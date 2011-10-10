@@ -27,6 +27,7 @@ public class PublishRunnable implements Runnable {
 		ContextEvent ce = gson.fromJson(item, ContextEvent.class);
 		
 		ResourceDescriptor rd = new ResourceDescriptor();
+		rd.setAttachment(item);
 		if (ce.getName() != null)
 			rd.setType(ce.getName()); // type of resource
 		rd.setResourceOwner(cp.getMyNetPeerInfo());
@@ -38,6 +39,10 @@ public class PublishRunnable implements Runnable {
 			rd.addParameter(new ResourceParameter("Object", ce.getObject().getName()));
 		if (ce.getLocation() != null)
 			rd.addParameter(new ResourceParameter("Location", ce.getLocation().getValue()));
+		/*
+		if (ce.getTimestamp() != null)
+			rd.addParameter(new ResourceParameter("Timestamp", ce.getTimestamp()));
+		*/
 		rd.generateResourceKey();	
 		String resourceKey = rd.getKey();
 		cfm.getLogger().log("Generated Resource String: " + resourceKey);
