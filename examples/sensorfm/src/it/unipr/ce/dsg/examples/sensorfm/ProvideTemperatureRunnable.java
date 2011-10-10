@@ -6,6 +6,8 @@ import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -64,7 +66,9 @@ public class ProvideTemperatureRunnable implements Runnable {
 		tempNotif.setLocation(room);
 		tempNotif.setSubject(temperature);
 		Date timestamp = new Date();
-		tempNotif.setTimestamp(timestamp.toString());
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		System.out.println(df.format(timestamp));
+		tempNotif.setTimestamp(df.format(timestamp));
 
 		Gson gson = new Gson();
 		String json = gson.toJson(tempNotif);

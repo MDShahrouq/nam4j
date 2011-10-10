@@ -127,12 +127,15 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 				}
 			}
 		}
+		
+		//ArrayList<ResourceParameter> results = rd.getParameterList();
+		/*
 		String parameters = "Received a Search Result Event Notification for resource: " + resourceKey 
 				+ " Resource Descriptor Key: " + rd.getKey() 
 				+ " with responsible: " + responsiblePeer.getKey() 
 				+ " and owner: " + ownerPeer.getKey();
-		
-		fm.execute(this.getId(), "Notify", parameters);
+		*/
+		fm.execute(this.getId(), "Notify", rd.getAttachment());
 	}
 
 	@Override

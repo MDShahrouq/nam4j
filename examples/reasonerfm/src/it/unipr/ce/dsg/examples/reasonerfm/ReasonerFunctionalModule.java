@@ -1,7 +1,15 @@
 package it.unipr.ce.dsg.examples.reasonerfm;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Scanner;
 
 import com.google.gson.Gson;
 
@@ -15,6 +23,7 @@ import it.unipr.ce.dsg.nam4j.impl.service.Service;
 public class ReasonerFunctionalModule extends FunctionalModule {
 
 	private ReasonerLogger rLogger = null;
+	private HashMap<String,Date> locationMap = null;
 	
 	public ReasonerFunctionalModule(NetworkedAutonomicMachine nam) {
 		super(nam);
@@ -23,6 +32,8 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 		this.rLogger = new ReasonerLogger("log/");
 		rLogger.log("I am " + this.getId() + " and I own to " + nam.getId());
 
+		this.locationMap = new HashMap<String,Date>();
+		
 		Notify notifyService = new Notify();
 		notifyService.setId("s1");
 		this.addProvidedService(notifyService.getId(), notifyService);
@@ -40,6 +51,14 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 		return rLogger;
 	}
 	
+	public HashMap<String,Date> getLocationMap() {
+		return locationMap;
+	}
+
+	public void setLocationMap(HashMap<String,Date> locationMap) {
+		this.locationMap = locationMap;
+	}
+
 	
 	// the reasoner exposes a notify service that is called 
 	// when a context event of interest is called
@@ -66,12 +85,12 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	    	fm = itr.next();
 	    	if (fm.getName().equals(this.getName()))
 	    		continue;
-	    	System.out.println("FM: " + fm.getName());
+	    	rLogger.log("FM: " + fm.getName());
 	    	Collection<Service> cc = fm.getProvidedServices().values();
 	    	Iterator<Service> itrr = cc.iterator();
 	    	while(itrr.hasNext()) {
 	    		serviceName = itrr.next().getName();
-	    		System.out.println("Service: " + serviceName);
+	    		rLogger.log("Service: " + serviceName);
 	    		if (serviceName.equals("Subscribe")) {
 	    			Temperature temperature = new Temperature();
 	    			TemperatureNotification tempNotif = new TemperatureNotification();
@@ -86,8 +105,33 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	
 
 	public void startTemperatureNotificationLookup(String locationsFileName) {
+		
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		Date initDay = null;
+		try {
+			initDay = df.parse("25/12/2010 00:00:00");
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+		
+		FileReader reader = null;
+		try {
+			reader = new FileReader(locationsFileName);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		Scanner in = new Scanner(reader);
+		while (in.hasNextLine()) {
+			 String location = in.nextLine();     
+			 locationMap.put(location, initDay);       
+		}
+		in.close();
+		
+		//System.out.println("rfm location map size: " + locationMap.size());
+		
 		// create and start a thread that periodically looks up for Temperature notification events
-		Thread t = new Thread(new SearchTemperatureRunnable(this, locationsFileName), "Search temperature thread");
+		Thread t = new Thread(new SearchTemperatureRunnable(this), "Search temperature thread");
 		//System.out.println("Child thread: " + t);
 		t.start();
 	}
