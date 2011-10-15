@@ -56,31 +56,32 @@ public class ProvideTemperatureRunnable implements Runnable {
 			}
 		}
 
-		Temperature temperature = new Temperature();
-		temperature.setId("i21");
-		temperature.setValue(this.temperatureValue);
-
-		TemperatureNotification tempNotif = new TemperatureNotification();
-		Room room = new Room();
-		room.setValue(locationName);
-		tempNotif.setLocation(room);
-		tempNotif.setSubject(temperature);
-		Date timestamp = new Date();
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-		System.out.println(df.format(timestamp));
-		tempNotif.setTimestamp(df.format(timestamp));
-
-		Gson gson = new Gson();
-		String json = gson.toJson(tempNotif);
-		sfm.getLogger().log(tempNotif);
-
 		while (true) {
-			fm.execute(sfm.getId(), "Publish", json);
 			try {
-				Thread.sleep(20000);
+				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
+			Temperature temperature = new Temperature();
+			temperature.setId("i21");
+			temperature.setValue(this.temperatureValue);
+
+			TemperatureNotification tempNotif = new TemperatureNotification();
+			Room room = new Room();
+			room.setValue(locationName);
+			tempNotif.setLocation(room);
+			tempNotif.setSubject(temperature);
+			Date timestamp = new Date();
+			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			sfm.getLogger().log(df.format(timestamp));
+			tempNotif.setTimestamp(df.format(timestamp));
+
+			Gson gson = new Gson();
+			String json = gson.toJson(tempNotif);
+			
+			sfm.getLogger().log(tempNotif);
+			fm.execute(sfm.getId(), "Publish", json);
 		}
 	}
 }

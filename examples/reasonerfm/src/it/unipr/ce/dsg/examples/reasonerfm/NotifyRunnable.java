@@ -20,7 +20,7 @@ public class NotifyRunnable implements Runnable {
 	}
 	
 	public void run() {
-		rfm.getLogger().log("Notified:\n" + item);
+		rfm.getLogger().log("Notified: " + item);
 		Gson gson = new Gson();
 		ContextEvent ce = gson.fromJson(item, ContextEvent.class);
 		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
