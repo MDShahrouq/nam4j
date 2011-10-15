@@ -123,7 +123,7 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 				// System.out.println("Service: " + serviceName);
 				if (serviceName.equals("Notify")) {
 					fm = tempfm;
-					// System.out.println("FM: " + fm.getName());
+					System.out.println("FM: " + fm.getName());
 				}
 			}
 		}
@@ -135,6 +135,8 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 				+ " with responsible: " + responsiblePeer.getKey() 
 				+ " and owner: " + ownerPeer.getKey();
 		*/
+		
+		System.out.println("CFM rd.getAttachment(): " + rd.getAttachment());
 		fm.execute(this.getId(), "Notify", rd.getAttachment());
 	}
 

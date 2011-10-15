@@ -64,14 +64,16 @@ public class SearchTemperatureRunnable implements Runnable {
 			room.setValue(locations.get(r.nextInt(rfm.getLocationMap().size())));
 			tempNotif.setLocation(room);
 			String json = gson.toJson(tempNotif);
-			rfm.getLogger().log(tempNotif);
 			
-			fm.execute(rfm.getId(), "Lookup", json);
+			
 			try {
 				Thread.sleep(20000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
+			rfm.getLogger().log(tempNotif);
+			fm.execute(rfm.getId(), "Lookup", json);
 		}
 	}
 
