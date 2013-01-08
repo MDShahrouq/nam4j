@@ -1,6 +1,6 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
-import java.math.BigInteger;
+//import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
@@ -14,8 +14,8 @@ import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
 import it.unipr.ce.dsg.s2pchord.eventlistener.ChordEventListener;
-import it.unipr.ce.dsg.s2pchord.util.SHA1;
-import it.unipr.dsg.s2pchord.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.util.SHA1.*;
+import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
 
 
 public class ChordFunctionalModule extends FunctionalModule implements ChordEventListener {
@@ -49,10 +49,16 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 		int port = 1024 + ran.nextInt(9999-1024);
 		int bitNumber = 160;
 		try {
+			/* vecchio sp2Chord 0.1
 			int unL = ran.nextInt(bitNumber);
 			String key = SHA1.convertToHex(SHA1.calculateSHA1(BigInteger.valueOf(unL + System.currentTimeMillis()).toString(16)));
 			chordPeer = new ChordPeer("config/chordPeer.cfg", key, key, port, bitNumber, false);
 			chordPeer.startPeer();
+			chordPeer.setChordEventListener(this);
+			*/
+			chordPeer = new ChordPeer("config/chordPeer.cfg", null);
+			//chordPeer.insert_key();
+			chordPeer.join();
 			chordPeer.setChordEventListener(this);
 		} catch (Exception e) {
 			e.printStackTrace();

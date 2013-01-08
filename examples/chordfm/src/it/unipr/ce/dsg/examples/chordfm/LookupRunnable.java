@@ -1,10 +1,12 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
+import java.io.IOException;
+
 import com.google.gson.Gson;
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
-import it.unipr.dsg.s2pchord.resource.ResourceDescriptor;
-import it.unipr.dsg.s2pchord.resource.ResourceParameter;
+import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
+import it.unipr.ce.dsg.s2pchord.Resource.ResourceParameter;
 
 
 public class LookupRunnable implements Runnable {
@@ -29,7 +31,7 @@ public class LookupRunnable implements Runnable {
 		ResourceDescriptor rd = new ResourceDescriptor();
 		if (ce.getName() != null)
 			rd.setType(ce.getName()); // type of resource
-		rd.setResourceOwner(cp.getMyNetPeerInfo());
+		rd.setResourceOwner(cp.getMyPeerDescriptor());
 		if (ce.getSubject() != null)
 			rd.addParameter(new ResourceParameter("Subject", ce.getSubject().getName()));
 		if (ce.getAction() != null)
@@ -41,8 +43,13 @@ public class LookupRunnable implements Runnable {
 		rd.generateResourceKey();	
 		String resourceKey = rd.getKey();
 		cfm.getLogger().log("Generated Resource String: " + resourceKey);
-		cfm.getLogger().log("Generated Resource Descriptor: " +  rd.resourceDescriptorString());
-		cp.searchResource(resourceKey);	
+		cfm.getLogger().log("Generated Resource Descriptor: " +  rd.resourceDescriptorToString());
+		//cp.searchResource(resourceKey); s2pChord 0.1
+		try {
+			cp.searchResource(resourceKey, cp.getMyPeerDescriptor().getAddress());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

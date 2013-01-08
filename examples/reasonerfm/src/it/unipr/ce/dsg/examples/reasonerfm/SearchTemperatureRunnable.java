@@ -73,6 +73,7 @@ public class SearchTemperatureRunnable implements Runnable {
 			}
 			
 			rfm.getLogger().log(tempNotif);
+			System.out.println("###\n [RFM] Lookup for: " + json + "\n ### \n");
 			fm.execute(rfm.getId(), "Lookup", json);
 		}
 	}
