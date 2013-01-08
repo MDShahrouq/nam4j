@@ -3,9 +3,9 @@ package it.unipr.ce.dsg.examples.chordfm;
 import com.google.gson.Gson;
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
-import it.unipr.dsg.s2pchord.resource.Resource;
-import it.unipr.dsg.s2pchord.resource.ResourceDescriptor;
-import it.unipr.dsg.s2pchord.resource.ResourceParameter;
+//import it.unipr.ce.dsg.s2pchord.resource.Resource;
+import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
+import it.unipr.ce.dsg.s2pchord.Resource.ResourceParameter;
 
 public class PublishRunnable implements Runnable {
 
@@ -30,7 +30,7 @@ public class PublishRunnable implements Runnable {
 		rd.setAttachment(item);
 		if (ce.getName() != null)
 			rd.setType(ce.getName()); // type of resource
-		rd.setResourceOwner(cp.getMyNetPeerInfo());
+		rd.setResourceOwner(cp.getMyPeerDescriptor());
 		if (ce.getSubject() != null)
 			rd.addParameter(new ResourceParameter("Subject", ce.getSubject().getName()));
 		if (ce.getAction() != null)
@@ -46,10 +46,10 @@ public class PublishRunnable implements Runnable {
 		rd.generateResourceKey();	
 		String resourceKey = rd.getKey();
 		cfm.getLogger().log("Generated Resource String: " + resourceKey);
-		cfm.getLogger().log("Generated Resource Descriptor: " +  rd.resourceDescriptorString());
-		Resource res = new Resource(rd, null, System.currentTimeMillis());
+		cfm.getLogger().log("Generated Resource Descriptor: " +  rd.resourceDescriptorToString());
+		//Resource res = new Resource(rd, null, System.currentTimeMillis());
 		
-		cp.publishResource(res);
+		cp.publishResource(rd);
 	}
 
 }
