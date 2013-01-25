@@ -7,6 +7,7 @@
 	<classpathentry kind="src" path="examples/ontology/src"/>
 	<classpathentry kind="src" path="examples/demonam/src"/>
 	<classpathentry kind="src" path="examples/chordfm/src"/>
+	<classpathentry kind="src" path="examples/migration/src"/>
 	<classpathentry kind="lib" path="lib/2p.jar"/>
 	<classpathentry kind="lib" path="lib/mysqlDAO.jar"/>
 	<classpathentry kind="lib" path="lib/sip2peer/server.jar"/>
