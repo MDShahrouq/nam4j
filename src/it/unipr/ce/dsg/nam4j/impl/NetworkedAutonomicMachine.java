@@ -27,6 +27,7 @@
 package it.unipr.ce.dsg.nam4j.impl;
 
 import it.unipr.ce.dsg.nam4j.impl.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.nam4j.interfaces.INetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.thread.ThreadPool;
 
@@ -34,6 +35,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -176,7 +178,7 @@ public abstract class NetworkedAutonomicMachine implements INetworkedAutonomicMa
     }
     
     public FunctionalModule getFunctionalModuleFromJar(String fmName) {
-		
+    	
 		FunctionalModule fm = null;
 		Constructor<?> cs;
 		try {
@@ -200,8 +202,31 @@ public abstract class NetworkedAutonomicMachine implements INetworkedAutonomicMa
 		
 		return fm;
 	}
+    
+    public Service getServiceFromFile(String fmName) {
+    	
+		Service serv = null;
+		try {
+			
+			Class<?> c = ClassLoader.getSystemClassLoader().loadClass(fmName);
+			serv = (Service)c.newInstance();
+			
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();	
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return serv;
+	}
 	
-	public FunctionalModule addJarToClassPath(String receivedFilename, String className) {
+	public FunctionalModule addJarToClassPath(String receivedFilename, String completeClassName) {
     	
 		try {
 			addFile(receivedFilename);
@@ -209,9 +234,23 @@ public abstract class NetworkedAutonomicMachine implements INetworkedAutonomicMa
 			e1.printStackTrace();
 		}
 		
-    	FunctionalModule cfm = getFunctionalModuleFromJar("it.unipr.ce.dsg.examples.chordfm." + className);
+    	FunctionalModule cfm = getFunctionalModuleFromJar(completeClassName);
 		
 		return cfm;
+		
+	}
+	
+	public Service addServiceFileToClassPath(String receivedFilename, String completeClassName) {
+    	
+		try {
+			addFile(receivedFilename);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+    	Service serv = getServiceFromFile(completeClassName);
+		
+		return serv;
 		
 	}
 	
@@ -262,35 +301,101 @@ public abstract class NetworkedAutonomicMachine implements INetworkedAutonomicMa
 			
 						    String line;
 						    line = new String(is.readLine());
-						    
-						    String className = "ChordFunctionalModule";
 			
 						    System.out.println("SERVER: message received from client = \"" + line + "\"");
 						    
-						    File file = new File ("lib/chordfm.jar");
+						    if(line.equalsIgnoreCase("FM")){
 						    
-						    System.out.println("SERVER: sending file name = " + file.getName());
-						    System.out.println("SERVER: sending class name = " + className);
+						    	System.out.println("SERVER: client asked for a FM");
+						    	
+						    	line = new String(is.readLine());
+								
+							    System.out.println("SERVER: client requested \"" + line + "\"");
+						    	
+							    String className = null;
+							    String completeName = null;
+							    File file = null;
+							    
+							    if(line.equalsIgnoreCase("ChordFunctionalModule")){
+							    	className = "ChordFunctionalModule";
+							    	completeName = "it.unipr.ce.dsg.examples.chordfm." + className;
+							    	file = new File ("lib/chordfm.jar");
+							    }
+							    if(line.equalsIgnoreCase("TestFunctionalModule")){
+							    	className = "TestFunctionalModule";
+							    	completeName = "it.unipr.ce.dsg.examples.migration." + className;
+							    	file = new File ("lib/testMigration.jar");
+							    }
+							    
+							    System.out.println("SERVER: sending file name = " + file.getName());
+							    System.out.println("SERVER: sending FM main class name = " + className);
+							    System.out.println("SERVER: sending FM main class complete name = " + completeName);
+							    
+							    OutputStream outputStream = cs.getOutputStream();  
+							    ObjectOutputStream oos = new ObjectOutputStream(outputStream);  
+							    Descriptor to = new Descriptor(file.getName(), className, completeName);  
+							    oos.writeObject(to);
+							    
+							    System.out.println("SERVER: sending file...");
+							    
+							    byte [] myBytearray  = new byte [(int)file.length()];
+							    FileInputStream fis = new FileInputStream(file);
+							    BufferedInputStream bis = new BufferedInputStream(fis);
+							    bis.read(myBytearray,0,myBytearray.length);
+							    OutputStream outStream = cs.getOutputStream();
+							    outStream.write(myBytearray,0,myBytearray.length);
+							    outStream.flush();
+							    
+							    System.out.println("SERVER: done sending");
+							    
+							    bis.close();
+							    oos.close();
 						    
-						    OutputStream outputStream = cs.getOutputStream();  
-						    ObjectOutputStream oos = new ObjectOutputStream(outputStream);  
-						    FMDescriptor to = new FMDescriptor(file.getName(), className);  
-						    oos.writeObject(to);
+						    }
 						    
-						    System.out.println("SERVER: sending file...");
+						    else if(line.equalsIgnoreCase("SERVICE")) {
+						    	
+						    	System.out.println("SERVER: client asked for a service");
+						    	
+						    	line = new String(is.readLine());
+								
+							    System.out.println("SERVER: client requested \"" + line + "\"");
 						    
-						    byte [] mybytearray  = new byte [(int)file.length()];
-						    OutputStream outputStr = cs.getOutputStream();
-						    outputStr.write(mybytearray,0,mybytearray.length);
-						    outputStr.flush();
+							    String serviceClassName = "TestService";
+							    String serviceCompleteName = "it.unipr.ce.dsg.examples.migration." + serviceClassName;
+							    File file = new File ("examples/migration/TestService.java");
+							    
+							    System.out.println("SERVER: sending file name = " + file.getName());
+							    System.out.println("SERVER: sending service class name = " + serviceClassName);
+							    System.out.println("SERVER: sending service class complete name = " + serviceCompleteName);
+							    
+							    OutputStream outputStream = cs.getOutputStream();  
+							    ObjectOutputStream oos = new ObjectOutputStream(outputStream);  
+							    Descriptor to = new Descriptor(file.getName(), serviceClassName, serviceCompleteName);  
+							    oos.writeObject(to);
+							    
+							    System.out.println("SERVER: sending file...");
+							    
+							    byte [] myBytearray  = new byte [(int)file.length()];
+							    FileInputStream fis = new FileInputStream(file);
+							    BufferedInputStream bis = new BufferedInputStream(fis);
+							    bis.read(myBytearray,0,myBytearray.length);
+							    OutputStream outStream = cs.getOutputStream();
+							    outStream.write(myBytearray,0,myBytearray.length);
+							    outStream.flush();
+							    
+							    System.out.println("SERVER: done sending");
+							    
+							    bis.close();
+							    oos.close();
 						    
-						    System.out.println("SERVER: done sending");
+						    }
 						    
 						    os.close();
-						    oos.close();
+						    
 						    is.close();
 						    cs.close();
-			
+						    		
 						}
 						catch (Exception e) {
 							System.out.println("SERVER: error: " + e);
@@ -302,7 +407,7 @@ public abstract class NetworkedAutonomicMachine implements INetworkedAutonomicMa
 		//}
 	}
 	
-	public FunctionalModule findRemoteFM() {
+	public FunctionalModule findRemoteFM(String functionalModule) {
 		
 		Socket s = null;
 		
@@ -326,24 +431,30 @@ public abstract class NetworkedAutonomicMachine implements INetworkedAutonomicMa
 		
 		System.out.println("CLIENT: created socket " + s);
 		
-		os.println("Requesting FM");
+		os.println("FM");
+		os.flush();
+		
+		os.println(functionalModule);
 		os.flush();
 		
 		System.out.println("CLIENT: waiting for FM descriptor...");
 		
 		String fileName = "";
 		String className = "";
+		String completeClassName = "";
 		
 		try {
 			
 			InputStream inputS = s.getInputStream();  
 			ObjectInputStream ois = new ObjectInputStream(inputS);  
-			FMDescriptor to = (FMDescriptor)ois.readObject();
+			Descriptor to = (Descriptor)ois.readObject();
 			fileName = to.getFileName();
 			className = to.getMainClassName();
+			completeClassName = to.getCompleteName();
 			
 			System.out.println("CLIENT: file name received from server = " + fileName);
 			System.out.println("CLIENT: main class name received from server = " + className);
+			System.out.println("CLIENT: complete class name received from server = " + completeClassName);
 			System.out.println("CLIENT: waiting for FM jar " + fileName);
 			
 			/* Writing the received file */
@@ -372,7 +483,7 @@ public abstract class NetworkedAutonomicMachine implements INetworkedAutonomicMa
 		    File f = new File(receivedFilename);
 		    if(f.exists()) {
 		    	System.out.println("CLIENT: "+ f.toURI().toURL() + " received");
-		    	fm = addJarToClassPath(receivedFilename, className);
+		    	fm = addJarToClassPath(receivedFilename, completeClassName);
 		    }
 		    else {
 		    	System.out.println("CLIENT: file not received");
@@ -386,5 +497,97 @@ public abstract class NetworkedAutonomicMachine implements INetworkedAutonomicMa
 		}
 		
 		return fm;
+	}
+	
+	public Service findRemoteService(String service) {
+		
+		Socket s = null;
+		
+		BufferedReader is = null;
+		PrintStream os = null;
+		
+		Service serv = null;
+		
+		int bytesRead;
+	    int current = 0;
+	    int filesize = 6022386; // Temporary hardcoded filesize
+		
+		try {
+			s = new Socket(serverAddress, serverPort);
+			is = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			os = new PrintStream(new BufferedOutputStream(s.getOutputStream()));
+		}
+		catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		System.out.println("\nCLIENT: created socket " + s);
+		
+		os.println("SERVICE");
+		os.flush();
+		
+		os.println(service);
+		os.flush();
+		
+		System.out.println("CLIENT: waiting for service descriptor...");
+		
+		String fileName = "";
+		String className = "";
+		String completeClassName = "";
+		
+		try {
+			
+			InputStream inputS = s.getInputStream();  
+			ObjectInputStream ois = new ObjectInputStream(inputS);  
+			Descriptor to = (Descriptor)ois.readObject();
+			fileName = to.getFileName();
+			className = to.getMainClassName();
+			completeClassName = to.getCompleteName();
+			
+			System.out.println("CLIENT: file name received from server = " + fileName);
+			System.out.println("CLIENT: service class name received from server = " + className);
+			System.out.println("CLIENT: complete class name received from server = " + completeClassName);
+			System.out.println("CLIENT: waiting for service file " + fileName);
+			
+			/* Writing the received file */
+			
+			byte [] mybytearray  = new byte [filesize];
+		    InputStream inputStr = s.getInputStream();
+		    String receivedFilename = "examples/migration/copy" + fileName;
+		    FileOutputStream fos = new FileOutputStream(receivedFilename);
+		    BufferedOutputStream bos = new BufferedOutputStream(fos);
+		    bytesRead = inputStr.read(mybytearray,0,mybytearray.length);
+		    current = bytesRead;
+
+		    bos.write(mybytearray, 0 , current);
+		    bos.flush();
+		    bos.close();
+		    fos.close();
+
+		    /* End of writing */
+		    
+		    is.close();
+			os.close();
+			s.close();
+			
+			s.close();
+  
+		    File f = new File(receivedFilename);
+		    if(f.exists()) {
+		    	System.out.println("CLIENT: "+ f.toURI().toURL() + " received");
+		    	serv = addServiceFileToClassPath(receivedFilename, completeClassName);
+		    }
+		    else {
+		    	System.out.println("CLIENT: file not received");
+		    }
+			
+		}
+		catch (IOException e) {
+			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+		return serv;
 	}
 }
