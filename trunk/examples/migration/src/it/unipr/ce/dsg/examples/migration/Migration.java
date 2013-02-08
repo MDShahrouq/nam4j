@@ -2,6 +2,7 @@ package it.unipr.ce.dsg.examples.migration;
 
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
+import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.nam4j.thread.ThreadPool;
   
 public class Migration extends NetworkedAutonomicMachine {
@@ -22,7 +23,10 @@ public class Migration extends NetworkedAutonomicMachine {
 		
 		Migration migration = new Migration(args[0]);
 		
-		FunctionalModule fm;
+		FunctionalModule chordfm = null;
+		FunctionalModule testfm = null;
+		Service serv = null;
+		String serviceId = null;
 		
 		if (args[0].equals("SERVER")) {
 			
@@ -31,7 +35,13 @@ public class Migration extends NetworkedAutonomicMachine {
 		}
 		else if (args[0].equals("CLIENT")) {
 	
-			fm = migration.findRemoteFM();
+			chordfm = migration.findRemoteFM("ChordFunctionalModule");
+			testfm = migration.findRemoteFM("TestFunctionalModule");
+			serv = migration.findRemoteService("TestService");
+			serviceId = "TestService";
+			
+			if(serv != null) testfm.addProvidedService(serviceId, serv);
+			else System.out.println("CLIENT: Error in service migration");
 
 		}
 	}
