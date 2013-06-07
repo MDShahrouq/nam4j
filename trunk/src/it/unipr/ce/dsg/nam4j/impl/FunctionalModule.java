@@ -1,8 +1,9 @@
 package it.unipr.ce.dsg.nam4j.impl;
 
-import it.unipr.ce.dsg.nam4j.interfaces.IFunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IFunctionalModule;
+
 import java.util.HashMap;
 
 
@@ -17,30 +18,65 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	HashMap<String,Service> consumableServices = new HashMap<String,Service>();
 	HashMap<String,Service> providedServices = new HashMap<String,Service>();
 	
+	/**
+	 * Class constructor.
+	 * 
+	 * @param nam a reference to the NAM whose the functional module has been added
+	 */
 	public FunctionalModule(NetworkedAutonomicMachine nam) {
 		this.nam = nam;
 	}
 	
+	/**
+	 * Returns a reference to the NAM the functional module belongs to.
+	 * 
+	 * @return a reference to the NAM the functional module belongs to
+	 */
 	public NetworkedAutonomicMachine getNam() {
 		return nam;
 	}
 
+	/**
+	 * Sets the NAM the functional module belongs to.
+	 * 
+	 * @param a reference to the NAM the functional module belongs to
+	 */
 	public void setNam(NetworkedAutonomicMachine nam) {
 		this.nam = nam;
 	}
 	
+	/**
+	 * Sets the identifier of the functional module.
+	 * 
+	 * @param id a String identifying the functional module
+	 */
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	/**
+	 * Returns the identifier of the functional module.
+	 * 
+	 * @return a String identifying the functional module
+	 */
 	public String getId() {
 		return id;
 	}
 	
+	/**
+	 * Sets the name of the functional module.
+	 * 
+	 * @param name a String identifying the name of the functional module
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+	 * Returns the name of the functional module.
+	 * 
+	 * @return a String identifying the name of the functional module
+	 */
 	public String getName() {
 		return name;
 	}
@@ -130,8 +166,12 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	}
 	
 	
-	/*
-	 * Generic service execution method
+	/**
+	 * Service execution method
+	 * 
+	 * @param requestorId a String identifying the requestor of the service
+	 * @param requestedService a String identifying the requested service
+	 * @param parameters
 	 */
 	public void execute(String requestorId, String requestedService, String parameters) {
 	}

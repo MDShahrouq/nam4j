@@ -1,5 +1,12 @@
 package it.unipr.ce.dsg.examples.reasonerfm;
 
+import it.unipr.ce.dsg.examples.ontology.Notify;
+import it.unipr.ce.dsg.examples.ontology.Temperature;
+import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
+import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
+import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
+import it.unipr.ce.dsg.nam4j.impl.service.Service;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.DateFormat;
@@ -12,13 +19,6 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
-
-import it.unipr.ce.dsg.examples.ontology.Notify;
-import it.unipr.ce.dsg.examples.ontology.Temperature;
-import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
-import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
-import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
 
 public class ReasonerFunctionalModule extends FunctionalModule {
 

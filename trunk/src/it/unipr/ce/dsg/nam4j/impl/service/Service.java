@@ -1,7 +1,8 @@
 package it.unipr.ce.dsg.nam4j.impl.service;
 
-import java.util.HashMap;
 import it.unipr.ce.dsg.nam4j.interfaces.IService;
+
+import java.util.HashMap;
 
 public class Service implements IService {
 

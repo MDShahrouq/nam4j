@@ -1,10 +1,6 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
 //import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Random;
-
 import it.unipr.ce.dsg.examples.ontology.Lookup;
 import it.unipr.ce.dsg.examples.ontology.Publish;
 import it.unipr.ce.dsg.examples.ontology.Subscribe;
@@ -13,9 +9,12 @@ import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
-import it.unipr.ce.dsg.s2pchord.eventlistener.ChordEventListener;
-import it.unipr.ce.dsg.util.SHA1.*;
 import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
+import it.unipr.ce.dsg.s2pchord.eventlistener.ChordEventListener;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Random;
 
 
 public class ChordFunctionalModule extends FunctionalModule implements ChordEventListener {

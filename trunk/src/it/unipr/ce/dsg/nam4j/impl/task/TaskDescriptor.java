@@ -1,8 +1,8 @@
 package it.unipr.ce.dsg.nam4j.impl.task;
 
-import java.util.ArrayList;
-
 import it.unipr.ce.dsg.nam4j.interfaces.ITaskDescriptor;
+
+import java.util.ArrayList;
 
 public class TaskDescriptor implements ITaskDescriptor {
 

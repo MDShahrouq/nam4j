@@ -11,6 +11,8 @@ public class Migration extends NetworkedAutonomicMachine {
 	
 	public Migration(String configuration) {
 		
+		super(10); // The parameter is the thread pool size
+		
 		this.setId("migration");
 		
 		/* The server needs the thread pool to manage the migration of the FMs */
@@ -35,9 +37,9 @@ public class Migration extends NetworkedAutonomicMachine {
 		}
 		else if (args[0].equals("CLIENT")) {
 	
-			chordfm = migration.findRemoteFM("ChordFunctionalModule");
-			testfm = migration.findRemoteFM("TestFunctionalModule");
-			serv = migration.findRemoteService("TestService");
+			chordfm = migration.findRemoteFM("ChordFunctionalModule", "F");
+			testfm = migration.findRemoteFM("TestFunctionalModule", "F");
+			serv = migration.findRemoteService("TestService", "F");
 			serviceId = "TestService";
 			
 			if(serv != null) testfm.addProvidedService(serviceId, serv);
@@ -45,4 +47,5 @@ public class Migration extends NetworkedAutonomicMachine {
 
 		}
 	}
+	
 }
