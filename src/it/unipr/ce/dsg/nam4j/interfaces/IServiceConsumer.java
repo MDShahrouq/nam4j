@@ -1,6 +1,7 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
+
 import java.util.HashMap;
 
 public interface IServiceConsumer {

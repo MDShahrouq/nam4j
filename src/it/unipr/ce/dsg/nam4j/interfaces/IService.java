@@ -1,7 +1,7 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
-import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
 import it.unipr.ce.dsg.nam4j.impl.service.Effect;
+import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
 import it.unipr.ce.dsg.nam4j.impl.service.Precondition;
 
 import java.util.HashMap;

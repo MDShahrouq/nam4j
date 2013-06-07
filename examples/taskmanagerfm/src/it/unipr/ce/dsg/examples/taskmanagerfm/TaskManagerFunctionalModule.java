@@ -1,12 +1,12 @@
 package it.unipr.ce.dsg.examples.taskmanagerfm;
 
-import java.util.ArrayList;
-
-import com.google.gson.Gson;
-
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.task.TaskDescriptor;
+
+import java.util.ArrayList;
+
+import com.google.gson.Gson;
 
 public class TaskManagerFunctionalModule extends FunctionalModule {
 

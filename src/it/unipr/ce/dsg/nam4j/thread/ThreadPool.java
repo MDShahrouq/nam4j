@@ -4,8 +4,13 @@ import java.util.LinkedList;
 
 public class ThreadPool {
 
-	private LinkedList tasks = new LinkedList();
+	private LinkedList<Runnable> tasks = new LinkedList<Runnable>();
 	
+	/**
+	 * Class constructor.
+	 * 
+	 * @param size an int representing the number of threads by which the pool is composed
+	 */
 	public ThreadPool(int size) {
 		for (int i = 0; i < size; i++) {
 			Thread thread = new ThreadTask(this);
@@ -13,6 +18,11 @@ public class ThreadPool {
 		}
 	}
 
+	/**
+	 * Appends a thread to the pool and runs it.
+	 * 
+	 * @param task a Runnable interface representing the thread to be added to the pool
+	 */
 	public void run(Runnable task) {
 		synchronized (tasks) {
 			tasks.addLast(task);
@@ -20,6 +30,11 @@ public class ThreadPool {
 		}
 	}
 
+	/**
+	 * Removes the first thread in the pool and returns a Runnable interface representing it.
+	 * 
+	 * @return a Runnable interface representing the first thread in the pool
+	 */
 	public Runnable getNext() {
 		Runnable returnVal = null;
 		synchronized (tasks) {
@@ -27,32 +42,12 @@ public class ThreadPool {
 				try {
 					tasks.wait();
 				} catch (InterruptedException ex) {
-					System.err.println("Interrupted");
+					System.err.println("Thread interrupted");
 				}
 			}
 			returnVal = (Runnable) tasks.removeFirst();
 		}
 		return returnVal;
 	}
-
-	/*
-	
-	public static void main(String args[]) {
-		final String message[] = { "Java", "Source", "and", "Support" };
-		ThreadPool pool = new ThreadPool(message.length / 2);
-		for (int i = 0, n = message.length; i < n; i++) {
-			final int innerI = i;
-			Runnable runner = new Runnable() {
-				public void run() {
-					for (int j = 0; j < 25; j++) {
-						System.out.println("j: " + j + ": " + message[innerI]);
-					}
-				}
-			};
-			pool.run(runner);
-		}
-	}
-	
-	*/
 	
 }

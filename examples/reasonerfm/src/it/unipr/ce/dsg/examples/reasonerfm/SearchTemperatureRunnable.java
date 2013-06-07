@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-
 import com.google.gson.Gson;
 
 public class SearchTemperatureRunnable implements Runnable {

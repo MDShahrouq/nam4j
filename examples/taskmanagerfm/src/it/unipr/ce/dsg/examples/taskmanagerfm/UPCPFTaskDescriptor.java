@@ -1,8 +1,8 @@
 package it.unipr.ce.dsg.examples.taskmanagerfm;
 
-import java.util.ArrayList;
-
 import it.unipr.ce.dsg.nam4j.impl.task.TaskDescriptor;
+
+import java.util.ArrayList;
 
 public class UPCPFTaskDescriptor extends TaskDescriptor {
 

@@ -1,6 +1,7 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
+
 import java.util.HashMap;
 
 public interface IContextProvider {

@@ -20,7 +20,6 @@ public class TestService extends Service {
 		t.start();
 		
 	}
-
 }
 
 class TestServiceRunnable implements Runnable {
@@ -77,7 +76,8 @@ class TestServiceRunnable implements Runnable {
 			e.printStackTrace();
 		}
 		
-		System.out.println("\n	Evaluating User Context ...");
+		System.out.println("	Evaluating User Context ...");
 		
 	}
+	
 }

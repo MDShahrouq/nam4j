@@ -1,11 +1,11 @@
 package it.unipr.ce.dsg.examples.reasonerfm;
 
+import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 
 import com.google.gson.Gson;
 
