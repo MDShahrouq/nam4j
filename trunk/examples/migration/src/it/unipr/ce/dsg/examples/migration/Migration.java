@@ -31,20 +31,17 @@ public class Migration extends NetworkedAutonomicMachine {
 		String serviceId = null;
 		
 		if (args[0].equals("SERVER")) {
-			
 			migration.activateMigration();
-			
 		}
 		else if (args[0].equals("CLIENT")) {
-	
 			chordfm = migration.findRemoteFM("ChordFunctionalModule", "F");
 			testfm = migration.findRemoteFM("TestFunctionalModule", "F");
 			serv = migration.findRemoteService("TestService", "F");
 			serviceId = "TestService";
-			
-			if(serv != null) testfm.addProvidedService(serviceId, serv);
-			else System.out.println("CLIENT: Error in service migration");
-
+			if (serv != null) 
+				testfm.addProvidedService(serviceId, serv);
+			else 
+				System.out.println("CLIENT: Error in service migration");
 		}
 	}
 	
