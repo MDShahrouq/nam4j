@@ -122,6 +122,35 @@ public abstract class NetworkedAutonomicMachine implements
 	String locationToSaveReceivedFile = "lib/";
 
 	/**
+	 * Class constructor.
+	 * 
+	 * @param pSize
+	 *            the size of the thread pool to manage incoming requests
+	 */
+	public NetworkedAutonomicMachine(int pSize) {
+
+		setPoolSize(pSize);
+
+		clientPlatform = new String[getPoolSize()];
+		serverPort = new int[getPoolSize()];
+
+		/*
+		 * Each thread of the pool managing the migration requests listens to a
+		 * different port, so the serverPort array must be fulfilled with the
+		 * right port values.
+		 * 
+		 * TODO: a protocol to manage the port requests by the clients, and a
+		 * dictionary of available ports used to fulfill the array, have yet to
+		 * be implemented (currently using port 11111 stored in the first
+		 * element of the array)
+		 * 
+		 * for(int i = 0; i < getPoolSize(); i++) { serverPort[i] = < PORT
+		 * NUMBER >; }
+		 */
+		serverPort[0] = 11111;
+	}
+	
+	/**
 	 * Sets the address of the server to which the migration requests should be
 	 * sent.
 	 * 
@@ -523,6 +552,9 @@ public abstract class NetworkedAutonomicMachine implements
 	/**
 	 * Server implementation: it creates the threads of the pool and starts them
 	 * to manage incoming requests.
+	 * 
+	 * FIXME hardcoded class names must be removed
+	 * 
 	 */
 	public void activateMigration() {
 
@@ -868,33 +900,6 @@ public abstract class NetworkedAutonomicMachine implements
 		return serv;
 	}
 
-	/**
-	 * Class constructor.
-	 * 
-	 * @param pSize
-	 *            the size of the thread pool to manage incoming requests
-	 */
-	public NetworkedAutonomicMachine(int pSize) {
 
-		setPoolSize(pSize);
-
-		clientPlatform = new String[getPoolSize()];
-		serverPort = new int[getPoolSize()];
-
-		/*
-		 * Each thread of the pool managing the migration requests listens to a
-		 * different port, so the serverPort array must be fulfilled with the
-		 * right port values.
-		 * 
-		 * TODO: a protocol to manage the port requests by the clients, and a
-		 * dictionary of available ports used to fulfill the array, have yet to
-		 * be implemented (currently using port 11111 stored in the first
-		 * element of the array)
-		 * 
-		 * for(int i = 0; i < getPoolSize(); i++) { serverPort[i] = < PORT
-		 * NUMBER >; }
-		 */
-		serverPort[0] = 11111;
-	}
 
 }
