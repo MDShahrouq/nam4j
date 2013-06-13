@@ -50,7 +50,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.sun.org.apache.bcel.internal.classfile.ClassParser;
 
 public abstract class NetworkedAutonomicMachine implements
 		INetworkedAutonomicMachine {
@@ -122,14 +129,19 @@ public abstract class NetworkedAutonomicMachine implements
 	String locationToSaveReceivedFile = "lib/";
 
 	/**
+	 * The path where the java, Jar and Dex files for migration are stored.
+	 */
+	String classesJarDexDir = "examples/migration";
+	
+	/**
 	 * Class constructor.
 	 * 
-	 * @param pSize
+	 * @param poolSize
 	 *            the size of the thread pool to manage incoming requests
 	 */
-	public NetworkedAutonomicMachine(int pSize) {
+	public NetworkedAutonomicMachine(int poolSize) {
 
-		setPoolSize(pSize);
+		setPoolSize(poolSize);
 
 		clientPlatform = new String[getPoolSize()];
 		serverPort = new int[getPoolSize()];
@@ -203,14 +215,14 @@ public abstract class NetworkedAutonomicMachine implements
 	 * Sets the port of the server to which the migration requests should be
 	 * sent.
 	 * 
-	 * @param p
+	 * @param port
 	 *            an int identifying the port of the server for migration
 	 * @param index
 	 *            an int representing the index of the port array where the
 	 *            value has to be stored
 	 */
-	public void setServerPort(int p, int index) {
-		this.serverPort[index] = p;
+	public void setServerPort(int port, int index) {
+		this.serverPort[index] = port;
 	}
 
 	/**
@@ -251,11 +263,11 @@ public abstract class NetworkedAutonomicMachine implements
 	/**
 	 * Set a reference to the descriptor of the migrated file.
 	 * 
-	 * @param d
+	 * @param descriptor
 	 *            the descriptor of the migrated file
 	 */
-	public void setDescriptor(BundleDescriptor d) {
-		this.to = d;
+	public void setDescriptor(BundleDescriptor descriptor) {
+		this.to = descriptor;
 	}
 
 	/**
@@ -367,26 +379,6 @@ public abstract class NetworkedAutonomicMachine implements
 	}
 
 	/**
-	 * Gets the Resources List of the NAM node.
-	 * 
-	 * @return a HashMap storing the Resources of the NAM node.
-	 */
-	public HashMap<String, ResourceDescriptor> getResources() {
-		return resourceDescriptors;
-	}
-
-	/**
-	 * Get a Resource of the NAM node.
-	 * 
-	 * @param id
-	 *            a String identifying the required Resource
-	 * @return the required Resource of the NAM node.
-	 */
-	public ResourceDescriptor getResource(String id) {
-		return resourceDescriptors.get(id);
-	}
-
-	/**
 	 * Removes a Resource from the NAM node.
 	 * 
 	 * @param id
@@ -406,6 +398,26 @@ public abstract class NetworkedAutonomicMachine implements
 		return poolForMigration;
 	}
 
+	/**
+	 * Gets the Resources List of the NAM node.
+	 * 
+	 * @return a HashMap storing the Resources of the NAM node.
+	 */
+	public HashMap<String, ResourceDescriptor> getResources() {
+		return resourceDescriptors;
+	}
+
+	/**
+	 * Get a Resource of the NAM node.
+	 * 
+	 * @param id
+	 *            a String identifying the required Resource
+	 * @return the required Resource of the NAM node.
+	 */
+	public ResourceDescriptor getResource(String id) {
+		return resourceDescriptors.get(id);
+	}
+	
 	/**
 	 * Adds a file to the classpath.
 	 * 
@@ -619,6 +631,13 @@ public abstract class NetworkedAutonomicMachine implements
 								.println("SERVER: message received from client = \""
 										+ line + "\"");
 
+						// Get the list of all files
+						String filename = "";
+						File folder = new File(classesJarDexDir);
+						File[] listOfFiles = folder.listFiles();
+						
+						boolean found = false; // It is set to true when the file to be migrated is found
+
 						if (line.equalsIgnoreCase("FM")) {
 
 							System.out.println("SERVER: client asked for a FM");
@@ -628,120 +647,248 @@ public abstract class NetworkedAutonomicMachine implements
 							System.out.println("SERVER: client requested \""
 									+ line + "\"");
 
-							String className = null;
+							// Data of the file to be migrated
+							String className = line;
 							String completeName = null;
+							String fileToBeMigrated = "";
 							File file = null;
-
-							if (line.equalsIgnoreCase("ChordFunctionalModule")) {
-								className = "ChordFunctionalModule";
-								completeName = "it.unipr.ce.dsg.examples.chordfm."
-										+ className;
-								if (getClientPlatform(0).equalsIgnoreCase("F"))
-									file = new File(
-											"examples/migration/chordfm.jar");
-								else
-									file = new File(
-											"examples/migration/chordfm.dex");
+							
+							for (int i = 0; i < listOfFiles.length; i++) {
+ 								
+								if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".jar")) {
+									filename = listOfFiles[i].getAbsolutePath();
+									
+									System.out.println("SERVER: checking inside file " + filename);
+									
+									/* The JarFile class allows to read the content of a Jar
+									 * @param: a string representing the path of the jar to open
+									 * @param: a boolean stating whether or not to verify if the Jar is signed
+									 */
+									JarFile jarFile = new JarFile(filename, false);
+									
+									Enumeration<JarEntry> entries = jarFile.entries();
+									
+									while (entries.hasMoreElements()) {
+										
+										JarEntry entry = entries.nextElement();
+										String entryName = entry.getName();
+								        
+										if (entryName.endsWith(".class")) {
+								        	
+											String[] currentClassName = entryName.split("/");
+											String justClassName = currentClassName[currentClassName.length - 1].replace(".class", "");
+								        	
+											System.out.println("SERVER: comparing " + justClassName + " with " + line);
+											
+											if(line.equalsIgnoreCase(justClassName)) {
+								        		
+								        		// listOfFiles[i] is the file to be migrated
+												
+								        		/* Using BCEL class parser to get the package name for the class
+								        		 * A new copy of the class file is created and then parsed to get it
+								        		 */
+												
+								        		File f = new File("temp.class");
+								        		
+								        		// Copying the content of the class in the new file
+								        		InputStream inputS = jarFile.getInputStream(entry);
+								        	    java.io.FileOutputStream fos = new FileOutputStream(f);
+								        	    while (inputS.available() > 0) {
+								        	    	fos.write(inputS.read());
+								        	    }
+								        	    fos.close();
+								        	    inputS.close();
+								        	    
+								        	    if(f.exists()) {
+								        	    
+								        	    	found = true;
+									        		
+									        		fileToBeMigrated = listOfFiles[i].getAbsolutePath();
+									        		
+									        	    // Parsing the class to get its package name
+									        	    ClassParser parser = new ClassParser(f.getAbsolutePath());
+													completeName = parser.parse().getPackageName() + "." + className;
+													
+													// Deleting the copy of the class
+													boolean success = f.delete();
+												    if (!success)
+												      throw new IllegalArgumentException("Delete: deletion failed");
+									        		
+									        		break;
+								        	    }
+								        	}
+								        }
+									}
+								}
+								
+								if(found) break;
 							}
-							if (line.equalsIgnoreCase("TestFunctionalModule")) {
-								className = "TestFunctionalModule";
-								completeName = "it.unipr.ce.dsg.examples.migration."
-										+ className;
+							
+							if(found) {
+								
 								if (getClientPlatform(0).equalsIgnoreCase("F"))
-									file = new File(
-											"examples/migration/testfm.jar");
+									file = new File(fileToBeMigrated);
 								else
-									file = new File(
-											"examples/migration/testfm.dex");
+									file = new File(fileToBeMigrated.replace(".jar", ".dex"));
+
+								System.out.println("SERVER: sending file name = "
+										+ file.getName());
+								System.out
+										.println("SERVER: sending FM main class name = "
+												+ className);
+								System.out
+										.println("SERVER: sending FM main class complete name = "
+												+ completeName);
+	
+								OutputStream outputStream = cs.getOutputStream();
+								ObjectOutputStream oos = new ObjectOutputStream(
+										outputStream);
+								to = new BundleDescriptor(file.getName(),
+										className, completeName);
+								oos.writeObject(to);
+	
+								System.out.println("SERVER: sending file...");
+	
+								byte[] myBytearray = new byte[(int) file.length()];
+								FileInputStream fis = new FileInputStream(file);
+								BufferedInputStream bis = new BufferedInputStream(
+										fis);
+								bis.read(myBytearray, 0, myBytearray.length);
+								OutputStream outStream = cs.getOutputStream();
+								outStream.write(myBytearray, 0, myBytearray.length);
+								outStream.flush();
+	
+								System.out.println("SERVER: done sending");
+	
+								bis.close();
+								oos.close();
+							
 							}
-
-							System.out.println("SERVER: sending file name = "
-									+ file.getName());
-							System.out
-									.println("SERVER: sending FM main class name = "
-											+ className);
-							System.out
-									.println("SERVER: sending FM main class complete name = "
-											+ completeName);
-
-							OutputStream outputStream = cs.getOutputStream();
-							ObjectOutputStream oos = new ObjectOutputStream(
-									outputStream);
-							to = new BundleDescriptor(file.getName(),
-									className, completeName);
-							oos.writeObject(to);
-
-							System.out.println("SERVER: sending file...");
-
-							byte[] myBytearray = new byte[(int) file.length()];
-							FileInputStream fis = new FileInputStream(file);
-							BufferedInputStream bis = new BufferedInputStream(
-									fis);
-							bis.read(myBytearray, 0, myBytearray.length);
-							OutputStream outStream = cs.getOutputStream();
-							outStream.write(myBytearray, 0, myBytearray.length);
-							outStream.flush();
-
-							System.out.println("SERVER: done sending");
-
-							bis.close();
-							oos.close();
-
+							else {
+								System.out.println("SERVER: requested FM is not available");
+								
+								// Informing the client that the FM could not be found
+								OutputStream outputStream = cs.getOutputStream();
+								ObjectOutputStream oos = new ObjectOutputStream(
+										outputStream);
+								to = new BundleDescriptor("notAvailable",
+										"", "");
+								oos.writeObject(to);
+								oos.close();
+							}
 						}
 
 						else if (line.equalsIgnoreCase("SERVICE")) {
 
-							System.out
-									.println("SERVER: client asked for a service");
+							System.out.println("SERVER: client asked for a service");
 
 							line = new String(is.readLine());
 
 							System.out.println("SERVER: client requested \""
 									+ line + "\"");
 
-							String serviceClassName = "TestService";
-							String serviceCompleteName = "it.unipr.ce.dsg.examples.migration."
-									+ serviceClassName;
+							// Data of the file to be migrated
+							String className = line;
+							String completeName = null;
+							String fileToBeMigrated = "";
 							File file = null;
+							
+							for (int i = 0; i < listOfFiles.length; i++) {
+ 								
+								if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(".java")) {
+									filename = listOfFiles[i].getAbsolutePath();
+									
+									System.out.println("SERVER: checking file " + filename);
+									
+									String[] currentClassName = filename.split("/");
+									String justClassName = currentClassName[currentClassName.length - 1].replace(".java", "");
+									
+									/* Since NAME.java file contain the class NAME, if the name of the current file
+									 * is equal to the required service's name, then current file is the correct one
+									 */
+									if(line.equalsIgnoreCase(justClassName)) {
+										fileToBeMigrated = listOfFiles[i].getAbsolutePath();
+										
+										FileInputStream fis = new FileInputStream(listOfFiles[i]);
 
-							if (getClientPlatform(0).equalsIgnoreCase("F"))
-								file = new File(
-										"examples/migration/TestService.java");
-							else
-								file = new File(
-										"examples/migration/testservice.dex");
-
-							System.out.println("SERVER: sending file name = "
-									+ file.getName());
-							System.out
-									.println("SERVER: sending service class name = "
-											+ serviceClassName);
-							System.out
-									.println("SERVER: sending service class complete name = "
-											+ serviceCompleteName);
-
-							OutputStream outputStream = cs.getOutputStream();
-							ObjectOutputStream oos = new ObjectOutputStream(
-									outputStream);
-							to = new BundleDescriptor(file.getName(),
-									serviceClassName, serviceCompleteName);
-							oos.writeObject(to);
-
-							System.out.println("SERVER: sending file...");
-
-							byte[] myBytearray = new byte[(int) file.length()];
-							FileInputStream fis = new FileInputStream(file);
-							BufferedInputStream bis = new BufferedInputStream(
-									fis);
-							bis.read(myBytearray, 0, myBytearray.length);
-							OutputStream outStream = cs.getOutputStream();
-							outStream.write(myBytearray, 0, myBytearray.length);
-							outStream.flush();
-
-							System.out.println("SERVER: done sending");
-
-							bis.close();
-							oos.close();
+										String fileContent = "";
+										int oneByte;
+										while ((oneByte = fis.read()) != -1) {
+											// System.out.write(oneByte);
+											// System.out.print((char)oneByte); // could also do this
+											char l = (char)oneByte;
+											fileContent += l;
+										}
+										System.out.flush();
+										fis.close();
+										
+										Pattern p = Pattern.compile("package.*;");  
+					                    Matcher m = p.matcher(fileContent);  
+					                    if(m.find()) {
+					                        int occurrenceStart = m.start();
+					                        int occurrenceEnd = m.end();
+					                        
+					                        completeName = fileContent.substring(occurrenceStart, occurrenceEnd).replace("package ", "").replace(";", "") + "." + className;
+					                        
+					                        found = true;
+					                    }
+										
+										break;
+									}
+								}
+							}
+							
+							if(found) {
+								
+								if (getClientPlatform(0).equalsIgnoreCase("F"))
+									file = new File(fileToBeMigrated);
+								else
+									file = new File(fileToBeMigrated.replace(".java", ".dex"));
+								
+								System.out.println("SERVER: sending file name = "
+										+ file.getName());
+								System.out
+										.println("SERVER: sending service class name = "
+												+ className);
+								System.out
+										.println("SERVER: sending service class complete name = "
+												+ completeName);
+	
+								OutputStream outputStream = cs.getOutputStream();
+								ObjectOutputStream oos = new ObjectOutputStream(
+										outputStream);
+								to = new BundleDescriptor(file.getName(),
+										className, completeName);
+								oos.writeObject(to);
+	
+								System.out.println("SERVER: sending file...");
+	
+								byte[] myBytearray = new byte[(int) file.length()];
+								FileInputStream fis = new FileInputStream(file);
+								BufferedInputStream bis = new BufferedInputStream(
+										fis);
+								bis.read(myBytearray, 0, myBytearray.length);
+								OutputStream outStream = cs.getOutputStream();
+								outStream.write(myBytearray, 0, myBytearray.length);
+								outStream.flush();
+	
+								System.out.println("SERVER: done sending");
+	
+								bis.close();
+								oos.close();
+							}
+							else {
+								System.out.println("SERVER: requested FM is not available");
+								
+								// Informing the client that the FM could not be found
+								OutputStream outputStream = cs.getOutputStream();
+								ObjectOutputStream oos = new ObjectOutputStream(
+										outputStream);
+								to = new BundleDescriptor("notAvailable",
+										"", "");
+								oos.writeObject(to);
+								oos.close();
+							}
 						}
 						os.close();
 						is.close();
@@ -817,51 +964,54 @@ public abstract class NetworkedAutonomicMachine implements
 			className = to.getMainClassName();
 			completeClassName = to.getCompleteName();
 
-			System.out.println("CLIENT: file name received from server = "
-					+ fileName);
-			System.out
-					.println("CLIENT: main class name received from server = "
-							+ className);
-			System.out
-					.println("CLIENT: complete class name received from server = "
-							+ completeClassName);
-			System.out.println("CLIENT: waiting for " + fType + " file "
-					+ fileName);
-
-			/* Writing the received file */
-
-			byte[] mybytearray = new byte[filesize];
-			InputStream inputStr = s.getInputStream();
-			String receivedFilename = locationToSaveReceivedFile + fileName;
-			FileOutputStream fos = new FileOutputStream(receivedFilename);
-			BufferedOutputStream bos = new BufferedOutputStream(fos);
-			bytesRead = inputStr.read(mybytearray, 0, mybytearray.length);
-			current = bytesRead;
-
-			bos.write(mybytearray, 0, current);
-			bos.flush();
-			bos.close();
-			fos.close();
-
-			/* End of writing */
-
-			is.close();
-			os.close();
-			s.close();
-
-			s.close();
-
-			File f = new File(receivedFilename);
-			if (f.exists()) {
+			if(!fileName.equalsIgnoreCase("notAvailable")) { // Checking if the node to which the request was issued could find the resource
+			
+				System.out.println("CLIENT: file name received from server = "
+						+ fileName);
 				System.out
-						.println("CLIENT: " + f.toURI().toURL() + " received");
+						.println("CLIENT: main class name received from server = "
+								+ className);
+				System.out
+						.println("CLIENT: complete class name received from server = "
+								+ completeClassName);
+				System.out.println("CLIENT: waiting for " + fType + " file "
+						+ fileName);
+	
+				/* Writing the received file */
+	
+				byte[] mybytearray = new byte[filesize];
+				InputStream inputStr = s.getInputStream();
+				String receivedFilename = locationToSaveReceivedFile + fileName;
+				FileOutputStream fos = new FileOutputStream(receivedFilename);
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				bytesRead = inputStr.read(mybytearray, 0, mybytearray.length);
+				current = bytesRead;
+	
+				bos.write(mybytearray, 0, current);
+				bos.flush();
+				bos.close();
+				fos.close();
+	
+				/* End of writing */
+	
+				is.close();
+				os.close();
+				s.close();
+	
+				s.close();
+	
+				File f = new File(receivedFilename);
+				if (f.exists()) {
+					System.out
+							.println("CLIENT: " + f.toURI().toURL() + " received");
+	
+					obj = addFileToClassPath(receivedFilename, completeClassName,
+							fType);
+				} else {
+					System.out.println("CLIENT: file not received");
+				}
 
-				obj = addFileToClassPath(receivedFilename, completeClassName,
-						fType);
-			} else {
-				System.out.println("CLIENT: file not received");
 			}
-
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		} catch (Exception e) {
