@@ -6,7 +6,9 @@ Folder examples/migration/src contains the code of a demo that implements a NAM 
 
 It includes three classes:
 
-{{{Migration extends NetworkedAutonomicMachine}}}
+{{{
+Migration extends NetworkedAutonomicMachine
+}}}
 
 This class contains the {{{main}}} method that has to be provided with the role the NAM assumes, either {{{SERVER}}} or {{{CLIENT}}}. Both extend NetworkedAutonomicMachine class and specify, as first parameter of its constructor, the size of the pool used by the server for the management of incoming migration requests and, as second parameter, the path where files to be sent and received are stored.
 
@@ -33,11 +35,15 @@ else {
 }
 }}}
 
-{{{TestFunctionalModule extends FunctionalModule}}}
+{{{
+TestFunctionalModule extends FunctionalModule
+}}}
 
 This class is a very simple Functional Module that just prints a message stating the id of the NAM it belongs to.
 
-{{{TestService extends Service}}}
+{{{
+TestService extends Service
+}}}
 
 This class is simple service that creates a thread, simulates data acquisition from environmental sensors and prints related messages.
 
