@@ -48,7 +48,7 @@ public class DemoNam extends NetworkedAutonomicMachine {
 	
 	public DemoNam(String configuration) {
 		
-		super(10); // The parameter is the thread pool size
+		super(10, "examples/migration");
 		
 		this.setId("demonam");
 		cfm = new ChordFunctionalModule(this);
