@@ -67,7 +67,7 @@ dx --dex --output = output.dex input.jar
 
 The file output.dex can be placed in the path the server uses to store files to be migrated (as shown above, it is the second parameter of the constructor found in class Migration).
 
-The path to save the received items, which the client specifies to NetworkedAutonomicMachine's constructor, should take into account the sandbox limitation.
+The path to save the received items, which the client specifies to NetworkedAutonomicMachine's constructor, should take into account the limits of Android application sandbox.
 
 {{{
 String pathToSaveFile = Environment.getExternalStorageDirectory().toString() + "/";
