@@ -1,0 +1,106 @@
+#summary Migration for desktop and Android nodes Tutorial.
+
+= Migration =
+
+Folder examples/migration/src contains the code of a demo that implements a NAM managing the migration of two Fuctional Modules and a service.
+
+It includes three classes:
+
+*Migration* contains the {{{main}}} method that has to be provided with the role the NAM assumes, either {{{SERVER}}} or {{{CLIENT}}}. Both extend NetworkedAutonomicMachine class and specify, as first parameter of its constructor, the size of the pool used by the server for the management of incoming migration requests and, as second parameter, the path where files to be sent and received are stored.
+
+{{{
+super(10, "examples/migration");
+}}}
+
+The server invokes the method activateMigration that creates a socket and waits for incoming connections. The client invokes the methods {{{findRemoteFM}}} and {{{findRemoteService}}} to request items. Both functions take as parameters the name of the required Functional Module, or the Service, and the platform. This is an enumeration data type whose possible values are {{{DESKTOP}}} and {{{ANDROID}}}. Platform specification is required since desktop nodes use Jar files, while Android nodes require Dex files.
+
+{{{
+Migration migration = new Migration(args[0]);
+if (args[0].equals("SERVER")) {
+	migration.activateMigration();
+}
+else {
+	FunctionalModule chordfm = migration.findRemoteFM("ChordFunctionalModule", Platform.DESKTOP);
+	FunctionalModule testfm = migration.findRemoteFM("TestFunctionalModule", Platform.DESKTOP);
+	Service service = migration.findRemoteService("TestService", Platform.DESKTOP);
+
+	if (service != null) {
+		serviceId = "TestService";
+		testfm.addProvidedService(serviceId, service);
+	}
+}
+}}}
+
+*TestFunctionalModule* is a very simple Functional Module that just prints a message stating the id of the NAM it belongs to.
+
+*TestService* is simple service that creates a thread, simulates data acquisition from environmental sensors and prints related messages.
+
+To run the demo you should first launch the server and then the client. The latter will receive {{{Chord}}} Functional Module and the two items described above. After receiving each, the client adds them to the classpath, instantiates their main classes and adds the service to the functional module. Then the NAM tries to join a Chord network and runs the service.
+
+
+= Android migration =
+
+To migrate Functional Modules and Services to an Android node, the Jar files must be converted into Dex files. To do this, the standard {{{ADT}}} installation provides the {{{dx}}} tool. If input.jar is the file to convert, you can use the following instruction:
+
+{{{
+dx --dex --output = output.dex input.jar
+}}}
+
+The file output.dex can be placed in the path the server uses to store files to be migrated (as shown above, it is the second parameter of the constructor found in class Migration).
+
+The path to save the received items, which the client specifies to NetworkedAutonomicMachine's constructor, should take into account the sandbox limitation.
+
+{{{
+String pathToSaveFile = Environment.getExternalStorageDirectory().toString() + "/";
+super(10, pathToSaveFile);
+}}}
+
+To manage the migration we suggest the use of an asynchronous task invoking the functions {{{findRemoteFM}}}, or {{{findRemoteService}}}, by specifying the Android platform as their second parameter.
+
+{{{
+this.findRemoteFM("TestFunctionalModule", Platform.ANDROID);		
+BundleDescriptor toClient = this.getDescriptor();
+fileName = toClient.getFileName();
+completeClassName = toClient.getCompleteName();
+testfm = (FunctionalModule)addFileToClassPath(fileName, completeClassName, "FunctionalModule");
+}}}
+
+The function {{{addFileToClasspath}}} can use a {{{DexClassLoader}}} object to write an optimized version of the received Dex file and supply it to the class loader. The type of the item is required for appropriate type cast; in the example above is passed as third parameter.
+
+{{{
+String dexFile = "/output.dex";
+File f = new File(Environment.getExternalStorageDirectory().toString() + dexFile);
+final File optimizedDexOutputPath = getDir("outdex", 0);
+DexClassLoader classLoader = new DexClassLoader(f.getAbsolutePath(),
+optimizedDexOutputPath.getAbsolutePath(),null, getClassLoader());
+Class<?> myClass = classLoader.loadClass(completeClassName);
+}}}
+
+It is possible to instantiate the main class of the Functional Module, or the Service, and to invoke its methods using Java Reflection. The code below also shows how the item's type information is used.
+
+{{{
+Object obj = null;
+Constructor<?> cs;
+if(fType.equalsIgnoreCase("FunctionalModule")) {
+	cs = classLoader.loadClass(completeClassName).getConstructor(NetworkedAutonomicMachine.class);
+	obj = (FunctionalModule)cs.newInstance(this);
+}
+if(fType.equalsIgnoreCase("Service")) {
+	cs = classLoader.loadClass(completeClassName).getConstructor();
+	obj = (Service)cs.newInstance();
+}
+
+Method m = myClass.getMethod(methodToInvoke);
+m.invoke(obj);
+}}}
+
+*Reflection* allows to get many information regarding the class, such as the list of its methods:
+
+{{{
+Method[] methods = myClass.getMethods();
+ArrayList<Method> methodsAL = new ArrayList<Method>();
+for(int mIndex = 0; mIndex < methods.length; mIndex++)
+	methodsAL.add(methods[mIndex]);
+}}}
+
+Further information about Android dynamic class loading and Java Reflection can be found in our [http://dsgwords.blogspot.it/2013/03/android-runtime-class-loading.html blog]
