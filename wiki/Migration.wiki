@@ -1,21 +1,21 @@
-#summary Migration for desktop and Android nodes Tutorial.
+#summary Tutorial on module and service migration on desktop and Android machines
 
 = Migration =
 
-Folder examples/migration/src contains the code of a demo that implements a NAM managing the migration of two Fuctional Modules and a service. It includes three classes.
+Folder examples/migration/src contains the code of a demo which implements a NAM which supports the migration of two Fuctional Modules and one Service. Three classes are included in such a demo.
 
 The first is:
 {{{
 Migration extends NetworkedAutonomicMachine
 }}}
 
-This class contains the {{{main}}} method that has to be provided with the role the NAM assumes, either {{{SERVER}}} or {{{CLIENT}}}. Both extend NetworkedAutonomicMachine class and specify, as first parameter of its constructor, the size of the pool used by the server for the management of incoming migration requests and, as second parameter, the path where files to be sent and received are stored.
+This class contains the {{{main}}} method, which requires as argument a String specifying the role the NAM assumes, either {{{SERVER}}} or {{{CLIENT}}}. By extending NetworkedAutonomicMachine, the Migration class requires, as a first parameter of its constructor, the size of the thread pool which is created to manage  incoming migration requests and, as a second parameter, the path where files to be sent and received are stored.
 
 {{{
 super(10, "examples/migration");
 }}}
 
-The server invokes the method activateMigration that creates a socket and waits for incoming connections. The client invokes the methods {{{findRemoteFM}}} and {{{findRemoteService}}} to request items. Both functions take as parameters the name of the required Functional Module, or the Service, and the platform. This is an enumeration data type whose possible values are {{{DESKTOP}}} and {{{ANDROID}}}. Platform specification is required since desktop nodes use Jar files, while Android nodes require Dex files.
+The migration server invokes the {{{activateMigration()}}} method which creates a socket and waits for incoming connections. The client invokes the {{{findRemoteFM()}}} and {{{findRemoteService()}}} methods to request remote items (Functional Modules or Services, respectively). Both methods take as parameters the name of the required Functional Module or Service, and the platform. The latter is an enumeration data type whose possible values are {{{DESKTOP}}} and {{{ANDROID}}}. Platform specification is required since desktop nodes use Jar files, while Android nodes require Dex files.
 
 {{{
 Migration migration = new Migration(args[0]);
@@ -41,7 +41,7 @@ The second class is:
 TestFunctionalModule extends FunctionalModule
 }}}
 
-This class is a very simple Functional Module that just prints a message stating the id of the NAM it belongs to.
+Such a class is a very simple Functional Module which just prints a message stating the id of the NAM it belongs to.
 
 ----
 The third class is:
@@ -54,7 +54,7 @@ This class is simple service that creates a thread, simulates data acquisition f
 
 ----
 
-To run the demo you should first launch the server and then the client. The latter will receive {{{Chord}}} Functional Module and the two items described above. After receiving each, the client adds them to the classpath, instantiates their main classes and adds the service to the functional module. Then the NAM tries to join a Chord network and runs the service.
+To run the demo, you should first launch the server and then the client. The latter will receive {{{Chord}}} Functional Module and the two items described above. After receiving each item, the client adds it to the classpath, instantiates its main class and adds the Service to the Functional Module. Then the NAM tries to join a Chord network and runs the service.
 
 
 = Android migration =
@@ -72,7 +72,7 @@ String pathToSaveFile = Environment.getExternalStorageDirectory().toString() + "
 super(10, pathToSaveFile);
 }}}
 
-To manage the migration we suggest the use of an asynchronous task invoking the functions {{{findRemoteFM}}}, or {{{findRemoteService}}}, by specifying the Android platform as their second parameter.
+To manage the migration we suggest the use of an asynchronous task, by invoking the {{{findRemoteFM()}}} or {{{findRemoteService()}}} methods, by specifying the Android platform as their second parameter.
 
 {{{
 this.findRemoteFM("TestFunctionalModule", Platform.ANDROID);		
@@ -93,7 +93,7 @@ optimizedDexOutputPath.getAbsolutePath(),null, getClassLoader());
 Class<?> myClass = classLoader.loadClass(completeClassName);
 }}}
 
-It is possible to instantiate the main class of the Functional Module, or the Service, and to invoke its methods using Java Reflection. The code below also shows how the item's type information is used.
+It is possible to instantiate the main class of the Functional Module, or the Service, and to invoke its methods using Java *Reflection*. The code below also shows how the item's type information is used.
 
 {{{
 Object obj = null;
