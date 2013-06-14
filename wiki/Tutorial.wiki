@@ -1,4 +1,4 @@
-#summary NAM4J first tutorial.
+#summary NAM4J introductive tutorial.
 
 = Introduction =
 
