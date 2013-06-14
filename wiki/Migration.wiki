@@ -9,7 +9,7 @@ The first is:
 Migration extends NetworkedAutonomicMachine
 }}}
 
-This class contains the {{{main}}} method, which requires as argument a String specifying the role the NAM assumes, either {{{SERVER}}} or {{{CLIENT}}}. By extending NetworkedAutonomicMachine, the Migration class requires, as a first parameter of its constructor, the size of the thread pool which is created to manage  incoming migration requests and, as a second parameter, the path where files to be sent and received are stored.
+This class contains the {{{main}}} method, which requires as argument a String specifying the role the NAM assumes, either {{{SERVER}}} or {{{CLIENT}}}. By extending {{{NetworkedAutonomicMachine}}}, the {{{Migration}}} class requires, as a first parameter of its constructor, the size of the thread pool which is created to manage  incoming migration requests and, as a second parameter, the path where files to be sent and received are stored.
 
 {{{
 super(10, "examples/migration");
