@@ -122,6 +122,6 @@ for(int mIndex = 0; mIndex < methods.length; mIndex++)
 	methodsAL.add(methods[mIndex]);
 }}}
 
-Further information about Android dynamic class loading and Java Reflection can be found in our [http://dsgwords.blogspot.it/2013/03/android-runtime-class-loading.html blog]
+Further information about Android dynamic class loading and Java Reflection can be found in our [http://dsgwords.blogspot.it/2013/03/android-runtime-class-loading.html blog].
 
 <g:plusone size="medium"></g:plusone>
