@@ -4,7 +4,7 @@
 
 You can get the source code from svn (unless a binary version is released).
 
-Folder src/ contains the middleware, that includes 6 packages:
+Folder src/ contains the middleware, that includes 7 packages:
 {{{
 it.unipr.ce.dsg.nam4j.interfaces
 it.unipr.ce.dsg.nam4j.impl
@@ -12,6 +12,7 @@ it.unipr.ce.dsg.nam4j.impl.context
 it.unipr.ce.dsg.nam4j.impl.resource
 it.unipr.ce.dsg.nam4j.impl.service
 it.unipr.ce.dsg.nam4j.impl.task
+it.unipr.ce.dsg.nam4j.thread
 }}}
 
 Folder examples/ contains demo code. Details are given below.
@@ -151,3 +152,7 @@ Subscribe (extends Service)
 Temperature (extends Parameter)
 TemperatureNotification (extends ContextEvent)
 }}}
+
+
+= migration =
+This folder contains the code that implements a NAM managing the migration of Fuctional Modules and Services. Description and code examples can be found in [https://code.google.com/p/nam4j/wiki/Migration this tutorial].
