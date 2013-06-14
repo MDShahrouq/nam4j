@@ -155,4 +155,4 @@ TemperatureNotification (extends ContextEvent)
 
 
 = migration =
-This folder contains the code that implements a NAM managing the migration of Fuctional Modules and Services. Description and code examples can be found in [https://code.google.com/p/nam4j/wiki/Migration this tutorial].
+This folder contains the code which implements a NAM managing the migration of Fuctional Modules and Services. Description and code examples can be found in [https://code.google.com/p/nam4j/wiki/Migration this tutorial].
