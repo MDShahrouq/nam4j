@@ -6,7 +6,9 @@ Folder examples/migration/src contains the code of a demo that implements a NAM 
 
 It includes three classes:
 
-*Migration* contains the {{{main}}} method that has to be provided with the role the NAM assumes, either {{{SERVER}}} or {{{CLIENT}}}. Both extend NetworkedAutonomicMachine class and specify, as first parameter of its constructor, the size of the pool used by the server for the management of incoming migration requests and, as second parameter, the path where files to be sent and received are stored.
+{{{Migration extends NetworkedAutonomicMachine}}}
+
+This class contains the {{{main}}} method that has to be provided with the role the NAM assumes, either {{{SERVER}}} or {{{CLIENT}}}. Both extend NetworkedAutonomicMachine class and specify, as first parameter of its constructor, the size of the pool used by the server for the management of incoming migration requests and, as second parameter, the path where files to be sent and received are stored.
 
 {{{
 super(10, "examples/migration");
@@ -31,9 +33,13 @@ else {
 }
 }}}
 
-*TestFunctionalModule* is a very simple Functional Module that just prints a message stating the id of the NAM it belongs to.
+{{{TestFunctionalModule extends FunctionalModule}}}
 
-*TestService* is simple service that creates a thread, simulates data acquisition from environmental sensors and prints related messages.
+This class is a very simple Functional Module that just prints a message stating the id of the NAM it belongs to.
+
+{{{TestService extends Service}}}
+
+This class is simple service that creates a thread, simulates data acquisition from environmental sensors and prints related messages.
 
 To run the demo you should first launch the server and then the client. The latter will receive {{{Chord}}} Functional Module and the two items described above. After receiving each, the client adds them to the classpath, instantiates their main classes and adds the service to the functional module. Then the NAM tries to join a Chord network and runs the service.
 
