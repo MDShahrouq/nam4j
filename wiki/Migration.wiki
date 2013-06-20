@@ -54,7 +54,7 @@ This class is simple service that creates a thread, simulates data acquisition f
 
 ----
 
-To run the demo, you should first launch the server and then the client. The latter will receive {{{Chord}}} Functional Module and the two items described above. After receiving each item, the client adds it to the classpath, instantiates its main class and adds the Service to the Functional Module. Then the NAM tries to join a Chord network and runs the service.
+To run the demo, you should first launch the server and then the client. To do that, create two run configurations in Eclipse using {{{it.unipr.ce.dsg.examples.migration.Migration}}} as main class. You also need to specify, as input parameter, {{{SERVER}}} for the first configuration and {{{CLIENT}}} for the second. The client will receive {{{Chord}}} Functional Module and the two items described above. After receiving each item, the client adds it to the classpath, instantiates its main class and adds the Service to the Functional Module. Then the NAM tries to join a Chord network and runs the service.
 
 
 = Android migration =
@@ -121,5 +121,3 @@ for(int mIndex = 0; mIndex < methods.length; mIndex++)
 }}}
 
 Further information about Android dynamic class loading and Java Reflection can be found in our [http://dsgwords.blogspot.it/2013/03/android-runtime-class-loading.html blog].
-
-<g:plusone size="medium"></g:plusone>
