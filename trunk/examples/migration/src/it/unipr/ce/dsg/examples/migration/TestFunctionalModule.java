@@ -13,5 +13,4 @@ public class TestFunctionalModule extends FunctionalModule {
 		System.out.println("\nI am " + this.getId() + " and I own to "
 				+ nam.getId());
 	}
-
 }
