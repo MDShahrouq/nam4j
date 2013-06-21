@@ -674,7 +674,7 @@ public abstract class NetworkedAutonomicMachine implements
 					 * original files.
 					 */
 					String receivedFilename = getMigrationStore() + "/"
-							+ fileName + "2" + "." + ext;
+							+ fileName + "." + ext;
 
 					FileOutputStream fos = new FileOutputStream(
 							receivedFilename);

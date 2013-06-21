@@ -19,6 +19,6 @@
 	<classpathentry kind="lib" path="lib/gson-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/sip2peer/sip2peer-1.0.jar"/>
-	<classpathentry kind="lib" path="lib/s2pChord-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/s2pChord.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
