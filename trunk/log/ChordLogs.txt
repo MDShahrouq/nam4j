@@ -1,1 +1,4 @@
-"I am cfm and I own to migration"
+"I am cfm and I own to demonam"
+"Service: Publish {\"id\":\"contextEvent\",\"name\":\"TemperatureNotification\",\"timestamp\":\"03/10/2013 22:27:27\",\"subject\":{\"id\":\"i21\",\"name\":\"Temperature\",\"value\":\"22\"},\"location\":{\"id\":\"param\",\"name\":\"Room\",\"value\":\"Building1-Apartment3-Kitchen\"}}"
+"Generated Resource String: 082ca7f6d464dcc5edd04ab17b8b9bea67a975f2"
+"Generated Resource Descriptor: TemperatureNotification--\u003e Subject:Temperature Location:Building1-Apartment3-Kitchen"
