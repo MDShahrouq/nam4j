@@ -9,7 +9,11 @@ import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 
 public class DemoNam extends NetworkedAutonomicMachine {
 
-	ChordFunctionalModule cfm = null;
+	private ChordFunctionalModule cfm = null;
+	private TaskManagerFunctionalModule tmfm = null;
+	private ReasonerFunctionalModule rfm = null;
+	private SensorFunctionalModule sfm = null;
+	
 	public ChordFunctionalModule getCfm() {
 		return cfm;
 	}
@@ -41,10 +45,6 @@ public class DemoNam extends NetworkedAutonomicMachine {
 	public void setSfm(SensorFunctionalModule sfm) {
 		this.sfm = sfm;
 	}
-
-	TaskManagerFunctionalModule tmfm = null;
-	ReasonerFunctionalModule rfm = null;
-	SensorFunctionalModule sfm = null;
 	
 	public DemoNam(String configuration) {
 		
