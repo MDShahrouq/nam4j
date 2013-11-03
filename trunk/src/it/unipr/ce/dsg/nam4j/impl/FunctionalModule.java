@@ -176,4 +176,11 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	public void execute(String requestorId, String requestedService, String parameters) {
 	}
 
+	/**
+	 * ContextEvent reception method
+	 * 
+	 * @param contextEvent a ContextEvent
+	 */
+	public void receive(ContextEvent contextEvent) {
+	}
 }
