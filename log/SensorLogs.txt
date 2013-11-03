@@ -1,0 +1,3 @@
+"I am sfm and I own to demonam"
+"03/10/2013 22:27:27"
+{"id":"contextEvent","name":"TemperatureNotification","timestamp":"03/10/2013 22:27:27","subject":{"id":"i21","name":"Temperature","value":"22"},"location":{"id":"param","name":"Room","value":"Building1-Apartment3-Kitchen"}}
