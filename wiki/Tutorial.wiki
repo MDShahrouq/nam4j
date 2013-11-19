@@ -152,7 +152,7 @@ Temperature (extends Parameter)
 TemperatureNotification (extends ContextEvent)
 }}}
 
-We adopt the following convention: domain-specific classes, like those listed above, are always grouped in an ontology package, which should be linked to all NAMs / functional modules that require those classes. Base classes ({{{Service}}}, {{{Parameter}}}, {{{ContextEvents}}}) are defined in different NAM4J packages - {{{context}}} and {{{service}}} - for the sake of modularity and coherence.
+We adopt the following convention: domain-specific classes, like those listed above, are always grouped in an ontology package, which should be linked to all NAMs / functional modules that require those classes. Base classes ({{{Service}}}, {{{Parameter}}}, {{{ContextEvent}}}) are defined in different NAM4J packages - {{{context}}} and {{{service}}} - for the sake of modularity and coherence.
 
 = migration =
 This folder contains the code which implements a NAM which supports the migration of Fuctional Modules and Services. Description and code examples can be found in [https://code.google.com/p/nam4j/wiki/Migration this tutorial].
