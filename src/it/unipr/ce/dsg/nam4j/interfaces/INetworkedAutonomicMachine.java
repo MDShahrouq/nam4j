@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 /**
  * <p>
- * This interface represents a networked Autonomic Machine (NAM).
+ * This interface represents a Networked Autonomic Machine (NAM).
  * </p>
  * 
  * <p>
