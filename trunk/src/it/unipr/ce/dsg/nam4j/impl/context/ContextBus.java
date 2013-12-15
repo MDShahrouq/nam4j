@@ -30,18 +30,35 @@ import it.unipr.ce.dsg.nam4j.impl.logger.Logger;
 public class ContextBus extends FunctionalModule {
 
 	private Logger logger = null;
-	private ArrayList<String> eventModuleList = null; // FIXME find a better data structure
+	private ArrayList<String> eventModuleList = null; // TODO find a better data structure
 	
+	/**
+     * constructor of the context bus
+     *
+     * @param nam, a reference to the NAM which hosts the context bus
+     */
 	public ContextBus(NetworkedAutonomicMachine nam) {
 		super(nam);
 		this.logger = new Logger("log/", "ContextBusLogs.txt");
 		eventModuleList = new ArrayList<String>();
 	}
 	
+	/**
+     * get the logger of the context bus
+     *
+     * @return logger
+     */
 	public Logger getLogger() {
 		return logger;
 	}
 
+	/**
+     * subscribe a functional module, specified by id, 
+     * to a type of context event, specified by name
+     *
+     * @param contextEventName
+     * @param functionalModuleId
+     */
 	public void subscribe(String contextEventName, String functionalModuleId) {
 		String eventModule = contextEventName + ":" + functionalModuleId;
 		if (!eventModuleList.contains(eventModule)) {
@@ -52,6 +69,13 @@ public class ContextBus extends FunctionalModule {
 			logger.log(eventModule + " was already in the eventModuleList, thus it has not been re-added");	
 	}
 	
+	/**
+     * unsubscribe a functional module, specified by id, 
+     * from a type of context event, specified by name
+     *
+     * @param contextEventName
+     * @param functionalModuleId
+     */
 	public void unsubscribe(String contextEventName, String functionalModuleId) {
 		String eventModule = contextEventName + ":" + functionalModuleId;
 		if (eventModuleList.contains(eventModule)) {
@@ -60,6 +84,13 @@ public class ContextBus extends FunctionalModule {
 		}
 	}
 	
+	/**
+     * publish a context event to the context bus;
+     * such a context event will be forwarded 
+     * to all interested functional modules
+     *
+     * @param contextEvent
+     */
 	public void publish(ContextEvent contextEvent) {
 		// get all the functional modules that subscribed to contextEvent
 		ArrayList<String> interestedModulesIds = new ArrayList<String>();
