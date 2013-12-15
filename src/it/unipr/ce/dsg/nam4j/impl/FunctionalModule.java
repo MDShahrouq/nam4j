@@ -104,18 +104,40 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	 * Implementation of IContextConsumer methods
 	 */
 	
+	/**
+     * Adds a consumable context event to the hashmap.
+     *
+     * @param id
+     * @param contextEvent
+     */
 	public void addConsumableContextEvent(String id, ContextEvent contextEvent) {
 		consumableContextEvents.put(id, contextEvent);
 	}
 	
+	/**
+     * Removes a consumable context event, given its id in the hash map.
+     *
+     * @param id
+     */
 	public void removeConsumableContextEvent(String id) {
 		consumableContextEvents.remove(id);
 	} 
 	
+	/**
+     * Returns the list of context events.
+     *
+     * @return the list of context events
+     */
 	public HashMap<String,ContextEvent> getConsumableContextEvents(){
 		return consumableContextEvents;
 	}
 	
+	/**
+     * Returns the consumable context event, given its id in the hash map.
+     *
+     * @param id
+     * @return the consumable context event
+     */
 	public ContextEvent getConsumableContextEvent(String id) {
 		return consumableContextEvents.get(id);
 	}
@@ -125,18 +147,40 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	 * Implementation of IContextProvider methods
 	 */
 	
+	/**
+     * Adds a provided context event to the hashmap.
+     *
+     * @param id
+     * @param contextEvent
+     */
 	public void addProvidedContextEvent(String id, ContextEvent contextEvent) {
 		providedContextEvents.put(id, contextEvent);
 	}
 	
+	/**
+     * Removes a provided context event, given its id in the hash map.
+     *
+     * @param id
+     */
 	public void removeProvidedContextEvent(String id) {
 		providedContextEvents.remove(id);
 	}
 	
+	/**
+     * Returns the list of provided context events.
+     *
+     * @return the list of provided context events
+     */
 	public HashMap<String,ContextEvent> getProvidedContextEvents(){
 		return providedContextEvents;
 	}
 	
+	/**
+     * Returns the provided context event, given its id in the hash map.
+     *
+     * @param id
+     * @return the provided context event
+     */
 	public ContextEvent getProvidedContextEvent(String id) {
 		return providedContextEvents.get(id);
 	}
@@ -146,18 +190,40 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	 * Implementation of IServiceConsumer methods
 	 */
 	
+	/**
+     * Adds a consumable service to the hashmap.
+     *
+     * @param id
+     * @param service
+     */
 	public void addConsumableService(String id, Service service) {
 		consumableServices.put(id, service);
 	}
 	
+	/**
+     * Removes a consumable service, given its id in the hash map.
+     *
+     * @param id
+     */
 	public void removeConsumableService(String id) {
 		consumableServices.remove(id);
 	} 
 	
+	/**
+     * Returns the list of consumable services.
+     *
+     * @return the list of consumable services
+     */
 	public HashMap<String,Service> getConsumableServices(){
 		return consumableServices;
 	}
 	
+	/**
+     * Returns the consumable service, given its id in the hash map.
+     *
+     * @param id
+     * @return the consumable service
+     */
 	public Service getConsumableService(String id) {
 		return consumableServices.get(id);
 	}
@@ -167,18 +233,40 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	 * Implementation of IServiceProvider methods
 	 */
 	
+	/**
+     * Adds a provided service to the hashmap.
+     * 
+     * @param id
+     * @param service.
+     */
 	public void addProvidedService(String id, Service service) {
 		providedServices.put(id, service);
 	}
 	
+	/**
+     * Removes a provided service, given its id in the hash map.
+     *
+     * @param id.
+     */
 	public void removeProvidedService(String id) {
 		providedServices.remove(id);
 	}
 	
+	/**
+     * Returns the list of provided services.
+     *
+     * @return the list of provided services
+     */
 	public HashMap<String, Service> getProvidedServices() {
 		return providedServices;
 	}
 	
+	/**
+     * Returns the provided service, given its id in the hash map.
+     *
+     * @param id
+     * @return the provided service
+     */
 	public Service getProvidedService(String id) {
 		return providedServices.get(id);
 	}
