@@ -24,6 +24,9 @@ public class IllegalStateException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	
+	/**
+     * constructor
+     */
 	public IllegalStateException(String errorMsg) {
 		super(errorMsg);
 	}

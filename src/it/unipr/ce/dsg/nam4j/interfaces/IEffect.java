@@ -23,30 +23,30 @@ package it.unipr.ce.dsg.nam4j.interfaces;
 public interface IEffect {
 
 	/**
-     * set the Effect name.
+     * set the effect name
      *
-     * @param name.
+     * @param name
      */
 	void setName(String name);
 	
 	/**
-     * get the Effect name.
+     * get the effect name
      *
-     * @return the name of the Effect.
+     * @return the name of the effect
      */
 	String getName();
 	
 	/**
-     * set the Effect id.
+     * set the effect id
      *
-     * @param id.
+     * @param id
      */
 	void setId(String id);
 	
 	/**
-     * get the Effect id.
+     * get the effect id
      *
-     * @return the id of the Effect.
+     * @return the id of the effect
      */
 	String getId();
 }

@@ -29,58 +29,61 @@ public class Parameter implements IParameter {
 	String name = "Parameter";
 	String value = "value";
 	
+	/**
+     * constructor
+     */
 	public Parameter() {
 	}
 	
 	/**
-     * set the Parameter name.
+     * set the parameter name
      *
-     * @param name.
+     * @param name
      */
 	protected void setName(String name) {
 		this.name = name;
 	}
 	
 	/**
-     * get the Parameter name.
+     * get the parameter name
      *
-     * @return the name of the Input.
+     * @return the name of the parameter
      */
 	public String getName() {
 		return this.name;
 	}
 	
 	/**
-     * set the Parameter id.
+     * set the parameter id
      *
-     * @param id.
+     * @param id
      */
 	public void setId(String id) {
 		this.id = id;
 	}
 	
 	/**
-     * get the Parameter id.
+     * get the parameter id
      *
-     * @return the id of the Parameter.
+     * @return the id of the parameter
      */
 	public String getId() {
 		return this.id;
 	}
 	
 	/**
-     * set the Parameter value.
+     * set the parameter value
      *
-     * @param value.
+     * @param value
      */
 	public void setValue(String value) {
 		this.value = value;
 	}
 	
 	/**
-     * get the Parameter value.
+     * get the parameter value
      *
-     * @return the value of the Parameter.
+     * @return the value of the parameter
      */
 	public String getValue() {
 		return this.value;

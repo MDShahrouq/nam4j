@@ -23,30 +23,30 @@ package it.unipr.ce.dsg.nam4j.interfaces;
 public interface IResourceDescriptor {
 
 	/**
-     * set the Resource name.
+     * set the resource name
      *
-     * @param name.
+     * @param name
      */
 	void setName(String name);
 	
 	/**
-     * get the Resource name.
+     * get the resource name
      *
-     * @return the name of the Resource.
+     * @return the name of the resource
      */
 	String getName();
 	
 	/**
-     * set the Resource id.
+     * set the resource id
      *
-     * @param id.
+     * @param id
      */
 	void setId(String id);
 	
 	/**
-     * get the Resource id.
+     * get the resource id
      *
-     * @return the id of the Resource.
+     * @return the id of the resource
      */
 	String getId();
 

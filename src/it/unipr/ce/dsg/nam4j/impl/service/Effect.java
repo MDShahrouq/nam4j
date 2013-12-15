@@ -26,27 +26,56 @@ public class Effect implements IEffect {
 	String id = "effect";
 	String name = "Effect";
 	
+	/**
+     * constructor
+     */
 	public Effect() {
 	}
 	
+	/**
+     * set the effect name
+     *
+     * @param name
+     */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+     * get the effect name
+     *
+     * @return the name of the effect
+     */
 	public String getName() {
 		return name;
 	}
 
+	/**
+     * set the effect id
+     *
+     * @param id
+     */
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	/**
+     * get the effect id
+     *
+     * @return the id of the effect
+     */
 	public String getId() {
 		return id;
 	}
 
-	public boolean equals(Object obj) {
-		return this.id.equals(((Effect)obj).getId());
+	/**
+     * compares two effects
+     * 
+     * @param effect
+     * @return true if the effect's id is equal to the one of the callee 
+     */
+	public boolean equals(Effect effect) {
+		return this.id.equals(effect.getId());
 	}
 }
 

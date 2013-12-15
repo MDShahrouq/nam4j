@@ -26,27 +26,56 @@ public class Precondition implements IPrecondition {
 	String id = "precondition";
 	String name = "Precondition";
 	
+	/**
+     * constructor
+     */
 	public Precondition() {
 	}
 	
+	/**
+     * set the precondition name
+     *
+     * @param name
+     */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+     * get the precondition name
+     *
+     * @return the name of the precondition
+     */
 	public String getName() {
 		return name;
 	}
 
+	/**
+     * set the precondition id
+     *
+     * @param id
+     */
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	/**
+     * get the precondition id
+     *
+     * @return the id of the precondition
+     */
 	public String getId() {
 		return id;
 	}
 
-	public boolean equals(Object obj) {
-		return this.id.equals(((Precondition)obj).getId());
+	/**
+     * compares two preconditions
+     * 
+     * @param precondition
+     * @return true if the precondition's id is equal to the one of the callee 
+     */
+	public boolean equals(Precondition precondition) {
+		return this.id.equals(precondition.getId());
 	}
 }
 
