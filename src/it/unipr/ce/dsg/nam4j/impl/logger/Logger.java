@@ -32,6 +32,12 @@ public class Logger {
 	private FileWriter fstream = null;
 	private BufferedWriter out = null;
 	
+	/**
+     * constructor of the logger
+     *
+     * @param logFolderPath, a String representing the path of the log folder
+     * @param logFileName,  a String representing the name of the log file
+     */
 	public Logger(String logFolderPath, String logFileName) {
 		this.logFolderPath = logFolderPath;
 		this.logFileName = logFileName;
@@ -43,6 +49,11 @@ public class Logger {
 		}
 	}
 	
+	/**
+     * log a message to file
+     *
+     * @param logMessage, an Object that will JSON-serialized and appended to the log file
+     */
 	public void log(Object logMessage) {
 		Gson gson = new Gson();	
 		try{			
@@ -53,6 +64,9 @@ public class Logger {
 		}
 	}
 	
+	/**
+     * close the log file
+     */
 	public void closeLogFile() {
 		try {
 			this.out.close();
