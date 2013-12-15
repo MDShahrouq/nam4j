@@ -24,51 +24,51 @@ import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 public interface IContextEvent extends IStatement{
 	
 	/**
-     * set the timestamp for the Context Event formatted in.
+     * set the timestamp of the context event
      *
-     * @param timestamp.
+     * @param timestamp
      */
 	void setTimestamp(String timestamp);
 	
 	/**
-     * get the Timestamp for the Context Event formatted in .
+     * get the timestamp of the context event 
      *
-     * @return the Timestamp of the Context Event.
+     * @return the timestamp of the context event
      */
 	String getTimestamp();
 	
 	/**
-     * set the Temporal Validity for the Context Event.
+     * set the temporal validity of the context event
      * 
-     * @param temporalValidity.
+     * @param temporalValidity
      */
 	void setTemporalValidity(String temporalValidity);
 	
 	/**
-     * get the the Temporal Validity for the Context Event.
+     * get the the temporal validity of the context event
      *
-     * @return the Temporal Validity of the Context Event.
+     * @return the temporal validity of the context event
      */
 	String getTemporalValidity();
 	
 	/**
-     * Validate the Context Event.
+     * validate the context event
      *
-     * @return the value indicating the validation of the Context Event.
+     * @return the value indicating the validation of the context event
      */
 	Boolean validateContextEvent(ContextEvent contextEvent);
 	
 	/**
-     * return the producer of the Context Event.
+     * return the producer of the context event
      *
-     * @return the Context Event Producer's id.
+     * @return the id of the context event producer
      */
 	String getContextEventProducer();
 	
 	/**
-     * set the producer of the Context Event.
+     * set the producer of the context event
      *
-     * @param the Producer's id.
+     * @param the id of the context event producer
      */
 	void setContextEventProducer(String producerId);
 }
