@@ -21,6 +21,7 @@ import java.util.HashMap;
  *  Free Documentation License".
  * </p>
  * 
+ * @author Marco Muro
  * @author Michele Amoretti (michele.amoretti@unipr.it)
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
@@ -29,139 +30,139 @@ import java.util.HashMap;
 public interface IService {
 
 	/**
-     * get the Service name.
+     * get the service name
      *
-     * @return the name of the Service.
+     * @return the name of the service
      */
 	String getName();
 	
 	/**
-     * set the Service id.
+     * set the service id
      *
-     * @param id.
+     * @param id
      */
 	void setId(String id);
 	
 	/**
-     * get the Service id.
+     * get the service id
      *
-     * @return the id of the Service.
+     * @return the id of the service
      */
 	String getId();
 	
 	/**
-     * get the Input List of the Service.
+     * get the input list of the service
      *
-     * @return the List of Input.
+     * @return the list of inputs
      */
 	HashMap<String, Parameter> getInputs();
 	
 	/**
-     * get the Input of the Service by id.
+     * get the input of the service by id
      *
-     * @param id.
-     * @return the Input.
+     * @param id
+     * @return the input
      */
 	Parameter getInput(String id);
 	
 	/**
-     * add Input to Service.
+     * add an input to the service
      *
-     *@param input.
+     *@param input
      */
 	void addInput(Parameter input);
 	
 	/**
-     * remove Input from Service by id.
+     * remove input from service by id
      *
-     *@param id.
+     *@param id
      */
 	void removeInput(String id);
 	
 	/**
-     * get the Output List of the Service.
+     * get the output list of the service
      *
-     * @return the List of Outputs.
+     * @return the list of outputs
      */
 	HashMap<String, Parameter> getOutputs();
 	
 	/**
-     * get the Output of the Service by id.
+     * get the output of the service by id
      *
-     * @param id.
-     * @return the Output.
+     * @param id
+     * @return the output
      */
 	Parameter getOutput(String id);
 	
 	/**
-     * add Output to Service.
+     * add output to service
      *
-     *@param output.
+     *@param output
      */
 	void addOutput(Parameter output);
 	
 	/**
-     * remove Output from Service by id.
+     * remove output from service by id
      *
-     *@param id.
+     *@param id
      */
 	void removeOutput(String id);
 	
 	/**
-     * get the Preconditions List of the Service.
+     * get the precondition list of the service
      *
-     * @return the List of Preconditions.
+     * @return the list of preconditions
      */
 	HashMap<String, Precondition> getPreconditions();
 	
 	/**
-     * get the Precondition of the Service by id.
+     * get a precondition of the service by id
      *
-     * @param id.
-     * @return the Precondition.
+     * @param id
+     * @return the precondition
      */
 	Precondition getPrecondition(String id);
 	
 	/**
-     * add Precondition to Service.
+     * add a precondition to the service
      *
-     *@param precondition.
+     *@param precondition
      */
 	void addPrecondition(Precondition precondition);
 	
 	/**
-     * remove Precondition from Service by id.
+     * remove a precondition from the service by id
      *
-     *@param id.
+     *@param id
      */
 	void removePrecondition(String id);
 	
 	/**
-     * get the Effects List of the Service.
+     * get the effect list of the service
      *
-     * @return the List of Effects.
+     * @return the list of effects
      */
 	HashMap<String, Effect> getEffects();
 	
 	/**
-     * get the Effect of the Service by id.
+     * get an effect of the service by id
      *
-     * @param id.
-     * @return the Effect.
+     * @param id
+     * @return the effect
      */
 	Effect getEffect(String id);
 	
 	/**
-     * add Effect to Service.
+     * add an effect to the service
      *
-     *@param effect.
+     *@param effect
      */
 	void addEffect(Effect effect);
 	
 	/**
-     * remove Effect from Service by id.
+     * remove an effect from the service by id
      *
-     *@param id.
+     *@param id
      */
 	void removeEffect(String id);
 }

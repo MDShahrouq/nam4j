@@ -24,58 +24,58 @@ import java.util.ArrayList;
 public interface ITaskDescriptor {
 
 	/**
-     * set the Task name.
+     * set the task name
      *
-     * @param name.
+     * @param name
      */
 	void setName(String name);
 	
 	/**
-     * get the Task name.
+     * get the task name
      *
-     * @return the name of the Task.
+     * @return the name of the task
      */
 	String getName();
 	
 	/**
-     * set the Task id.
+     * set the task id
      *
-     * @param id.
+     * @param id
      */
 	void setId(String id);
 	
 	/**
-     * get the Task id.
+     * get the task id
      *
-     * @return the id of the Task.
+     * @return the id of the task
      */
 	String getId();
 	
 	/**
-     * set the Task state.
+     * set the task state
      *
-     * @param state.
+     * @param state
      */
 	void setState(String state);
 	
 	/**
-     * get the Task state.
+     * get the task state
      *
-     * @return the state of the Task.
+     * @return the state of the task
      */
 	String getState();
 
 	/**
-     * set the Task allowed states.
+     * set the list of allowed states
      *
-     * @param allowedStates.
+     * @param allowedStates
      */
 	public void setAllowedStates(ArrayList<String> allowedStates);
 	
 	/**
-     * get the Task allowed states.
+     * get the list of allowed states
      *
-     * @return the allowed states of the Task.
+     * @return the list of allowed states
      */
 	public ArrayList<String> getAllowedStates();
 	

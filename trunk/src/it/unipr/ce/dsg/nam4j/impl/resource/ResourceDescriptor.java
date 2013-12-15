@@ -26,27 +26,55 @@ public class ResourceDescriptor implements IResourceDescriptor {
 	String name = "ResourceDescriptor";
 	String id = "ResourceId";
 	
+	/**
+     * constructor
+     */
 	public ResourceDescriptor() {
 	}
 	
+	/**
+     * set the resource name
+     *
+     * @param name
+     */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/**
+     * get the resource name
+     *
+     * @return the name of the resource
+     */
 	public String getName() {
 		return name;
 	}
 
+	/**
+     * set the resource id
+     *
+     * @param id
+     */
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	/**
+     * get the resource id
+     *
+     * @return the id of the resource
+     */
 	public String getId() {
 		return id;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return this.id.equals(((ResourceDescriptor)obj).getId());
+	/**
+     * compares two resource descriptors
+     * 
+     * @param resourceDescriptor
+     * @return true if the resourceDescriptor's id is equal to the one of the callee 
+     */
+	public boolean equals(ResourceDescriptor resourceDescriptor) {
+		return this.id.equals(resourceDescriptor.getId());
 	}
 }

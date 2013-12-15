@@ -23,30 +23,30 @@ package it.unipr.ce.dsg.nam4j.interfaces;
 public interface IPrecondition {
 
 	/**
-     * set the Precondition name.
+     * set the precondition name
      *
-     * @param name.
+     * @param name
      */
 	void setName(String name);
 	
 	/**
-     * get the Precondition name.
+     * get the precondition name
      *
-     * @return the name of the Precondition.
+     * @return the name of the precondition
      */
 	String getName();
 	
 	/**
-     * set the Precondition id.
+     * set the precondition id
      *
-     * @param id.
+     * @param id
      */
 	void setId(String id);
 	
 	/**
-     * get the Precondition id.
+     * get the precondition id
      *
-     * @return the id of the Precondition.
+     * @return the id of the precondition
      */
 	String getId();
 }

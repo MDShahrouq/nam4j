@@ -31,33 +31,59 @@ public class TaskDescriptor implements ITaskDescriptor {
 	String state = "TaskState";
 	ArrayList<String> allowedStates = null;
 	
+	/**
+     * constructor
+     * 
+     * @param name, a String representing the task name
+     * @param id, a String representing the task id
+     */
 	public TaskDescriptor(String name, String id) {
 		this.name = name;
 		this.id = id;
 		allowedStates = new ArrayList<String>();
 	}
 	
-	@Override
+	/**
+     * set the task name
+     *
+     * @param name
+     */
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	@Override
+	/**
+     * get the task name
+     *
+     * @return the name of the task
+     */
 	public String getName() {
 		return name;
 	}
 
-	@Override
+	/**
+     * set the task id
+     *
+     * @param id
+     */
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	@Override
+	/**
+     * get the task id
+     *
+     * @return the id of the task
+     */
 	public String getId() {
 		return id;
 	}
 
-	@Override
+	/**
+     * set the task state
+     *
+     * @param state
+     */
 	public void setState(String state)
 		throws IllegalStateException {
 		if (!allowedStates.contains(state))
@@ -66,27 +92,30 @@ public class TaskDescriptor implements ITaskDescriptor {
 			this.state = state;
 	}
 
-	@Override
+	/**
+     * get the task state
+     *
+     * @return the state of the task
+     */
 	public String getState() {
 		return state;
 	}
-	
-	/**
-     * get the list of allowed states.
-     *
-     * @return the list of allowed states.
-     */
-	public ArrayList<String> getAllowedStates() {
-		return allowedStates;
-	}
 
 	/**
-     * set the list of allowed states.
+     * set the list of allowed states
      *
-     * @param allowedStates.
+     * @param allowedStates
      */
 	public void setAllowedStates(ArrayList<String> allowedStates) {
 		this.allowedStates = allowedStates;
 	}
 
+	/**
+     * get the list of allowed states
+     *
+     * @return the list of allowed states
+     */
+	public ArrayList<String> getAllowedStates() {
+		return allowedStates;
+	}
 }

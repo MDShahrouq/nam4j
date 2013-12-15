@@ -24,37 +24,37 @@ package it.unipr.ce.dsg.nam4j.interfaces;
 public interface IParameter {
 	
 	/**
-     * get the Parameter name.
+     * get the parameter name
      *
-     * @return the name of the Input.
+     * @return the name of the parameter
      */
 	String getName();
 	
 	/**
-     * set the Parameter id.
+     * set the parameter id
      *
-     * @param id.
+     * @param id
      */
 	void setId(String id);
 	
 	/**
-     * get the Parameter id.
+     * get the parameter id
      *
-     * @return the id of the Parameter.
+     * @return the id of the parameter
      */
 	String getId();
 	
 	/**
-     * set the Parameter value.
+     * set the parameter value
      *
-     * @param value.
+     * @param value
      */
 	void setValue(String value);
 	
 	/**
-     * get the Parameter value.
+     * get the parameter value
      *
-     * @return the value of the Parameter.
+     * @return the value of the parameter
      */
 	String getValue();
 	
