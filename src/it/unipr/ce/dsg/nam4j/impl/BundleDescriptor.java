@@ -1,9 +1,3 @@
-/**
-Ê* 
-Ê* This is the class which describes a Functional Module or a Service
- * requested for migration.
-Ê* 
-Ê*/
 
 package it.unipr.ce.dsg.nam4j.impl;
 
