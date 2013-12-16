@@ -12,7 +12,7 @@ Migration extends NetworkedAutonomicMachine
 This class contains the {{{main}}} method, which requires as argument a String specifying the role the NAM assumes, either {{{SERVER}}} or {{{CLIENT}}}. By extending {{{NetworkedAutonomicMachine}}}, the {{{Migration}}} class requires, as a first parameter of its constructor, the size of the thread pool which is created to manage incoming migration requests, as a second parameter, the path where files to be sent and received are stored and, as a third parameter, the number of times a NAM client tries to connect to a client server (i.e. if, for instance, it is set to 3, the clients tries two more times if the first one fails).
 
 {{{
-super(10, "examples/migration, 3");
+super(10, "examples/migration", 3);
 }}}
 
 The migration server invokes the {{{activateMigration()}}} method which creates a socket and waits for incoming connections. The client invokes the {{{findRemoteFM()}}} and {{{findRemoteService()}}} methods to request remote items (Functional Modules or Services, respectively). Both methods take as parameters the name of the required Functional Module or Service, and the platform. The latter is an enumeration data type whose possible values are {{{DESKTOP}}} and {{{ANDROID}}}. Platform specification is required since desktop nodes use Jar files, while Android nodes require Dex files.
