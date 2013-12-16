@@ -1,12 +1,12 @@
 package it.unipr.ce.dsg.nam4j.impl.context;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.logger.Logger;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * <p>

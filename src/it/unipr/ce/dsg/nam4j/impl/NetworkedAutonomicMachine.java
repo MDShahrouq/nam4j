@@ -133,6 +133,11 @@ public abstract class NetworkedAutonomicMachine implements
 	 * The threads pool to manage the migration requests.
 	 */
 	ExecutorService poolForMigration;
+	
+	/**
+	 * The number of times a client tries to connect to the server
+	 */
+	private int trialsNumber = 3;
 
 	/**
 	 * A Class array used for the reflection.
@@ -161,11 +166,18 @@ public abstract class NetworkedAutonomicMachine implements
 	 * 
 	 * @param poolSize
 	 *            the size of the thread pool to manage incoming requests
+	 * 
+	 * @param migrationStorePath
+	 *            the path to store files received via migration
+	 *            
+	 * @param trials
+	 *            the number of times a client tries to connect to a server
 	 */
-	public NetworkedAutonomicMachine(int poolSize, String migrationStorePath) {
+	public NetworkedAutonomicMachine(int poolSize, String migrationStorePath, int trials) {
 
 		setPoolSize(poolSize);
 		setMigrationStore(migrationStorePath);
+		setTrialsNumber(trials);
 
 		clientPlatform = new Platform[getPoolSize()];
 	}
@@ -338,6 +350,25 @@ public abstract class NetworkedAutonomicMachine implements
 	 */
 	public String getMigrationStore() {
 		return migrationStore;
+	}
+	
+	/**
+	 * Set the number of times a client tries to connect to a server.
+	 * 
+	 * @param num
+	 *            the number of times a client tries to connect to a server.
+	 */
+	public void setTrialsNumber(int num) {
+		trialsNumber = num;
+	}
+	
+	/**
+	 * Get the number of times a client tries to connect to a server.
+	 * 
+	 * @return the number of times a client tries to connect to a server.
+	 */
+	public int getTrialsNumber() {
+		return trialsNumber;
 	}
 
 	/**
@@ -613,7 +644,7 @@ public abstract class NetworkedAutonomicMachine implements
 		boolean connected = false;
 
 		/* The client tries 3 times to connect to server */
-		for (int j = 0; j < 3; j++) {
+		for (int j = 0; j < getTrialsNumber(); j++) {
 			try {
 				s = new Socket(serverAddress, serverPort);
 				is = new BufferedReader(new InputStreamReader(
@@ -685,14 +716,7 @@ public abstract class NetworkedAutonomicMachine implements
 
 					byte[] mybytearray = new byte[filesize];
 					InputStream inputStr = s.getInputStream();
-
-					/*
-					 * TODO : Remove ' + "2"' from following instruction when
-					 * testing with server and client running on different
-					 * machines. It was added because if client and server are
-					 * running on the same machine, the former overwrites the
-					 * original files.
-					 */
+					
 					String receivedFilename = getMigrationStore() + "/"
 							+ fileName + "." + ext;
 

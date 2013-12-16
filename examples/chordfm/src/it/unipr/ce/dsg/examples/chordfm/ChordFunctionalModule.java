@@ -12,6 +12,7 @@ import it.unipr.ce.dsg.s2pchord.ChordPeer;
 import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
 import it.unipr.ce.dsg.s2pchord.eventlistener.ChordEventListener;
 
+import java.security.MessageDigest;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
@@ -46,7 +47,6 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 		// create and start ChordPeer
 		Random ran = new Random();
 		int port = 1024 + ran.nextInt(9999-1024);
-		int bitNumber = 160;
 		try {
 			/* vecchio sp2Chord 0.1
 			int unL = ran.nextInt(bitNumber);
@@ -55,13 +55,38 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 			chordPeer.startPeer();
 			chordPeer.setChordEventListener(this);
 			*/
-			chordPeer = new ChordPeer("config/chordPeer.cfg", null);
+			// chordPeer = new ChordPeer("config/chordPeer.cfg", null);
+			
+			String key = getRandomKey();
+			chordPeer = new ChordPeer("config/chordPeer.cfg", key, key, port);
+			
 			//chordPeer.insert_key();
 			chordPeer.join();
 			chordPeer.setChordEventListener(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private static String getRandomKey() {
+		try {
+			Random random = new Random();
+			String key = new Integer((random.nextInt() + 1)
+					* (random.nextInt() + 1)).toString();
+			byte[] bytesOfMessage = key.getBytes("UTF-8");
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] thedigest = md.digest(bytesOfMessage);
+			// convert the byte to hex format method 1
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < thedigest.length; i++) {
+				sb.append(Integer.toString((thedigest[i] & 0xff) + 0x100, 16)
+						.substring(1));
+			}
+			return sb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public ChordLogger getLogger() {

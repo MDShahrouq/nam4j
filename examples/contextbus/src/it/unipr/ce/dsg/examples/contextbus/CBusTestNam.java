@@ -1,9 +1,5 @@
 package it.unipr.ce.dsg.examples.contextbus;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import it.unipr.ce.dsg.examples.ontology.Room;
 import it.unipr.ce.dsg.examples.ontology.Temperature;
 import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
@@ -11,13 +7,17 @@ import it.unipr.ce.dsg.examples.reasonerfm.ReasonerFunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.context.ContextBus;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class CBusTestNam extends NetworkedAutonomicMachine {
 
 	private ContextBus cBus = null;
 	private ReasonerFunctionalModule rfm = null;
 	
-	public CBusTestNam(int poolSize, String migrationStorePath) {
-		super(poolSize, migrationStorePath);
+	public CBusTestNam(int poolSize, String migrationStorePath, int trialsNumber) {
+		super(poolSize, migrationStorePath, trialsNumber);
 		
 		this.setId("cbtestnam");
 		cBus = new ContextBus(this);
@@ -35,7 +35,7 @@ public class CBusTestNam extends NetworkedAutonomicMachine {
 	}
 
 	public static void main(String[] args) {
-		CBusTestNam cbtestnam = new CBusTestNam(10, "examples/migration");
+		CBusTestNam cbtestnam = new CBusTestNam(10, "examples/migration", 3);
 		
 		ContextBus cBus = cbtestnam.getContextBus();
 		cBus.subscribe("TemperatureNotification", cbtestnam.getReasonerFunctionalModule().getId());
