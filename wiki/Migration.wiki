@@ -69,7 +69,7 @@ The file output.dex can be placed in the path the server uses to store files to 
 
 {{{
 String pathToSaveFile = Environment.getExternalStorageDirectory().toString() + "/";
-super(10, pathToSaveFile);
+super(10, pathToSaveFile, 3);
 }}}
 
 To manage the migration we suggest the use of an asynchronous task, by invoking the {{{findRemoteFM()}}} or {{{findRemoteService()}}} methods, by specifying the Android platform as their second parameter.
