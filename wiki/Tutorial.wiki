@@ -24,7 +24,7 @@ This folder contains the code that implements a NAM. There is a unique class
 DemoNam extends NetworkedAutonomicMachine
 }}}
 
-The constructor instantiates four functional modules: 
+The constructor instantiates five functional modules: 
 
 {{{
 cfm = new ChordFunctionalModule(this);
@@ -35,10 +35,12 @@ rfm = new ReasonerFunctionalModule(this);
 this.addFunctionalModule(rfm);
 sfm = new SensorFunctionalModule(this);
 this.addFunctionalModule(sfm);
+bfm = new BuildingFunctionalModule(this);
+this.addFunctionalModule(bfm);
 }}}
 
 whose details are given in the following sections.
-In the {{{main()}}} method, {{{DemoNam}}} starts the task manager thread (with one task called "AmITask"). If the first argument to the {{{main()}}} method is {{{NOTIFICATION}}}, the NAM acts as a context publisher. If the first argument is {{{LOOKUP}}}, the NAM acts as a context consumer.
+In the {{{main()}}} method, {{{DemoNam}}} starts the task manager thread (with one task called "AmITask"). If the first argument to the {{{main()}}} method is {{{NOTIFICATION}}}, the NAM acts as a context publisher. If the first argument is {{{LOOKUP}}}, the NAM acts as a context consumer. Special cases are when the first argument is set to {{{BUILDINGNOTIFICATION}}} or {{{BUILDINGLOOKUP}}}. For these, the application looks, or publishes, data related to sensors placed inside buildings. 
 
 If the NAM is a context publisher, the second argument must be a location name, and the third argument must be a numeric value representing a temperature.
 
