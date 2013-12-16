@@ -7,5 +7,10 @@ public class Room extends Parameter {
 	public Room() {
 		this.setName("Room");
 	}
+	
+	public Room( String value ) {
+		this.setName("Room");
+		this.setValue(value);
+	}
 
 }

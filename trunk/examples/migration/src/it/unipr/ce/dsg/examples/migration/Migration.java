@@ -8,7 +8,7 @@ public class Migration extends NetworkedAutonomicMachine {
 
 	public Migration(String configuration) {
 
-		super(10, "examples/migration");
+		super(10, "examples/migration", 3);
 
 		this.setId("migration");
 
