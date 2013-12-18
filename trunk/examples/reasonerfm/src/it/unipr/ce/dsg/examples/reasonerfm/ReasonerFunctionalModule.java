@@ -237,13 +237,5 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	public void stopTemperatureNotificationLookup() {
 		str.stopThread();
 	}
-	
-	public void restartBuildingNotificationLookup() {
-		sbr.startThread();
-	}
-	
-	public void restartTemperatureNotificationLookup() {
-		str.startThread();
-	}
 
 }
