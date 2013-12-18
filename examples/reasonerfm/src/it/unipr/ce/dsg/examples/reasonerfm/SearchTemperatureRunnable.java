@@ -87,15 +87,9 @@ public class SearchTemperatureRunnable implements Runnable {
 			fm.execute(rfm.getId(), "Lookup", json);
 		}
 	}
-	
-	public void startThread(){
-    	stopThread = false;
-    }
 
 	public void stopThread() {
-
 		stopThread = true;
-
 	}
 
 }

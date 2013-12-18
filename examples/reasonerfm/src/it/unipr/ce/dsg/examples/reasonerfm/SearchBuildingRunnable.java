@@ -75,10 +75,6 @@ public class SearchBuildingRunnable implements Runnable {
 			}
 	}
 	
-	public void startThread(){
-    	stopThread = false;
-    }
-	
     public void stopThread(){
     	stopThread = true;
     }
