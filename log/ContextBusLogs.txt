@@ -1,2 +1,0 @@
-"added TemperatureNotification:rfm to eventModuleList"
-"notified TemperatureNotification to rfm"

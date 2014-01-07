@@ -1,3 +1,0 @@
-"I am sfm and I own to mccdemonam"
-"19/12/2013 21:05:36"
-{"id":"contextEvent","name":"TemperatureNotification","timestamp":"19/12/2013 21:05:36","subject":{"id":"i21","name":"Temperature","value":"77"},"location":{"id":"param","name":"Parameter","value":"{\"building\":{\"id\":\"param\",\"name\":\"Building\",\"value\":\"Parco Area delle Science\"},\"room\":{\"id\":\"param\",\"name\":\"Room\",\"value\":\"Living Room\"},\"floor\":{\"id\":\"param\",\"name\":\"Floor\",\"value\":\"1\"},\"sensor\":{\"id\":\"param\",\"name\":\"Sensor\",\"value\":\"Temperature1\"},\"latitude\":{\"id\":\"param\",\"name\":\"Latitude\",\"value\":\"44.765\"},\"longitude\":{\"id\":\"param\",\"name\":\"Longitude\",\"value\":\"10.3\"}}"}}
