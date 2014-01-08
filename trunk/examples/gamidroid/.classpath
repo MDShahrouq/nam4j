@@ -8,5 +8,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/sip2peer/sip2peer-1.0.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="/Users/ardarico/Documents/SVILUPPO/adt-bundle-mac-x86_64-20130917/sdk/extras/google/google_play_services/libproject/google-play-services_lib/libs/google-play-services.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
