@@ -3,6 +3,7 @@ package it.unipr.ce.dsg.examples.taskmanagerfm;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.task.TaskDescriptor;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.util.ArrayList;
 
@@ -50,5 +51,17 @@ public class TaskManagerFunctionalModule extends FunctionalModule {
 	public void startTaskManagement() {
 		Thread t = new Thread(new ManageTasksRunnable(this), "Perform task management");
 		t.start();
+	}
+
+	@Override
+	public void addConsumableService(String id, IService service) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addProvidedService(String id, IService service) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -8,7 +8,7 @@ import it.unipr.ce.dsg.examples.ontology.RoomStruct;
 import it.unipr.ce.dsg.examples.ontology.Sensor;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,8 +55,8 @@ public class ProvideBuildingRunnable implements Runnable {
 			if (tempfm.getName().equals(bfm.getName()))
 				continue;
 
-			Collection<Service> cc = tempfm.getProvidedServices().values();
-			Iterator<Service> itrr = cc.iterator();
+			Collection<IService> cc = tempfm.getProvidedServices().values();
+			Iterator<IService> itrr = cc.iterator();
 			while (itrr.hasNext()) {
 				serviceName = itrr.next().getName();
 

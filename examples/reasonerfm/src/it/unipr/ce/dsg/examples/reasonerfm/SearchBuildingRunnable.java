@@ -4,7 +4,7 @@ import it.unipr.ce.dsg.examples.ontology.Building;
 import it.unipr.ce.dsg.examples.ontology.BuildingNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,8 +39,8 @@ public class SearchBuildingRunnable implements Runnable {
 				tempfm = itr.next();
 				if (tempfm.getName().equals(rfm.getName()))
 					continue;
-				Collection<Service> cc = tempfm.getProvidedServices().values();
-				Iterator<Service> itrr = cc.iterator();
+				Collection<IService> cc = tempfm.getProvidedServices().values();
+				Iterator<IService> itrr = cc.iterator();
 				while (itrr.hasNext()) {
 					serviceName = itrr.next().getName();
 					if (serviceName.equals("Lookup")) {

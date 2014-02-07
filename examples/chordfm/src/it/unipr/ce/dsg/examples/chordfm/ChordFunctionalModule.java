@@ -7,6 +7,7 @@ import it.unipr.ce.dsg.examples.ontology.Subscribe;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
 import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
@@ -146,8 +147,8 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 			if (tempfm.getName().equals(this.getName()))
 				continue;
 			// System.out.println("Temp FM: " + tempfm.getName());
-			Collection<Service> cc = tempfm.getProvidedServices().values();
-			Iterator<Service> itrr = cc.iterator();
+			Collection<IService> cc = tempfm.getProvidedServices().values();
+			Iterator<IService> itrr = cc.iterator();
 			while (itrr.hasNext()) {
 				serviceName = itrr.next().getName();
 				// System.out.println("Service: " + serviceName);
@@ -173,6 +174,18 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 	@Override
 	public void publishResultEvent(ResourceDescriptor rd, PeerDescriptor responsiblePeer, PeerDescriptor ownerPeer) {
 		cLogger.log("Received a Publish Result Event Notification for resource: " + rd.getKey() + " with responsible: " + responsiblePeer.getKey() + " and owner: " + ownerPeer.getKey());	
+	}
+
+	@Override
+	public void addConsumableService(String id, IService service) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addProvidedService(String id, IService service) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

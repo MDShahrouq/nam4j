@@ -10,7 +10,7 @@ import it.unipr.ce.dsg.examples.ontology.Temperature;
 import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -94,8 +94,8 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 			if (fm.getName().equals(this.getName()))
 				continue;
 			rLogger.log("FM: " + fm.getName());
-			Collection<Service> cc = fm.getProvidedServices().values();
-			Iterator<Service> itrr = cc.iterator();
+			Collection<IService> cc = fm.getProvidedServices().values();
+			Iterator<IService> itrr = cc.iterator();
 			while (itrr.hasNext()) {
 				serviceName = itrr.next().getName();
 				rLogger.log("Service: " + serviceName);
@@ -236,6 +236,18 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	
 	public void stopTemperatureNotificationLookup() {
 		str.stopThread();
+	}
+
+	@Override
+	public void addConsumableService(String id, IService service) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addProvidedService(String id, IService service) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
