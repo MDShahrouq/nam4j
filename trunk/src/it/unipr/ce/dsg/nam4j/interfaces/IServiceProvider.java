@@ -1,7 +1,5 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
-
 import java.util.HashMap;
 
 /**
@@ -33,7 +31,7 @@ public interface IServiceProvider {
      * @param id
      * @param service.
      */
-	void addProvidedService(String id, Service service);
+	void addProvidedService(String id, IService service);
 	
 	/**
      * Removes a provided service, given its id in the hash map.
@@ -47,7 +45,7 @@ public interface IServiceProvider {
      *
      * @return the list of provided services
      */
-	HashMap<String, Service> getProvidedServices();
+	HashMap<String, IService> getProvidedServices();
 	
 	/**
      * Returns the provided service, given its id in the hash map.
@@ -55,6 +53,6 @@ public interface IServiceProvider {
      * @param id
      * @return the provided service
      */
-	Service getProvidedService(String id);
+	IService getProvidedService(String id);
 	
 }

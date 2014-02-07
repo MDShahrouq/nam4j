@@ -11,7 +11,7 @@ import it.unipr.ce.dsg.examples.ontology.Temperature;
 import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -75,8 +75,8 @@ public class ProvideTemperatureRunnable implements Runnable {
 			if (tempfm.getName().equals(sfm.getName()))
 				continue;
 			
-			Collection<Service> cc = tempfm.getProvidedServices().values();
-			Iterator<Service> itrr = cc.iterator();
+			Collection<IService> cc = tempfm.getProvidedServices().values();
+			Iterator<IService> itrr = cc.iterator();
 			
 			while (itrr.hasNext()) {
 				serviceName = itrr.next().getName();

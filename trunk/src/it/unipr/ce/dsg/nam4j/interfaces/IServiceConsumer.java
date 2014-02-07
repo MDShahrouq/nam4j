@@ -1,8 +1,7 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
-
 import java.util.HashMap;
+
 
 /**
  * <p>
@@ -33,7 +32,7 @@ public interface IServiceConsumer {
      * @param id
      * @param service
      */
-	void addConsumableService(String id, Service service);
+	void addConsumableService(String id, IService service);
 	
 	/**
      * Removes a consumable service, given its id in the hash map.
@@ -47,7 +46,7 @@ public interface IServiceConsumer {
      *
      * @return the list of consumable services
      */
-	HashMap<String, Service> getConsumableServices();
+	HashMap<String, IService> getConsumableServices();
 	
 	/**
      * Returns the consumable service, given its id in the hash map.
@@ -55,6 +54,6 @@ public interface IServiceConsumer {
      * @param id
      * @return the consumable service
      */
-	Service getConsumableService(String id);
+	IService getConsumableService(String id);
 
 }

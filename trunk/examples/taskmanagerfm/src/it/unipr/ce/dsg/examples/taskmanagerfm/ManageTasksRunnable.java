@@ -1,7 +1,7 @@
 package it.unipr.ce.dsg.examples.taskmanagerfm;
 
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,9 +43,9 @@ public class ManageTasksRunnable implements Runnable {
 						tempfm = itr.next();
 						if (tempfm.getName().equals(tmfm.getName()))
 							continue;
-						Collection<Service> cc = tempfm.getProvidedServices()
+						Collection<IService> cc = tempfm.getProvidedServices()
 								.values();
-						Iterator<Service> itrr = cc.iterator();
+						Iterator<IService> itrr = cc.iterator();
 						while (itrr.hasNext()) {
 							serviceName = itrr.next().getName();
 							// System.out.println("Service: " + serviceName);

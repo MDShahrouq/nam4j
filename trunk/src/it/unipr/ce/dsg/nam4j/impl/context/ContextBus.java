@@ -3,6 +3,7 @@ package it.unipr.ce.dsg.nam4j.impl.context;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.logger.Logger;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -111,5 +112,15 @@ public class ContextBus extends FunctionalModule {
 				logger.log("notified " + contextEvent.getName() + " to " + tempfm.getId());
 			}
 		}
+	}
+
+	@Override
+	public void addConsumableService(String id, IService service) {
+		// TODO Auto-generated method stub		
+	}
+
+	@Override
+	public void addProvidedService(String id, IService service) {
+		// TODO Auto-generated method stub
 	}
 }

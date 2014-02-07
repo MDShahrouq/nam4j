@@ -3,6 +3,7 @@ package it.unipr.ce.dsg.nam4j.impl;
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.nam4j.interfaces.IFunctionalModule;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.util.HashMap;
 
@@ -33,8 +34,8 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	
 	HashMap<String,ContextEvent> consumableContextEvents = new HashMap<String,ContextEvent>();
 	HashMap<String,ContextEvent> providedContextEvents = new HashMap<String,ContextEvent>();
-	HashMap<String,Service> consumableServices = new HashMap<String,Service>();
-	HashMap<String,Service> providedServices = new HashMap<String,Service>();
+	HashMap<String,IService> consumableServices = new HashMap<String,IService>();
+	HashMap<String,IService> providedServices = new HashMap<String,IService>();
 	
 	/**
 	 * Class constructor.
@@ -214,7 +215,7 @@ public abstract class FunctionalModule implements IFunctionalModule {
      *
      * @return the list of consumable services
      */
-	public HashMap<String,Service> getConsumableServices(){
+	public HashMap<String,IService> getConsumableServices(){
 		return consumableServices;
 	}
 	
@@ -224,7 +225,7 @@ public abstract class FunctionalModule implements IFunctionalModule {
      * @param id
      * @return the consumable service
      */
-	public Service getConsumableService(String id) {
+	public IService getConsumableService(String id) {
 		return consumableServices.get(id);
 	}
 	
@@ -257,7 +258,7 @@ public abstract class FunctionalModule implements IFunctionalModule {
      *
      * @return the list of provided services
      */
-	public HashMap<String, Service> getProvidedServices() {
+	public HashMap<String, IService> getProvidedServices() {
 		return providedServices;
 	}
 	
@@ -267,7 +268,7 @@ public abstract class FunctionalModule implements IFunctionalModule {
      * @param id
      * @return the provided service
      */
-	public Service getProvidedService(String id) {
+	public IService getProvidedService(String id) {
 		return providedServices.get(id);
 	}
 	
