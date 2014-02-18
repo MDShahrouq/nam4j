@@ -2,9 +2,8 @@ package it.unipr.ce.dsg.gamidroid.chordfm;
 
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
-//import it.unipr.ce.dsg.s2pchord.resource.Resource;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceParameter;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceParameter;
 
 import com.google.gson.Gson;
 
@@ -40,15 +39,8 @@ public class PublishRunnable implements Runnable {
 			rd.addParameter(new ResourceParameter("Object", ce.getObject().getName()));
 		if (ce.getLocation() != null)
 			rd.addParameter(new ResourceParameter("Location", ce.getLocation().getValue()));
-		/*
-		if (ce.getTimestamp() != null)
-			rd.addParameter(new ResourceParameter("Timestamp", ce.getTimestamp()));
-		*/
-		rd.generateResourceKey();	
-		String resourceKey = rd.getKey();
-		// cfm.getLogger().log("Generated Resource String: " + resourceKey);
-		// cfm.getLogger().log("Generated Resource Descriptor: " +  rd.resourceDescriptorToString());
-		//Resource res = new Resource(rd, null, System.currentTimeMillis());
+		
+		rd.generateResourceKey();
 		
 		cp.publishResource(rd);
 	}

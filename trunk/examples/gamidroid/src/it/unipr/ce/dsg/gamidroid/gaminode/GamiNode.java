@@ -7,8 +7,8 @@ import it.unipr.ce.dsg.gamidroid.sensorfm.SensorFunctionalModule;
 import it.unipr.ce.dsg.gamidroid.taskmanagerfm.TaskManagerFunctionalModule;
 import it.unipr.ce.dsg.gamidroid.taskmanagerfm.UPCPFTaskDescriptor;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceListener;
 import it.unipr.ce.dsg.s2pchord.msg.MessageListener;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceListener;
 
 import org.w3c.dom.Document;
 
@@ -70,7 +70,7 @@ public class GamiNode extends NetworkedAutonomicMachine {
 	}
 
 	public void setCfm(ChordFunctionalModule cfm) {
-		this.cfm = cfm;
+		GamiNode.cfm = cfm;
 	}
 
 	public TaskManagerFunctionalModule getTmfm() {

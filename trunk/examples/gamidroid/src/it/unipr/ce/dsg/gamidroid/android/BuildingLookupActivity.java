@@ -2,8 +2,8 @@ package it.unipr.ce.dsg.gamidroid.android;
 
 import it.unipr.ce.dsg.gamidroid.gaminode.GamiNode;
 import it.unipr.ce.dsg.gamidroid.ontology.FloorStruct;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceListener;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceListener;
 
 import java.util.ArrayList;
 import java.util.List;

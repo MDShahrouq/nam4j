@@ -6,8 +6,8 @@ import it.unipr.ce.dsg.gamidroid.ontology.Floor;
 import it.unipr.ce.dsg.gamidroid.ontology.Location;
 import it.unipr.ce.dsg.gamidroid.ontology.Room;
 import it.unipr.ce.dsg.gamidroid.ontology.Sensor;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceListener;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;

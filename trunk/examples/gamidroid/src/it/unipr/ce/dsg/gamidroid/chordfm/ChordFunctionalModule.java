@@ -9,10 +9,10 @@ import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
 import it.unipr.ce.dsg.s2pchord.PeerConfig;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceListener;
 import it.unipr.ce.dsg.s2pchord.eventlistener.ChordEventListener;
 import it.unipr.ce.dsg.s2pchord.msg.MessageListener;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceListener;
 
 import java.io.File;
 import java.security.MessageDigest;
