@@ -2,10 +2,10 @@ package it.unipr.ce.dsg.gamidroid.android;
 
 import it.unipr.ce.dsg.gamidroid.gaminode.GamiNode;
 import it.unipr.ce.dsg.gamidroid.taskmanagerfm.UPCPFTaskDescriptor;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceListener;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceParameter;
 import it.unipr.ce.dsg.s2pchord.msg.MessageListener;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceListener;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceParameter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

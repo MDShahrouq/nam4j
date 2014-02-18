@@ -2,8 +2,8 @@ package it.unipr.ce.dsg.gamidroid.chordfm;
 
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceParameter;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceParameter;
 
 import java.io.IOException;
 
