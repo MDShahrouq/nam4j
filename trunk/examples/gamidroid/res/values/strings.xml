@@ -139,7 +139,7 @@
     
     <string name="no">No</string>
     <string name="yes">Yes</string>
-     <string name="ok">Ok</string>
+     <string name="ok">OK</string>
     
     <!-- Latitude, longitude format -->
     <string name="latitude_longitude">%1$.8f, %2$.8f</string>
