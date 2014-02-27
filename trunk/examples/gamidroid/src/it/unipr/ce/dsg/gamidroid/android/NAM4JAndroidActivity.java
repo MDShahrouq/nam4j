@@ -324,7 +324,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 				AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 				dialog.setMessage("The map cannot be initialized.");
 				dialog.setCancelable(true);
-				dialog.setPositiveButton("OK",
+				dialog.setPositiveButton(getResources().getString(R.string.ok),
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
 								dialog.dismiss();
@@ -805,7 +805,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(message)
 					.setCancelable(false)
-					.setPositiveButton("OK",
+					.setPositiveButton(getResources().getString(R.string.no),
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface iDialog,
 										int id) {
@@ -875,7 +875,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 									}
 								}
 							})
-					.setNegativeButton("Annulla",
+					.setNegativeButton(getResources().getString(R.string.no),
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int id) {
@@ -1140,7 +1140,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		dialog.setMessage("Do you want to see information about building located in "
 				+ addressTouch + " ?");
 		dialog.setCancelable(true);
-		dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		dialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				dialog.dismiss();
 				Intent intent = new Intent(NAM4JAndroidActivity.this,
@@ -1598,7 +1598,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 								bDialog.setMessage(getResources().getString(
 										R.string.leave));
 								bDialog.setCancelable(true);
-								bDialog.setPositiveButton("OK",
+								bDialog.setPositiveButton(getResources().getString(R.string.yes),
 										new DialogInterface.OnClickListener() {
 											public void onClick(
 													DialogInterface iDialog,
@@ -1715,7 +1715,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 														R.string.exitOnBackButtonPressed))
 										.setCancelable(false)
 										.setPositiveButton(
-												"OK",
+												getResources().getString(R.string.yes),
 												new DialogInterface.OnClickListener() {
 													public void onClick(
 															DialogInterface iDialog,
@@ -1745,7 +1745,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 													}
 												})
 										.setNegativeButton(
-												"Annulla",
+												getResources().getString(R.string.no),
 												new DialogInterface.OnClickListener() {
 													public void onClick(
 															DialogInterface dialog,
@@ -1787,7 +1787,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 														R.string.exitOnBackButtonPressed))
 										.setCancelable(false)
 										.setPositiveButton(
-												"OK",
+												getResources().getString(R.string.yes),
 												new DialogInterface.OnClickListener() {
 													public void onClick(
 															DialogInterface iDialog,
@@ -1817,7 +1817,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 													}
 												})
 										.setNegativeButton(
-												"Annulla",
+												getResources().getString(R.string.no),
 												new DialogInterface.OnClickListener() {
 													public void onClick(
 															DialogInterface dialog,
