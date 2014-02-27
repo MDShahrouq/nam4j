@@ -36,7 +36,7 @@
     <string name="aboutApp">Developed by the Distributed Systems Group of the University of Parma, Italy.\n\nhttp://dsg.ce.unipr.it/\n\ndsg@ce.unipr.it</string>
     <string name="leave">Do you really want to leave the network?</string>
     <string name="connection_started">Connected to the network</string>
-    <string name="not_connected">Not connected to the network.\nClick on Options button, set the bootstrap address and connect.</string>
+    <string name="not_connected">Not connected to the network.\nOpen the menu, set the bootstrap address in the \"Settings\" section and connect.</string>
     <string name="disconnected_from_network">Disconnected from the network</string>
     <string name="geocoder_not_available">Geocoder service is not available</string>
     <string name="number_of_rooms">Please specify the number of rooms on each floor</string>
@@ -48,6 +48,7 @@
     <string name="pwGeocoding">Please wait while geocoding the selected location&#8230;</string>
     <string name="pwRevGeocoding">Please wait while reverse-geocoding current location&#8230;</string>
     <string name="specify_address">Please specify the address of the building</string>
+    <string name="specify_latlng">Please specify lat and lng seprated by a comma</string>
     <string name="specify_room_names">Please specify the name of all rooms</string>
     <string name="specify_room_num">Please specify the number of rooms on the floor(s)</string>
     <string name="specify_floor_num">Please specify the number of floors in the building</string>
@@ -120,6 +121,21 @@
     <string name="menu_connect">onOptionsItemSelected MENU_CONNECT</string>
     <string name="menu_settings">onOptionsItemSelected MENU_SETTINGS</string>
     <string name="exitOnBackButtonPressed">Are you sure you want to exit?</string>
+    
+    <!-- Side Menu -->
+    <string name="connectMenuTitle">Connect</string>
+    <string name="connectMenuSubTitle">Join the network</string>
+    <string name="settingsMenuTitle">Settings</string>
+    <string name="settingsMenuSubTitle">Configure the bootstrap address</string>
+    
+    <string name="disconnectMenuTitle">Disconnect</string>
+    <string name="disconnectMenuSubTitle">Disconnect from the network</string>
+    <string name="publishBuildingMenuTitle">Publish Building</string>
+    <string name="publishBuildingMenuSubTitle">Publish in the network a building</string>
+    <string name="publishSensorgMenuTitle">Publish Sensor</string>
+    <string name="publishSensorgMenuSubTitle">Publish in the network a sensor</string>
+    <string name="exitMenuTitle">Exit</string>
+    <string name="exitMenuSubTitle">Close the app</string>
     
     <!-- Latitude, longitude format -->
     <string name="latitude_longitude">%1$.8f, %2$.8f</string>

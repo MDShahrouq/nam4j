@@ -1,60 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    android:id="@+id/mainContainer"
+    android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:background="@drawable/title_gradient_bg" >
 
     <RelativeLayout
-        android:id="@+id/titleLl"
-        android:layout_width="fill_parent"
-        android:layout_height="65dp"
-        android:background="@drawable/title_bg"
-        android:descendantFocusability="beforeDescendants"
-        android:focusableInTouchMode="true"
-        android:gravity="center"
-        android:orientation="horizontal" >
+        android:id="@+id/listContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="#33323A" >
 
-        <Button
-            android:id="@+id/menuButton"
+        <RelativeLayout
+            android:id="@+id/rlListViewContent"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/ic_action_view_as_grid"
-            android:contentDescription="@string/menu" />
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true" >
 
-        <TextView
-            android:id="@+id/titleText"
-            style="@style/TitleStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/nam4j"
-            android:textSize="18sp" >
-        </TextView>
+            <ListView
+                android:id="@+id/ListViewContent"
+                style="@style/ListViewContentStyle" >
+            </ListView>
+        </RelativeLayout>
 
-        <Button
-            android:id="@+id/infoButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <RelativeLayout
+            android:id="@+id/shadowContainer"
+            android:layout_width="7dp"
+            android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/ic_action_about"
-            android:contentDescription="@string/about" />
+            android:layout_toRightOf="@+id/rlListViewContent"
+            android:background="@drawable/shadow_gradient_bg" >
+        </RelativeLayout>
     </RelativeLayout>
 
-    <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/titleLl" >
+    <RelativeLayout
+        android:id="@+id/rlContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="0dp" >
 
-        <fragment
-            android:id="@+id/mapview"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-    </FrameLayout>
+        <RelativeLayout
+            android:id="@+id/titleLl"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:background="@drawable/title_bg"
+            android:descendantFocusability="beforeDescendants"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/menuButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_action_view_as_grid"
+                android:contentDescription="@string/menu" />
+
+            <ImageView
+                android:id="@+id/BarImgLogo"
+                style="@style/BarLogoStyle"
+                android:contentDescription="@string/dsgLogoDescription" />
+
+            <Button
+                android:id="@+id/infoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/ic_action_about"
+                android:contentDescription="@string/about" />
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/frameId"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/titleLl"
+            android:background="@drawable/title_gradient_bg" >
+
+            <fragment
+                android:id="@+id/mapview"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -10,7 +10,7 @@ import it.unipr.ce.dsg.gamidroid.ontology.Temperature;
 import it.unipr.ce.dsg.gamidroid.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Scanner;
 
 import com.google.gson.Gson;
@@ -96,8 +97,8 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 			if (fm.getName().equals(this.getName()))
 				continue;
 			// rLogger.log("FM: " + fm.getName());
-			Collection<Service> cc = fm.getProvidedServices().values();
-			Iterator<Service> itrr = cc.iterator();
+			Collection<IService> cc = fm.getProvidedServices().values();
+			Iterator<IService> itrr = cc.iterator();
 			while (itrr.hasNext()) {
 				serviceName = itrr.next().getName();
 				// rLogger.log("Service: " + serviceName);
@@ -115,7 +116,7 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 
 	public void startTemperatureNotificationLookup(String locationsFileName) {
 
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
 		Date initDay = null;
 		try {
 			initDay = df.parse("25/12/2010 00:00:00");
@@ -162,7 +163,7 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 		System.out
 				.println("*************************************************************");
 
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
 		Date initDay = null;
 
 		try {
@@ -206,7 +207,7 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 
 	public void startBuildingNotificationLookup(String address) {
 
-		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
 		Date initDay = null;
 		try {
 			initDay = df.parse("25/12/2010 00:00:00");
@@ -239,5 +240,11 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 	public void stopTemperatureNotificationLookup() {
 		str.stopThread();
 	}
+
+	@Override
+	public void addConsumableService(String id, IService service) {}
+
+	@Override
+	public void addProvidedService(String id, IService service) {}
 
 }

@@ -5,7 +5,7 @@ import it.unipr.ce.dsg.gamidroid.ontology.Publish;
 import it.unipr.ce.dsg.gamidroid.ontology.Subscribe;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
 import it.unipr.ce.dsg.s2pchord.PeerConfig;
@@ -106,7 +106,7 @@ public class ChordFunctionalModule extends FunctionalModule implements
 	private static String getRandomKey() {
 		try {
 			Random random = new Random();
-			String key = new Integer((random.nextInt() + 1)
+			String key = Integer.valueOf((random.nextInt() + 1)
 					* (random.nextInt() + 1)).toString();
 			byte[] bytesOfMessage = key.getBytes("UTF-8");
 			MessageDigest md = MessageDigest.getInstance("MD5");
@@ -191,8 +191,8 @@ public class ChordFunctionalModule extends FunctionalModule implements
 			if (tempfm.getName().equals(this.getName()))
 				continue;
 			
-			Collection<Service> cc = tempfm.getProvidedServices().values();
-			Iterator<Service> itrr = cc.iterator();
+			Collection<IService> cc = tempfm.getProvidedServices().values();
+			Iterator<IService> itrr = cc.iterator();
 			
 			while (itrr.hasNext()) {
 				
@@ -217,5 +217,11 @@ public class ChordFunctionalModule extends FunctionalModule implements
 				+ " and owner: "
 				+ ownerPeer.getKey());
 	}
+
+	@Override
+	public void addConsumableService(String id, IService service) {}
+
+	@Override
+	public void addProvidedService(String id, IService service) {}
 
 }

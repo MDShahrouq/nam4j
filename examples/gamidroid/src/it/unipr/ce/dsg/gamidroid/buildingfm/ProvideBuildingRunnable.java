@@ -8,7 +8,7 @@ import it.unipr.ce.dsg.gamidroid.ontology.RoomStruct;
 import it.unipr.ce.dsg.gamidroid.ontology.Sensor;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -79,8 +80,8 @@ public class ProvideBuildingRunnable implements Runnable {
 			if (tempfm.getName().equals(bfm.getName()))
 				continue;
 
-			Collection<Service> cc = tempfm.getProvidedServices().values();
-			Iterator<Service> itrr = cc.iterator();
+			Collection<IService> cc = tempfm.getProvidedServices().values();
+			Iterator<IService> itrr = cc.iterator();
 			while (itrr.hasNext()) {
 				serviceName = itrr.next().getName();
 
@@ -187,7 +188,7 @@ public class ProvideBuildingRunnable implements Runnable {
 			}
 
 			Date timestamp = new Date();
-			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
 
 			buildingNotification.setTimestamp(df.format(timestamp));
 

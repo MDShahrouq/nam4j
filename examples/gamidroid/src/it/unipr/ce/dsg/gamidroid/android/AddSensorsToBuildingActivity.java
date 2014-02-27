@@ -67,6 +67,8 @@ public class AddSensorsToBuildingActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_sensors_to_building);
+		
+		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
 
 		context = this;
 
@@ -82,7 +84,7 @@ public class AddSensorsToBuildingActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				finish();
+				onBackPressed();
 			}
 		});
 
@@ -327,7 +329,7 @@ public class AddSensorsToBuildingActivity extends Activity {
 															Toast.LENGTH_LONG)
 															.show();
 
-													finish();
+													onBackPressed();
 
 												}
 											});
@@ -362,6 +364,12 @@ public class AddSensorsToBuildingActivity extends Activity {
 			e.printStackTrace();
 		}
 
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    super.onBackPressed();
+	    overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
 	}
 
 }

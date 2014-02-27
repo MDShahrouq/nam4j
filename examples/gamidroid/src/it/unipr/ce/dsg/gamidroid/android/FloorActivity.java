@@ -44,6 +44,8 @@ public class FloorActivity extends ListActivity implements ResourceListener {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.building_lookup);
+		
+		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_left_out);
 
 		Button backButton = (Button) findViewById(R.id.backButtonLookup);
 
@@ -51,7 +53,7 @@ public class FloorActivity extends ListActivity implements ResourceListener {
 
 			@Override
 			public void onClick(View v) {
-				finish();
+				onBackPressed();
 			}
 		});
 
@@ -112,7 +114,7 @@ public class FloorActivity extends ListActivity implements ResourceListener {
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-			finish();
+			onBackPressed();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -181,6 +183,12 @@ public class FloorActivity extends ListActivity implements ResourceListener {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    super.onBackPressed();
+	    overridePendingTransition(R.anim.animate_right_in, R.anim.animate_right_out);
 	}
 
 }

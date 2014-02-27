@@ -53,6 +53,8 @@ public class SensorDataViewActivity extends Activity implements
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sensor_data);
+		
+		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_left_out);
 
 		Button backButton = (Button) findViewById(R.id.backButtonSensor);
 
@@ -63,10 +65,10 @@ public class SensorDataViewActivity extends Activity implements
 				
 				stopThread();
 
-				GamiNode.getAndroidDemoNam().getRfm()
+				GamiNode.getAndroidGamiNode().getRfm()
 						.stopTemperatureNotificationLookup();
 
-				finish();
+				onBackPressed();
 			}
 		});
 
@@ -98,7 +100,7 @@ public class SensorDataViewActivity extends Activity implements
 		titleTv.setTextSize(15);
 
 		GamiNode
-				.getAndroidDemoNam()
+				.getAndroidGamiNode()
 				.getRfm()
 				.startTemperatureNotificationLookup(
 						location.getBuilding().getValue(),
@@ -194,16 +196,22 @@ public class SensorDataViewActivity extends Activity implements
 
 			stopThread();
 
-			GamiNode.getAndroidDemoNam().getRfm()
+			GamiNode.getAndroidGamiNode().getRfm()
 					.stopTemperatureNotificationLookup();
 			
-			finish();
+			onBackPressed();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
 	public void stopThread() {
 		stopThread = true;
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    super.onBackPressed();
+	    overridePendingTransition(R.anim.animate_right_in, R.anim.animate_right_out);
 	}
 
 }

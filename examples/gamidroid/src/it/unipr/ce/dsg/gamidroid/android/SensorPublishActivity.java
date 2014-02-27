@@ -45,6 +45,8 @@ public class SensorPublishActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sensor_publish);
 
+		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
+
 		context = this;
 
 		Bundle b = this.getIntent().getExtras();
@@ -74,7 +76,7 @@ public class SensorPublishActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				finish();
+				onBackPressed();
 			}
 		});
 
@@ -92,54 +94,79 @@ public class SensorPublishActivity extends Activity {
 				String instertedLatLng = editTextLatLng.getText().toString()
 						.replaceAll("\\s+", "");
 
-				String latStr = instertedLatLng.split(",")[0];
-				String lngStr = instertedLatLng.split(",")[1];
+				String[] splitArray = instertedLatLng.split(",");
+				
+				if (splitArray.length == 2) {
 
-				if (!address.equalsIgnoreCase("") && address != null) {
+					String latStr = instertedLatLng.split(",")[0];
+					String lngStr = instertedLatLng.split(",")[1];
 
-					EditText editTextName = (EditText) findViewById(R.id.editSensorName);
-					String name = editTextName.getText().toString();
+					if (!address.equalsIgnoreCase("") && address != null) {
 
-					EditText editTextFloor = (EditText) findViewById(R.id.editSensorFloor);
-					String floor = editTextFloor.getText().toString();
+						EditText editTextName = (EditText) findViewById(R.id.editSensorName);
+						String name = editTextName.getText().toString();
 
-					EditText editTextRoom = (EditText) findViewById(R.id.editSensorRoom);
-					String room = editTextRoom.getText().toString();
+						EditText editTextFloor = (EditText) findViewById(R.id.editSensorFloor);
+						String floor = editTextFloor.getText().toString();
 
-					EditText editTextValue = (EditText) findViewById(R.id.editSensorValue);
-					String value = editTextValue.getText().toString();
+						EditText editTextRoom = (EditText) findViewById(R.id.editSensorRoom);
+						String room = editTextRoom.getText().toString();
 
-					if (!name.equalsIgnoreCase("") && !(name == null)
-							&& !floor.equalsIgnoreCase("") && !(floor == null)
-							&& !room.equalsIgnoreCase("") && !(room == null)
-							&& !value.equalsIgnoreCase("") && !(value == null)) {
+						EditText editTextValue = (EditText) findViewById(R.id.editSensorValue);
+						String value = editTextValue.getText().toString();
 
-						/* Start publishing the resource */
+						if (!name.equalsIgnoreCase("") && !(name == null)
+								&& !floor.equalsIgnoreCase("")
+								&& !(floor == null)
+								&& !room.equalsIgnoreCase("")
+								&& !(room == null)
+								&& !value.equalsIgnoreCase("")
+								&& !(value == null)) {
 
-						GamiNode.publishSensor(address, latStr, lngStr,
-								name, floor, room, value);
+							/* Start publishing the resource */
 
+							GamiNode.publishSensor(address, latStr, lngStr,
+									name, floor, room, value);
+
+							Toast.makeText(
+									context,
+									getResources().getString(
+											R.string.resource_published),
+									Toast.LENGTH_LONG).show();
+
+							onBackPressed();
+						} else {
+							Toast.makeText(
+									context,
+									getResources().getString(
+											R.string.specify_all),
+									Toast.LENGTH_LONG).show();
+						}
+
+					} else {
 						Toast.makeText(
 								context,
 								getResources().getString(
-										R.string.resource_published),
-								Toast.LENGTH_LONG).show();
-
-						finish();
-					} else {
-						Toast.makeText(context,
-								getResources().getString(R.string.specify_all),
+										R.string.specify_address),
 								Toast.LENGTH_LONG).show();
 					}
 
-				} else {
-					Toast.makeText(context,
-							getResources().getString(R.string.specify_address),
+				}
+				else {
+					Toast.makeText(
+							context,
+							getResources().getString(
+									R.string.specify_latlng),
 							Toast.LENGTH_LONG).show();
 				}
-
 			}
 		});
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
 	}
 
 }

@@ -25,8 +25,8 @@ import android.os.Handler;
 
 public class SplashScreen extends Activity {
 
-	// Splash screen timeout (seconds)
-	private static int SPLASH_TIME_OUT = 2000;
+	// Splash screen timeout (milliseconds)
+	private static int SPLASH_TIME_OUT = 1000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

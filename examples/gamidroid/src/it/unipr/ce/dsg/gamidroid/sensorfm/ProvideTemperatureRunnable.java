@@ -11,20 +11,21 @@ import it.unipr.ce.dsg.gamidroid.ontology.Temperature;
 import it.unipr.ce.dsg.gamidroid.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
 import com.google.gson.Gson;
 
 public class ProvideTemperatureRunnable implements Runnable {
 	
 	private SensorFunctionalModule sfm = null;
-	private String locationName = "nowhere";
+	// private String locationName = "nowhere"; /* The name of the location is not actually used */
 	private String buildingName = "nowhere";
 	private String floorName = "nowhere";
 	private String roomName = "nowhere";
@@ -37,7 +38,7 @@ public class ProvideTemperatureRunnable implements Runnable {
 			String locationName, 
 			String temperatureValue) {
 		this.sfm = sfm;
-		this.locationName = locationName;
+		// this.locationName = locationName;
 		this.temperatureValue = temperatureValue;
 	}
 	
@@ -75,8 +76,8 @@ public class ProvideTemperatureRunnable implements Runnable {
 			if (tempfm.getName().equals(sfm.getName()))
 				continue;
 			
-			Collection<Service> cc = tempfm.getProvidedServices().values();
-			Iterator<Service> itrr = cc.iterator();
+			Collection<IService> cc = tempfm.getProvidedServices().values();
+			Iterator<IService> itrr = cc.iterator();
 			
 			while (itrr.hasNext()) {
 				serviceName = itrr.next().getName();
@@ -133,7 +134,7 @@ public class ProvideTemperatureRunnable implements Runnable {
 			
 			tempNotif.setSubject(temperature);
 			Date timestamp = new Date();
-			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
 			sfm.getLogger().log(df.format(timestamp));
 			tempNotif.setTimestamp(df.format(timestamp));
 
