@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.task.TaskDescriptor;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 public class TaskManagerFunctionalModule extends FunctionalModule {
 
@@ -51,4 +52,10 @@ public class TaskManagerFunctionalModule extends FunctionalModule {
 		Thread t = new Thread(new ManageTasksRunnable(this), "Perform task management");
 		t.start();
 	}
+
+	@Override
+	public void addConsumableService(String id, IService service) {}
+
+	@Override
+	public void addProvidedService(String id, IService service) {}
 }

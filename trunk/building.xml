@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-	<BUILDING name="Parco Area delle Science">
+	<BUILDING name="Viale G P Usberti, 40">
 		<FLOOR name="1">
 			<ROOM name="Living Room">
 				<SENSOR name="Temperature1"></SENSOR>

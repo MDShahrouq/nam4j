@@ -47,13 +47,15 @@ public class RoomActivity extends ListActivity implements ResourceListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.building_lookup);
         
+        overridePendingTransition(R.anim.animate_left_in, R.anim.animate_left_out);
+        
         Button backButton = (Button) findViewById(R.id.backButtonLookup);
 
 		backButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				finish();
+				onBackPressed();
 			}
 		});
         
@@ -115,7 +117,7 @@ public class RoomActivity extends ListActivity implements ResourceListener {
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			
-			finish();
+			onBackPressed();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -205,4 +207,9 @@ public class RoomActivity extends ListActivity implements ResourceListener {
 		
 	}
 	
+	@Override
+	public void onBackPressed() {
+	    super.onBackPressed();
+	    overridePendingTransition(R.anim.animate_right_in, R.anim.animate_right_out);
+	}
 }

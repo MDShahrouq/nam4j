@@ -17,20 +17,20 @@
             android:id="@+id/backButtonSetting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_action_previous_item"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_action_previous_item"
             android:contentDescription="@string/back" />
 
         <TextView
             android:id="@+id/BootStrapIpText"
             style="@style/TitleStyle"
-            android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="@string/bootstrap_ip"
-            android:layout_centerVertical="true" >
+            android:textSize="18sp" >
         </TextView>
     </RelativeLayout>
 

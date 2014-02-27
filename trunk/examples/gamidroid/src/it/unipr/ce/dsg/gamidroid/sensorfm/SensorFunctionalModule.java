@@ -2,6 +2,7 @@ package it.unipr.ce.dsg.gamidroid.sensorfm;
 
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 
 public class SensorFunctionalModule extends FunctionalModule {
@@ -24,4 +25,10 @@ public class SensorFunctionalModule extends FunctionalModule {
 		Thread t = new Thread(new ProvideTemperatureRunnable(this, buildingName , floorName , roomName , sensorName , temperatureValue , latitude , longitude ), "Provide temperature thread");
 		t.start();
 	}
+
+	@Override
+	public void addConsumableService(String id, IService service) {}
+
+	@Override
+	public void addProvidedService(String id, IService service) {}
 }

@@ -16,8 +16,8 @@ import android.os.Environment;
 
 public class GamiNode extends NetworkedAutonomicMachine {
 
-	public static String TAG = "AndroidDemoNam";
-	private static GamiNode androidDemoNam;
+	public static String TAG = "AndroidGamiNode";
+	private static GamiNode androidGamiNode;
 	private TaskManagerFunctionalModule tmfm = null;
 	private ReasonerFunctionalModule rfm = null;
 	private static ChordFunctionalModule cfm = null;
@@ -35,7 +35,7 @@ public class GamiNode extends NetworkedAutonomicMachine {
 
 		// PeerConfig peerConfig = new PeerConfig(confFile);
 
-		this.setId("demonam");
+		this.setId("gaminode");
 
 		thisNam = this;
 
@@ -62,7 +62,7 @@ public class GamiNode extends NetworkedAutonomicMachine {
 	/* Leave Chord ring */
 	public static void disconnect() {
 		cfm.disconnect();
-		androidDemoNam = null;
+		androidGamiNode = null;
 	}
 
 	public ChordFunctionalModule getCfm() {
@@ -89,11 +89,11 @@ public class GamiNode extends NetworkedAutonomicMachine {
 		this.rfm = rfm;
 	}
 
-	public static GamiNode getAndroidDemoNam() {
-		if (androidDemoNam == null) {
-			androidDemoNam = new GamiNode("LOOKUP", null);
+	public static GamiNode getAndroidGamiNode() {
+		if (androidGamiNode == null) {
+			androidGamiNode = new GamiNode("LOOKUP", null);
 		}
-		return androidDemoNam;
+		return androidGamiNode;
 	}
 
 	public static void publishBuilding(Document xml) {

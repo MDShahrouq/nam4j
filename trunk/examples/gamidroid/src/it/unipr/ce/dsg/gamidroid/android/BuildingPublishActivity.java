@@ -84,6 +84,8 @@ public class BuildingPublishActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.building_publish);
+		
+		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
 
 		context = this;
 
@@ -114,7 +116,7 @@ public class BuildingPublishActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				finish();
+				onBackPressed();
 			}
 		});
 
@@ -315,8 +317,7 @@ public class BuildingPublishActivity extends Activity {
 
 															lastInsertedViewId = roomEd
 																	.getId();
-
-															// rl.addView(roomEd);
+															
 														}
 													}
 												}
@@ -553,7 +554,7 @@ public class BuildingPublishActivity extends Activity {
 
 																					startActivity(i);
 
-																					finish();
+																					onBackPressed();
 
 																				}
 																			});
@@ -578,7 +579,7 @@ public class BuildingPublishActivity extends Activity {
 																							Toast.LENGTH_LONG)
 																							.show();
 
-																					finish();
+																					onBackPressed();
 																				}
 																			});
 
@@ -634,5 +635,11 @@ public class BuildingPublishActivity extends Activity {
 				}
 			}
 		});
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    super.onBackPressed();
+	    overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
 	}
 }

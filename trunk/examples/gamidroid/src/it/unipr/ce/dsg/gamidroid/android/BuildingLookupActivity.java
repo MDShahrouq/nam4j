@@ -65,6 +65,8 @@ public class BuildingLookupActivity extends ListActivity implements ResourceList
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.building_lookup);
 		
+		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_left_out);
+		
 		Button backButton = (Button) findViewById(R.id.backButtonLookup);
 
 		backButton.setOnClickListener(new View.OnClickListener() {
@@ -72,10 +74,10 @@ public class BuildingLookupActivity extends ListActivity implements ResourceList
 			@Override
 			public void onClick(View v) {
 				
-				GamiNode.getAndroidDemoNam().getRfm()
+				GamiNode.getAndroidGamiNode().getRfm()
 						.stopBuildingNotificationLookup();
 
-				finish();
+				onBackPressed();
 			}
 		});
 
@@ -94,7 +96,7 @@ public class BuildingLookupActivity extends ListActivity implements ResourceList
 		titleTv.setText(address);
 		titleTv.setTextSize(18);
 
-		GamiNode.getAndroidDemoNam().getRfm()
+		GamiNode.getAndroidGamiNode().getRfm()
 				.startBuildingNotificationLookup(address);
 		
 		GamiNode.addResourceListener(this);
@@ -124,10 +126,10 @@ public class BuildingLookupActivity extends ListActivity implements ResourceList
 
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-			GamiNode.getAndroidDemoNam().getRfm()
+			GamiNode.getAndroidGamiNode().getRfm()
 					.stopBuildingNotificationLookup();
 			
-			finish();
+			onBackPressed();
 			
 		}
 		return super.onKeyDown(keyCode, event);
@@ -193,6 +195,12 @@ public class BuildingLookupActivity extends ListActivity implements ResourceList
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    super.onBackPressed();
+	    overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
 	}
 
 }

@@ -10,6 +10,7 @@ import it.unipr.ce.dsg.s2pchord.resource.ResourceParameter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -32,6 +33,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -39,12 +41,23 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -72,13 +85,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * </p>
  * 
  * <p>
- *  Copyright (c) 2013, Distributed Systems Group, University of Parma, Italy.
- *  Permission is granted to copy, distribute and/or modify this document
- *  under the terms of the GNU Free Documentation License, Version 1.3
- *  or any later version published by the Free Software Foundation;
- *  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
- *  A copy of the license is included in the section entitled "GNU
- *  Free Documentation License".
+ * Copyright (c) 2013, Distributed Systems Group, University of Parma, Italy.
+ * Permission is granted to copy, distribute and/or modify this document under
+ * the terms of the GNU Free Documentation License, Version 1.3 or any later
+ * version published by the Free Software Foundation; with no Invariant
+ * Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the
+ * license is included in the section entitled "GNU Free Documentation License".
  * </p>
  * 
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
@@ -90,17 +102,14 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		GooglePlayServicesClient.OnConnectionFailedListener,
 		OnMarkerClickListener, ResourceListener, MessageListener {
 
-	// A request to connect to Location Services
+	/* A request to connect to Location Services */
 	private LocationRequest mLocationRequest;
 
-	// Stores the current instantiation of the location client in this object
+	/* Stores the current instantiation of the location client in this object */
 	private LocationClient mLocationClient;
 
 	public static String TAG = "NAM4JAndroidActivity";
 	final static int MAX_RESULT = 1;
-	private static final int MENU_FIRST = 1;
-	private static final int MENU_SECOND = 2;
-	private static final int MENU_THIRD = 3;
 
 	private FileManager fileManager;
 
@@ -117,9 +126,17 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 	Context context;
 
+	private RelativeLayout mainRL;
+	private RelativeLayout listRL;
+	private RelativeLayout titleBarRL;
+
 	private LatLng currentLocation;
 
 	private ProgressDialog dialog;
+
+	private int animationDuration = 300;
+
+	private boolean showingMenu = false;
 
 	/*
 	 * The boolean is used to decide what to do after a LatLng has been
@@ -156,6 +173,14 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 	Button menuButton, infoButton;
 
+	int screenWidth = 0;
+	int screenHeight = 0;
+
+	/* Ratio between the menu size and the screen width */
+	double menuWidth = 0.66;
+
+	ListView listView;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -164,13 +189,36 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 		context = this;
 
+		/* Settings menu elements */
+		ArrayList<MenuListElement> listElements = new ArrayList<MenuListElement>();
+
+		listElements.add(new MenuListElement(getResources().getString(
+				R.string.connectMenuTitle), getResources().getString(
+				R.string.connectMenuSubTitle)));
+		listElements.add(new MenuListElement(getResources().getString(
+				R.string.settingsMenuTitle), getResources().getString(
+				R.string.settingsMenuSubTitle)));
+		listElements.add(new MenuListElement(getResources().getString(
+				R.string.exitMenuTitle), getResources().getString(
+				R.string.exitMenuSubTitle)));
+
+		listView = (ListView) findViewById(R.id.ListViewContent);
+
+		MenuListAdapter adapter = new MenuListAdapter(this,
+				R.layout.menu_list_view_row, listElements);
+		listView.setAdapter(adapter);
+
+		listView.setOnItemClickListener(new ListItemClickListener());
+
+		mainRL = (RelativeLayout) findViewById(R.id.rlContainer);
+		listRL = (RelativeLayout) findViewById(R.id.listContainer);
+		titleBarRL = (RelativeLayout) findViewById(R.id.titleLl);
+
+		/* Adding swipe gesture listener to the top bar */
+		titleBarRL.setOnTouchListener(new SwipeAndClickListener());
+
 		menuButton = (Button) findViewById(R.id.menuButton);
-		menuButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				openOptionsMenu();
-			}
-		});
+		menuButton.setOnTouchListener(new SwipeAndClickListener());
 
 		infoButton = (Button) findViewById(R.id.infoButton);
 		infoButton.setOnClickListener(new View.OnClickListener() {
@@ -187,84 +235,191 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			}
 		});
 
-		// Create a new global location parameters object
-		mLocationRequest = LocationRequest.create();
-
-		// Set the update interval
-		mLocationRequest
-				.setInterval(LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
-
-		// Use high accuracy
-		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-		// Set the interval ceiling to one minute
-		mLocationRequest
-				.setFastestInterval(LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
-
-		bitmapDescriptorBlue = BitmapDescriptorFactory
-				.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-
-		bitmapDescriptorRed = BitmapDescriptorFactory
-				.defaultMarker(BitmapDescriptorFactory.HUE_RED);
-
 		/*
-		 * Create a new location client, using the enclosing class to handle
-		 * callbacks.
+		 * Check if the device has the Google Play Services installed and
+		 * updated. They are necessary to use Google Maps
 		 */
-		mLocationClient = new LocationClient(this, this, this);
+		int code = GooglePlayServicesUtil
+				.isGooglePlayServicesAvailable(context);
 
-		map = ((SupportMapFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.mapview)).getMap();
+		if (code != ConnectionResult.SUCCESS) {
 
-		if (map != null) {
+			showErrorDialog(code);
 
-			/* Set default map center and zoom on Parma */
-			double lat = 44.7950156;
-			double lgt = 10.32547;
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,
-					lgt), 12.0f));
+			System.out.println("Google Play Services error");
+			
+			FrameLayout fl = (FrameLayout) findViewById(R.id.frameId);
+			fl.removeAllViews();
+		}
+
+		else {
+			// Create a new global location parameters object
+			mLocationRequest = LocationRequest.create();
+
+			// Set the update interval
+			mLocationRequest
+					.setInterval(LocationUtils.UPDATE_INTERVAL_IN_MILLISECONDS);
+
+			// Use high accuracy
+			mLocationRequest
+					.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+			// Set the interval ceiling to one minute
+			mLocationRequest
+					.setFastestInterval(LocationUtils.FAST_INTERVAL_CEILING_IN_MILLISECONDS);
+
+			bitmapDescriptorBlue = BitmapDescriptorFactory
+					.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+
+			bitmapDescriptorRed = BitmapDescriptorFactory
+					.defaultMarker(BitmapDescriptorFactory.HUE_RED);
 
 			/*
-			 * Adding listeners to the map respectively for zoom level change
-			 * and onTap event.
+			 * Create a new location client, using the enclosing class to handle
+			 * callbacks.
 			 */
-			map.setOnCameraChangeListener(getCameraChangeListener());
-			map.setOnMapClickListener(getOnMapClickListener());
+			mLocationClient = new LocationClient(this, this, this);
 
-			/* Set map type as normal (i.e. not the satellite view) */
-			map.setMapType(com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL);
+			map = ((SupportMapFragment) getSupportFragmentManager()
+					.findFragmentById(R.id.mapview)).getMap();
 
-			/* Hide traffic layer */
-			map.setTrafficEnabled(false);
+			if (map != null) {
 
-			/*
-			 * Enable the 'my-location' layer, which continuously draws an
-			 * indication of a user's current location and bearing, and displays
-			 * UI controls that allow the interaction with the location itself
-			 */
-			map.setMyLocationEnabled(true);
+				/* Set default map center and zoom on Parma */
+				double lat = 44.7950156;
+				double lgt = 10.32547;
+				map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+						lat, lgt), 12.0f));
 
-			ml = new HashMap<String, Marker>();
+				/*
+				 * Adding listeners to the map respectively for zoom level
+				 * change and onTap event.
+				 */
+				map.setOnCameraChangeListener(getCameraChangeListener());
+				map.setOnMapClickListener(getOnMapClickListener());
 
-			// Get file manager for config files
-			fileManager = FileManager.getFileManager();
-			fileManager.createFiles();
+				/* Set map type as normal (i.e. not the satellite view) */
+				map.setMapType(com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL);
 
-			map.setOnMarkerClickListener(this);
+				/* Hide traffic layer */
+				map.setTrafficEnabled(false);
+
+				/*
+				 * Enable the 'my-location' layer, which continuously draws an
+				 * indication of a user's current location and bearing, and
+				 * displays UI controls that allow the interaction with the
+				 * location itself
+				 */
+				map.setMyLocationEnabled(true);
+
+				ml = new HashMap<String, Marker>();
+
+				// Get file manager for config files
+				fileManager = FileManager.getFileManager();
+				fileManager.createFiles();
+
+				map.setOnMarkerClickListener(this);
+
+			} else {
+				AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+				dialog.setMessage("The map cannot be initialized.");
+				dialog.setCancelable(true);
+				dialog.setPositiveButton("OK",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.dismiss();
+							}
+						});
+
+				dialog.show();
+			}
+
+		}
+
+	}
+
+	/**
+	 * Method to display the menu of the app.
+	 */
+	private void displaySideMenu() {
+
+		TranslateAnimation animation = null;
+
+		if (!showingMenu) {
+
+			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
+					.getLayoutParams();
+
+			animation = new TranslateAnimation(0, listRL.getMeasuredWidth()
+					- layoutParams.leftMargin, 0, 0);
+
+			animation.setDuration(animationDuration);
+			animation.setFillEnabled(true);
+			animation.setAnimationListener(new AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+
+					/*
+					 * At the end, set the final position as the current one
+					 */
+					RelativeLayout.LayoutParams lpList = (LayoutParams) mainRL
+							.getLayoutParams();
+					lpList.setMargins(listRL.getMeasuredWidth(), 0,
+							-listRL.getMeasuredWidth(), 0);
+					mainRL.setLayoutParams(lpList);
+
+					showingMenu = true;
+
+				}
+			});
 
 		} else {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-			dialog.setMessage("The map cannot be initialized.");
-			dialog.setCancelable(true);
-			dialog.setPositiveButton("OK",
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							dialog.dismiss();
-						}
-					});
 
-			dialog.show();
+			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
+					.getLayoutParams();
+
+			animation = new TranslateAnimation(0, -layoutParams.leftMargin, 0,
+					0);
+
+			animation.setDuration(animationDuration);
+			animation.setFillEnabled(true);
+			animation.setAnimationListener(new AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+
+					/*
+					 * At the end, set the final position as the current one
+					 */
+					RelativeLayout.LayoutParams mainContenrLP = (LayoutParams) mainRL
+							.getLayoutParams();
+					mainContenrLP.setMargins(0, 0, 0, 0);
+					mainRL.setLayoutParams(mainContenrLP);
+
+					showingMenu = false;
+
+				}
+			});
 		}
+
+		mainRL.startAnimation(animation);
 
 	}
 
@@ -309,12 +464,13 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	public void onStop() {
 
 		// If the client is connected
-		if (mLocationClient.isConnected()) {
+		if (mLocationClient != null && mLocationClient.isConnected()) {
 			stopPeriodicUpdates();
 		}
 
 		// After disconnect() is called, the client is considered "dead".
-		mLocationClient.disconnect();
+		if (mLocationClient != null)
+			mLocationClient.disconnect();
 
 		super.onStop();
 	}
@@ -340,7 +496,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		 * Connect the client. Don't re-start any requests here; instead, wait
 		 * for onResume()
 		 */
-		mLocationClient.connect();
+		if (mLocationClient != null)
+			mLocationClient.connect();
 
 	}
 
@@ -350,6 +507,49 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	@Override
 	public void onResume() {
 		super.onResume();
+
+		getScreenSize();
+
+		final RelativeLayout listRL = (RelativeLayout) findViewById(R.id.listContainer);
+		final RelativeLayout listRLContainer = (RelativeLayout) findViewById(R.id.rlListViewContent);
+		final RelativeLayout shadowRL = (RelativeLayout) findViewById(R.id.shadowContainer);
+
+		RelativeLayout.LayoutParams menuListLP = (LayoutParams) listRL
+				.getLayoutParams();
+
+		/*
+		 * Setting the ListView width as the container width without the shadow
+		 * RelativeLayout
+		 */
+		menuListLP.width = (int) (screenWidth * menuWidth);
+		listRL.setLayoutParams(menuListLP);
+
+		RelativeLayout.LayoutParams listP = (LayoutParams) listRLContainer
+				.getLayoutParams();
+		listP.width = (int) (screenWidth * menuWidth)
+				- shadowRL.getLayoutParams().width;
+		listRLContainer.setLayoutParams(listP);
+
+	}
+
+	/**
+	 * Method to get the size of the screen.
+	 */
+	private void getScreenSize() {
+		final DisplayMetrics metrics = this.getResources().getDisplayMetrics();
+
+		Rect rect = new Rect();
+		Window win = getWindow();
+		win.getDecorView().getWindowVisibleDisplayFrame(rect);
+		int statusHeight = rect.top;
+		int contentViewTop = win.findViewById(Window.ID_ANDROID_CONTENT)
+				.getTop();
+		int titleHeight = contentViewTop - statusHeight;
+
+		/* Getting screen size */
+		screenWidth = metrics.widthPixels;
+		screenHeight = metrics.heightPixels - titleHeight - statusHeight;
+
 	}
 
 	/**
@@ -377,16 +577,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			// Google Play services was not available for some reason
 		} else {
 			// Display an error dialog
-			Log.d(NAM4JAndroidActivity.TAG,
-					this.getString(R.string.play_services_availability_error));
-			Dialog dialog = GooglePlayServicesUtil.getErrorDialog(resultCode,
-					this, 0);
-			if (dialog != null) {
-				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-				errorFragment.setDialog(dialog);
-				errorFragment.show(getSupportFragmentManager(),
-						NAM4JAndroidActivity.TAG);
-			}
+			showErrorDialog(resultCode);
 			return false;
 		}
 	}
@@ -446,7 +637,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		if (connectionResult.hasResolution()) {
 			try {
 
-				// Start an Activity that tries to resolve the error
+				/* Start an Activity that tries to resolve the error */
 				connectionResult.startResolutionForResult(this,
 						LocationUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
 
@@ -462,8 +653,10 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			}
 		} else {
 
-			// If no resolution is available, display a dialog to the user with
-			// the error.
+			/*
+			 * If no resolution is available, display a dialog to the user with
+			 * the error.
+			 */
 			showErrorDialog(connectionResult.getErrorCode());
 		}
 	}
@@ -494,14 +687,6 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 						zoom));
 			}
 
-			/*
-			 * Print the new location coordinates
-			 * 
-			 * Log.d(NAM4JAndroidActivity.TAG,
-			 * this.getString(R.string.current_location) +
-			 * LocationUtils.getLatLng(this, location));
-			 */
-
 		} else
 			Log.d(NAM4JAndroidActivity.TAG,
 					this.getString(R.string.location_not_available));
@@ -513,7 +698,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	 */
 	private void startPeriodicUpdates() {
 
-		mLocationClient.requestLocationUpdates(mLocationRequest, this);
+		if (mLocationClient != null)
+			mLocationClient.requestLocationUpdates(mLocationRequest, this);
 
 		Log.d(NAM4JAndroidActivity.TAG,
 				this.getString(R.string.updates_started));
@@ -524,7 +710,9 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	 * Services
 	 */
 	private void stopPeriodicUpdates() {
-		mLocationClient.removeLocationUpdates(this);
+
+		if (mLocationClient != null)
+			mLocationClient.removeLocationUpdates(this);
 
 		Log.d(NAM4JAndroidActivity.TAG,
 				this.getString(R.string.updates_stopped));
@@ -555,6 +743,10 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			// Show the error dialog in the DialogFragment
 			errorFragment.show(getSupportFragmentManager(),
 					NAM4JAndroidActivity.TAG);
+		} else {
+			Toast.makeText(context,
+					"Incompatible version of Google Play Services",
+					Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -591,6 +783,14 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			return mDialog;
+		}
+		
+		/* Close the app when the user clicks on the dialog button */
+		@Override
+		public void onDismiss(DialogInterface dialog) {
+			super.onDismiss(dialog);
+			
+			getActivity().finish();
 		}
 	}
 
@@ -632,7 +832,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 										dialog = new ProgressDialog(
 												NAM4JAndroidActivity.this);
 										dialog.setMessage(NAM4JAndroidActivity.this
-												.getString(R.string.pwJoining));
+												.getString(R.string.pwLeaving));
 										dialog.show();
 
 										new LeaveNetwork(null).execute();
@@ -688,6 +888,11 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 			return true;
 		}
+
+		else if (keyCode == KeyEvent.KEYCODE_MENU) {
+			displaySideMenu();
+		}
+
 		return super.onKeyDown(keyCode, event);
 		// return true;
 	}
@@ -838,160 +1043,6 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		}
 	}
 
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		menu.clear();
-		if (connected) {
-			menu.add(Menu.NONE, MENU_FIRST, 1, "Disconnect").setIcon(
-					R.drawable.ic_action_cancel);
-			menu.add(Menu.NONE, MENU_SECOND, 2, "Publish Building").setIcon(
-					R.drawable.home);
-			menu.add(Menu.NONE, MENU_THIRD, 3, "Publish Sensor").setIcon(
-					R.drawable.ic_action_cast);
-			return super.onPrepareOptionsMenu(menu);
-		} else {
-			menu.add(Menu.NONE, MENU_FIRST, 1, "Connect").setIcon(
-					R.drawable.ic_action_refresh);
-			menu.add(Menu.NONE, MENU_SECOND, 2, "Settings").setIcon(
-					R.drawable.ic_action_settings);
-			return super.onPrepareOptionsMenu(menu);
-		}
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		boolean result = super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, MENU_FIRST, 1, "Connect").setIcon(
-				R.drawable.ic_action_refresh);
-		menu.add(Menu.NONE, MENU_SECOND, 2, "Settings").setIcon(
-				R.drawable.ic_action_settings);
-		return result;
-
-	}
-
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		// Select menu
-		int id = item.getItemId();
-
-		switch (id) {
-		case MENU_FIRST:
-
-			if (connected) {
-
-				AlertDialog.Builder bDialog = new AlertDialog.Builder(this);
-				bDialog.setMessage(getResources().getString(R.string.leave));
-				bDialog.setCancelable(true);
-				bDialog.setPositiveButton("OK",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface iDialog, int id) {
-								iDialog.dismiss();
-
-								/*
-								 * The progress dialog is not created by the
-								 * AsyncTask because the peer just sends a
-								 * message to the bootstrap. This takes very few
-								 * time and the dialog would disappear almost
-								 * immediately. By showing it before executing
-								 * the AsyncTask, it can stay on the screen
-								 * until the bootstrap informs the peer that it
-								 * is part of the network. Thus, the dialog is
-								 * removed from the function listening for
-								 * received messages onReceivedMessage(String).
-								 */
-								dialog = new ProgressDialog(
-										NAM4JAndroidActivity.this);
-								dialog.setMessage(NAM4JAndroidActivity.this
-										.getString(R.string.pwJoining));
-								dialog.show();
-
-								new LeaveNetwork(null).execute();
-
-								connected = false;
-							}
-						});
-				bDialog.setNegativeButton("No",
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.dismiss();
-							}
-						});
-
-				bDialog.show();
-
-			} else {
-				connect();
-				Log.d(NAM4JAndroidActivity.TAG,
-						this.getString(R.string.menu_connect));
-			}
-
-			return true;
-		case MENU_SECOND:
-
-			if (connected) {
-
-				if (currentLocation != null) {
-
-					/*
-					 * Specifying that the GeoCoder class must call the function
-					 * to start publishing by setting the boolean to true
-					 */
-					requestPendingForBuilding = true;
-
-					new ReverseGeocodingTask(getBaseContext())
-							.execute(currentLocation);
-				} else {
-					Bundle args = new Bundle();
-					args.putParcelable("CurrentLocation", null);
-
-					Intent i = new Intent(this, BuildingPublishActivity.class);
-					i.putExtra("Address", "");
-					i.putExtra("Bundle", args);
-
-					startActivity(i);
-				}
-
-			} else {
-
-				showSettings();
-				Log.d(NAM4JAndroidActivity.TAG,
-						this.getString(R.string.menu_settings));
-			}
-			return true;
-		case MENU_THIRD:
-
-			if (connected) {
-
-				if (currentLocation != null) {
-
-					/*
-					 * Specifying that the GeoCoder class must call the function
-					 * to start publishing by setting the boolean to true
-					 */
-					requestPendingForSensor = true;
-
-					new ReverseGeocodingTask(getBaseContext())
-							.execute(currentLocation);
-				} else {
-					Bundle args = new Bundle();
-					args.putParcelable("CurrentLocation", null);
-
-					Intent i = new Intent(this, SensorPublishActivity.class);
-					i.putExtra("Address", "");
-					i.putExtra("Bundle", args);
-
-					startActivity(i);
-				}
-
-			}
-			return true;
-
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
 	private void startBuildingPublishActivity(String addresses) {
 
 		requestPendingForBuilding = false;
@@ -1120,6 +1171,24 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		Toast.makeText(getApplicationContext(),
 				getResources().getString(R.string.disconnected_from_network),
 				Toast.LENGTH_LONG).show();
+
+		/* Settings menu elements */
+		ArrayList<MenuListElement> listElements = new ArrayList<MenuListElement>();
+
+		listElements.add(new MenuListElement(getResources().getString(
+				R.string.connectMenuTitle), getResources().getString(
+				R.string.connectMenuSubTitle)));
+		listElements.add(new MenuListElement(getResources().getString(
+				R.string.settingsMenuTitle), getResources().getString(
+				R.string.settingsMenuSubTitle)));
+		listElements.add(new MenuListElement(getResources().getString(
+				R.string.exitMenuTitle), getResources().getString(
+				R.string.exitMenuSubTitle)));
+
+		MenuListAdapter adapter = new MenuListAdapter(this,
+				R.layout.menu_list_view_row, listElements);
+		listView.setAdapter(adapter);
+
 		/*
 		 * Cleaning the map and the HashMap containing the known resources
 		 */
@@ -1184,6 +1253,56 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 				System.out.println("Marker is already present");
 			}
 		}
+	}
+
+	@Override
+	public void onReceivedMessage(String msg) {
+
+		System.out.println("Received message of type " + msg);
+
+		/* Connected to the Chord network */
+		if (msg.equalsIgnoreCase(peer_listMessageType) && !connected) {
+
+			/* Settings menu elements */
+			ArrayList<MenuListElement> listElements = new ArrayList<MenuListElement>();
+
+			listElements.add(new MenuListElement(getResources().getString(
+					R.string.disconnectMenuTitle), getResources().getString(
+					R.string.disconnectMenuSubTitle)));
+			listElements.add(new MenuListElement(getResources().getString(
+					R.string.publishBuildingMenuTitle), getResources()
+					.getString(R.string.publishBuildingMenuSubTitle)));
+			listElements.add(new MenuListElement(getResources().getString(
+					R.string.publishSensorgMenuTitle), getResources()
+					.getString(R.string.publishSensorgMenuSubTitle)));
+			listElements.add(new MenuListElement(getResources().getString(
+					R.string.exitMenuTitle), getResources().getString(
+					R.string.exitMenuSubTitle)));
+
+			final MenuListAdapter adapter = new MenuListAdapter(this,
+					R.layout.menu_list_view_row, listElements);
+
+			connected = true;
+
+			runOnUiThread(new Runnable() {
+				public void run() {
+
+					if (dialog.isShowing()) {
+						dialog.dismiss();
+					}
+
+					Toast.makeText(
+							context,
+							getResources().getString(
+									R.string.connection_started),
+							Toast.LENGTH_LONG).show();
+
+					listView.setAdapter(adapter);
+
+				}
+			});
+		}
+
 	}
 
 	private class ReverseGeocodingTask extends AsyncTask<LatLng, Void, String> {
@@ -1394,7 +1513,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		@Override
 		protected Void doInBackground(Void... params) {
 
-			GamiNode.getAndroidDemoNam();
+			GamiNode.getAndroidGamiNode();
 
 			return null;
 		}
@@ -1430,31 +1549,583 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		}
 	}
 
-	@Override
-	public void onReceivedMessage(String msg) {
+	class ListItemClickListener implements OnItemClickListener {
 
-		// Connected to the Chord network
-		if (msg.equalsIgnoreCase(peer_listMessageType) && !connected) {
+		@Override
+		public void onItemClick(AdapterView<?> clickedList,
+				View clickedElement, final int clickedElementPosition,
+				long clickedRowId) {
 
-			connected = true;
+			if (showingMenu) {
 
-			runOnUiThread(new Runnable() {
-				public void run() {
+				final RelativeLayout mainRL = (RelativeLayout) findViewById(R.id.rlContainer);
+				final RelativeLayout listRL = (RelativeLayout) findViewById(R.id.listContainer);
 
-					if (dialog.isShowing()) {
-						dialog.dismiss();
+				TranslateAnimation animation = new TranslateAnimation(0,
+						-listRL.getMeasuredWidth(), 0, 0);
+
+				animation.setDuration(animationDuration);
+				animation.setFillEnabled(true);
+				animation.setAnimationListener(new AnimationListener() {
+
+					@Override
+					public void onAnimationStart(Animation animation) {
 					}
 
-					Toast.makeText(
-							context,
-							getResources().getString(
-									R.string.connection_started),
-							Toast.LENGTH_LONG).show();
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+					}
+
+					@Override
+					public void onAnimationEnd(Animation animation) {
+
+						/*
+						 * At the end, set the final position as the current one
+						 */
+						RelativeLayout.LayoutParams mainContainerLP = (LayoutParams) mainRL
+								.getLayoutParams();
+						mainContainerLP.setMargins(0, 0, 0, 0);
+						mainRL.setLayoutParams(mainContainerLP);
+
+						showingMenu = false;
+
+						if (connected) {
+							switch (clickedElementPosition) {
+							case 0:
+
+								AlertDialog.Builder bDialog = new AlertDialog.Builder(
+										context);
+								bDialog.setMessage(getResources().getString(
+										R.string.leave));
+								bDialog.setCancelable(true);
+								bDialog.setPositiveButton("OK",
+										new DialogInterface.OnClickListener() {
+											public void onClick(
+													DialogInterface iDialog,
+													int id) {
+												iDialog.dismiss();
+
+												/*
+												 * The progress dialog is not
+												 * created by the AsyncTask
+												 * because the peer just sends a
+												 * message to the bootstrap.
+												 * This takes very few time and
+												 * the dialog would disappear
+												 * almost immediately. By
+												 * showing it before executing
+												 * the AsyncTask, it can stay on
+												 * the screen until the
+												 * bootstrap informs the peer
+												 * that it is part of the
+												 * network. Thus, the dialog is
+												 * removed from the function
+												 * listening for received
+												 * messages
+												 * onReceivedMessage(String).
+												 */
+												dialog = new ProgressDialog(
+														NAM4JAndroidActivity.this);
+												dialog.setMessage(NAM4JAndroidActivity.this
+														.getString(R.string.pwLeaving));
+												dialog.show();
+
+												new LeaveNetwork(null)
+														.execute();
+
+												connected = false;
+											}
+										});
+								bDialog.setNegativeButton("No",
+										new DialogInterface.OnClickListener() {
+
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int id) {
+												dialog.dismiss();
+											}
+										});
+
+								bDialog.show();
+
+								break;
+
+							case 1:
+
+								if (currentLocation != null) {
+
+									/*
+									 * Specifying that the GeoCoder class must
+									 * call the function to start publishing by
+									 * setting the boolean to true
+									 */
+									requestPendingForBuilding = true;
+
+									new ReverseGeocodingTask(getBaseContext())
+											.execute(currentLocation);
+								} else {
+									Bundle args = new Bundle();
+									args.putParcelable("CurrentLocation", null);
+
+									Intent i = new Intent(context,
+											BuildingPublishActivity.class);
+									i.putExtra("Address", "");
+									i.putExtra("Bundle", args);
+
+									startActivity(i);
+								}
+
+								break;
+
+							case 2:
+
+								if (currentLocation != null) {
+
+									/*
+									 * Specifying that the GeoCoder class must
+									 * call the function to start publishing by
+									 * setting the boolean to true
+									 */
+									requestPendingForSensor = true;
+
+									new ReverseGeocodingTask(getBaseContext())
+											.execute(currentLocation);
+								} else {
+									Bundle args = new Bundle();
+									args.putParcelable("CurrentLocation", null);
+
+									Intent i = new Intent(context,
+											SensorPublishActivity.class);
+									i.putExtra("Address", "");
+									i.putExtra("Bundle", args);
+
+									startActivity(i);
+								}
+
+								break;
+
+							case 3:
+
+								AlertDialog.Builder builder = new AlertDialog.Builder(
+										context);
+								builder.setMessage(
+										context.getResources()
+												.getString(
+														R.string.exitOnBackButtonPressed))
+										.setCancelable(false)
+										.setPositiveButton(
+												"OK",
+												new DialogInterface.OnClickListener() {
+													public void onClick(
+															DialogInterface iDialog,
+															int id) {
+
+														if (connected) {
+
+															close = true;
+
+															dialog = new ProgressDialog(
+																	NAM4JAndroidActivity.this);
+															dialog.setMessage(NAM4JAndroidActivity.this
+																	.getString(R.string.pwLeaving));
+															dialog.show();
+
+															new LeaveNetwork(
+																	null)
+																	.execute();
+
+															connected = false;
+
+														} else {
+															System.runFinalizersOnExit(true);
+
+															System.exit(0);
+														}
+													}
+												})
+										.setNegativeButton(
+												"Annulla",
+												new DialogInterface.OnClickListener() {
+													public void onClick(
+															DialogInterface dialog,
+															int id) {
+														dialog.cancel();
+													}
+												});
+
+								AlertDialog alert = builder.create();
+								alert.show();
+
+								break;
+							}
+						} else {
+							switch (clickedElementPosition) {
+							case 0:
+
+								connect();
+								Log.d(NAM4JAndroidActivity.TAG, context
+										.getString(R.string.menu_connect));
+
+								break;
+
+							case 1:
+
+								showSettings();
+								Log.d(NAM4JAndroidActivity.TAG, context
+										.getString(R.string.menu_settings));
+
+								break;
+
+							case 2:
+
+								AlertDialog.Builder builder = new AlertDialog.Builder(
+										context);
+								builder.setMessage(
+										context.getResources()
+												.getString(
+														R.string.exitOnBackButtonPressed))
+										.setCancelable(false)
+										.setPositiveButton(
+												"OK",
+												new DialogInterface.OnClickListener() {
+													public void onClick(
+															DialogInterface iDialog,
+															int id) {
+
+														if (connected) {
+
+															close = true;
+
+															dialog = new ProgressDialog(
+																	NAM4JAndroidActivity.this);
+															dialog.setMessage(NAM4JAndroidActivity.this
+																	.getString(R.string.pwLeaving));
+															dialog.show();
+
+															new LeaveNetwork(
+																	null)
+																	.execute();
+
+															connected = false;
+
+														} else {
+															System.runFinalizersOnExit(true);
+
+															System.exit(0);
+														}
+													}
+												})
+										.setNegativeButton(
+												"Annulla",
+												new DialogInterface.OnClickListener() {
+													public void onClick(
+															DialogInterface dialog,
+															int id) {
+														dialog.cancel();
+													}
+												});
+
+								AlertDialog alert = builder.create();
+								alert.show();
+
+								break;
+							}
+						}
+
+					}
+				});
+
+				mainRL.startAnimation(animation);
+
+			}
+		}
+	}
+
+	public class SwipeAndClickListener implements OnTouchListener {
+
+		static final String logTag = "ActivitySwipeDetector";
+
+		int sourceId;
+
+		/*
+		 * To distinguish between click and swipe, set the max duration for a
+		 * click in milliseconds
+		 */
+		private static final int MAX_CLICK_DURATION = 200;
+
+		/* Instant the user clicks */
+		private long startClickTime;
+
+		boolean isAnimating = false;
+
+		/* Change sensitivity based on screen resolution */
+		static final int MIN_DISTANCE = 50;
+
+		private float downX, downY, upX, upY;
+
+		public SwipeAndClickListener() {
+		}
+
+		public void onRightToLeftSwipe() {
+
+			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
+					.getLayoutParams();
+
+			TranslateAnimation animation = null;
+
+			final RelativeLayout mainRL = (RelativeLayout) findViewById(R.id.rlContainer);
+
+			if (layoutParams.leftMargin >= listRL.getMeasuredWidth() / 2) {
+				animation = new TranslateAnimation(0, listRL.getMeasuredWidth()
+						- layoutParams.leftMargin, 0, 0);
+			} else {
+				animation = new TranslateAnimation(0, -layoutParams.leftMargin,
+						0, 0);
+			}
+
+			animation.setDuration(animationDuration);
+			animation.setFillEnabled(true);
+			animation.setAnimationListener(new AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+
+					/*
+					 * At the end, set the final position as the current one
+					 */
+					RelativeLayout.LayoutParams mainContainerLP = (LayoutParams) mainRL
+							.getLayoutParams();
+
+					if (mainContainerLP.leftMargin >= listRL.getMeasuredWidth() / 2) {
+						mainContainerLP.setMargins(listRL.getMeasuredWidth(),
+								0, -listRL.getMeasuredWidth(), 0);
+						showingMenu = true;
+					} else {
+						mainContainerLP.setMargins(0, 0, 0, 0);
+						showingMenu = false;
+					}
+
+					mainRL.setLayoutParams(mainContainerLP);
+
+					isAnimating = false;
 
 				}
 			});
 
+			mainRL.startAnimation(animation);
+
 		}
+
+		public void onLeftToRightSwipe() {
+
+			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
+					.getLayoutParams();
+
+			TranslateAnimation animation = null;
+
+			if (layoutParams.leftMargin >= listRL.getMeasuredWidth() / 2) {
+				animation = new TranslateAnimation(0, listRL.getMeasuredWidth()
+						- layoutParams.leftMargin, 0, 0);
+			} else {
+				animation = new TranslateAnimation(0, -layoutParams.leftMargin,
+						0, 0);
+			}
+
+			animation.setDuration(animationDuration);
+			animation.setFillEnabled(true);
+			animation.setAnimationListener(new AnimationListener() {
+
+				@Override
+				public void onAnimationStart(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationRepeat(Animation animation) {
+				}
+
+				@Override
+				public void onAnimationEnd(Animation animation) {
+
+					/*
+					 * At the end, set the final position as the current one
+					 */
+					RelativeLayout.LayoutParams mainContainerLP = (LayoutParams) mainRL
+							.getLayoutParams();
+
+					if (mainContainerLP.leftMargin >= listRL.getMeasuredWidth() / 2) {
+						mainContainerLP.setMargins(listRL.getMeasuredWidth(),
+								0, -listRL.getMeasuredWidth(), 0);
+						showingMenu = true;
+					} else {
+						mainContainerLP.setMargins(0, 0, 0, 0);
+						showingMenu = false;
+					}
+
+					mainRL.setLayoutParams(mainContainerLP);
+
+					isAnimating = false;
+
+				}
+			});
+
+			mainRL.startAnimation(animation);
+
+		}
+
+		public void onTopToBottomSwipe() {
+
+		}
+
+		public void onBottomToTopSwipe() {
+
+		}
+
+		public boolean onTouch(View v, MotionEvent event) {
+
+			sourceId = v.getId();
+
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN: {
+
+				startClickTime = Calendar.getInstance().getTimeInMillis();
+
+				downX = event.getX();
+				downY = event.getY();
+				return true;
+			}
+			case MotionEvent.ACTION_UP: {
+
+				long clickDuration = Calendar.getInstance().getTimeInMillis()
+						- startClickTime;
+
+				if (clickDuration < MAX_CLICK_DURATION) {
+
+					/* Click event has occurred */
+
+					/*
+					 * Process click event just if the button was clicked. If
+					 * the user pressed the bar, ignore it
+					 */
+					if (sourceId == menuButton.getId()) {
+						displaySideMenu();
+					}
+
+				} else {
+
+					/* Swipe event has occurred */
+
+					upX = event.getX();
+					upY = event.getY();
+
+					float deltaX = downX - upX;
+					float deltaY = downY - upY;
+
+					if (!isAnimating) {
+
+						if (!showingMenu) {
+
+							RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
+									.getLayoutParams();
+
+							if (layoutParams.leftMargin > 0) {
+								isAnimating = true;
+								onRightToLeftSwipe();
+							}
+						} else {
+
+							RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
+									.getLayoutParams();
+
+							if (layoutParams.leftMargin < listRL
+									.getMeasuredWidth()) {
+								isAnimating = true;
+								onLeftToRightSwipe();
+							}
+						}
+					}
+
+					// swipe horizontal?
+					if (Math.abs(deltaX) > MIN_DISTANCE) {
+
+						// left or right
+						if (deltaX < 0) {
+							// this.onLeftToRightSwipe();
+							return true;
+						}
+
+						if (deltaX > 0) {
+							// this.onRightToLeftSwipe();
+							return true;
+						}
+					} else {
+					}
+
+					// swipe vertical?
+					if (Math.abs(deltaY) > MIN_DISTANCE) {
+						// top or down
+						if (deltaY < 0) {
+							this.onTopToBottomSwipe();
+							return true;
+						}
+						if (deltaY > 0) {
+							this.onBottomToTopSwipe();
+							return true;
+						}
+					} else {
+					}
+
+					return false; // no swipe horizontally and no swipe
+									// vertically
+				}
+			}
+			case MotionEvent.ACTION_MOVE: {
+
+				upX = event.getX();
+
+				float deltaX = downX - upX;
+
+				RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
+						.getLayoutParams();
+
+				if (!showingMenu) {
+					if (!isAnimating
+							&& ((layoutParams.leftMargin - deltaX >= 0) && (layoutParams.leftMargin
+									- deltaX <= listRL.getMeasuredWidth()))) {
+
+						layoutParams.leftMargin -= deltaX;
+						layoutParams.rightMargin += deltaX;
+
+						mainRL.setLayoutParams(layoutParams);
+					}
+				} else {
+					if (!isAnimating
+							&& ((layoutParams.leftMargin - deltaX <= listRL
+									.getMeasuredWidth()) && (layoutParams.leftMargin
+									- deltaX >= 0))) {
+
+						layoutParams.leftMargin -= deltaX;
+						layoutParams.rightMargin += deltaX;
+
+						mainRL.setLayoutParams(layoutParams);
+					}
+				}
+
+				return false;
+
+			}
+			}
+			return false;
+		}
+
 	}
 
 }

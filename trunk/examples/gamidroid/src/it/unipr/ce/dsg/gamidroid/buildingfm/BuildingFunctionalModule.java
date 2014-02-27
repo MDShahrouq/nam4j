@@ -2,6 +2,7 @@ package it.unipr.ce.dsg.gamidroid.buildingfm;
 
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
+import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
 import org.w3c.dom.Document;
 
@@ -36,4 +37,10 @@ public class BuildingFunctionalModule extends FunctionalModule {
 				"Provide Building thread");
 		t.start();
 	}
+
+	@Override
+	public void addConsumableService(String id, IService service) {}
+
+	@Override
+	public void addProvidedService(String id, IService service) {}
 }

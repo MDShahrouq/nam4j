@@ -46,6 +46,8 @@ public class SettingsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.settings);
+		
+		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
 
 		fileManager = FileManager.getFileManager();
 
@@ -58,6 +60,7 @@ public class SettingsActivity extends Activity {
 				EditText textIp = (EditText) findViewById(R.id.editIpBoostrap);
 				String ip = textIp.getText().toString();
 				fileManager.updateFileChordPeer(ip);
+				onBackPressed();
 				finish();
 			}
 		});
@@ -68,7 +71,7 @@ public class SettingsActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				finish();
+				onBackPressed();
 			}
 		});
 
@@ -94,6 +97,12 @@ public class SettingsActivity extends Activity {
 			e1.printStackTrace();
 		}
 
+	}
+	
+	@Override
+	public void onBackPressed() {
+	    super.onBackPressed();
+	    overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
 	}
 
 }
