@@ -805,7 +805,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(message)
 					.setCancelable(false)
-					.setPositiveButton(getResources().getString(R.string.no),
+					.setPositiveButton(getResources().getString(R.string.yes),
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface iDialog,
 										int id) {
