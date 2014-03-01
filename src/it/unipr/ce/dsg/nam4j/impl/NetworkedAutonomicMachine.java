@@ -555,7 +555,7 @@ public abstract class NetworkedAutonomicMachine implements
 	 *            null if you need to copy just a FM)
 	 * @param clientType
 	 *            (ANDROID or DESKTOP)
-	 * */
+	 */
 	public void startCopyAction(String functionalModule, String[] service,
 			String[] serviceId, Platform clientType) {
 
