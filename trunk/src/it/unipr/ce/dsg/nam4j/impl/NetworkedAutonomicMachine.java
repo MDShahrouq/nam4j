@@ -25,40 +25,17 @@
 
 package it.unipr.ce.dsg.nam4j.impl;
 
+import it.unipr.ce.dsg.nam4j.impl.mobility.ClientCopyActionManager;
+import it.unipr.ce.dsg.nam4j.impl.mobility.ServerMobilityActionManager;
 import it.unipr.ce.dsg.nam4j.impl.resource.ResourceDescriptor;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.nam4j.interfaces.INetworkedAutonomicMachine;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.sun.org.apache.bcel.internal.classfile.ClassParser;
 
 /**
  * <p>
@@ -66,13 +43,12 @@ import com.sun.org.apache.bcel.internal.classfile.ClassParser;
  * </p>
  * 
  * <p>
- *  Copyright (c) 2011, Distributed Systems Group, University of Parma, Italy.
- *  Permission is granted to copy, distribute and/or modify this document
- *  under the terms of the GNU Free Documentation License, Version 1.3
- *  or any later version published by the Free Software Foundation;
- *  with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
- *  A copy of the license is included in the section entitled "GNU
- *  Free Documentation License".
+ * Copyright (c) 2011, Distributed Systems Group, University of Parma, Italy.
+ * Permission is granted to copy, distribute and/or modify this document under
+ * the terms of the GNU Free Documentation License, Version 1.3 or any later
+ * version published by the Free Software Foundation; with no Invariant
+ * Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the
+ * license is included in the section entitled "GNU Free Documentation License".
  * </p>
  * 
  * @author Michele Amoretti (michele.amoretti@unipr.it)
@@ -101,15 +77,24 @@ public abstract class NetworkedAutonomicMachine implements
 	};
 
 	/**
+	 * The mobility action to be performed.
+	 */
+	public enum Action {
+		BACK, COPY, GO, MIGRATE, OFFLOAD
+	}
+
+	/**
+	 * The type of the mobility action subject.
+	 */
+	public enum MigrationSubject {
+		FM, SERVICE
+	}
+
+	/**
 	 * An array representing the type of the NAM (ANDROID or DESKTOP). i-th
 	 * element is relative to the client served by the i-th thread in the pool
 	 */
 	Platform[] clientPlatform;
-
-	/**
-	 * The descriptor of the object to be migrated.
-	 */
-	BundleDescriptor bundleDescriptor;
 
 	/**
 	 * A HashMap for the functional modules added to the NAM The keys are String
@@ -125,6 +110,16 @@ public abstract class NetworkedAutonomicMachine implements
 	HashMap<String, ResourceDescriptor> resourceDescriptors = new HashMap<String, ResourceDescriptor>();
 
 	/**
+	 * A HashMap to store the address of NAMs which sent Functional Modules.
+	 */
+	HashMap<String, String> fmSender = new HashMap<String, String>();
+
+	/**
+	 * A HashMap to store the address of NAMs which sent Services.
+	 */
+	HashMap<String, String> serviceSender = new HashMap<String, String>();
+	
+	/**
 	 * An int representing the size of the threads pool for the migration.
 	 */
 	int poolSize;
@@ -132,17 +127,17 @@ public abstract class NetworkedAutonomicMachine implements
 	/**
 	 * The threads pool to manage the migration requests.
 	 */
-	ExecutorService poolForMigration;
-	
+	ExecutorService poolForServerMobilityAction;
+
+	/**
+	 * The threads pool to manage the migration requests.
+	 */
+	ExecutorService poolForClientMobilityAction;
+
 	/**
 	 * The number of times a client tries to connect to the server
 	 */
 	private int trialsNumber = 3;
-
-	/**
-	 * A Class array used for the reflection.
-	 */
-	private static final Class<?>[] parameters = new Class[] { URL.class };
 
 	/**
 	 * Address of the server to which the migration requests should be sent.
@@ -169,15 +164,23 @@ public abstract class NetworkedAutonomicMachine implements
 	 * 
 	 * @param migrationStorePath
 	 *            the path to store files received via migration
-	 *            
+	 * 
 	 * @param trials
 	 *            the number of times a client tries to connect to a server
 	 */
-	public NetworkedAutonomicMachine(int poolSize, String migrationStorePath, int trials) {
+	public NetworkedAutonomicMachine(int poolSize, String migrationStorePath,
+			int trials) {
 
 		setPoolSize(poolSize);
 		setMigrationStore(migrationStorePath);
 		setTrialsNumber(trials);
+
+		/*
+		 * Creation of the thread pools to manage incoming mobility action
+		 * requests.
+		 */
+		createPoolForServerMobilityAction();
+		createPoolForClientMobilityAction();
 
 		clientPlatform = new Platform[getPoolSize()];
 	}
@@ -258,25 +261,6 @@ public abstract class NetworkedAutonomicMachine implements
 	}
 
 	/**
-	 * Set a reference to the descriptor of the migrated file.
-	 * 
-	 * @param descriptor
-	 *            the descriptor of the migrated file
-	 */
-	public void setDescriptor(BundleDescriptor descriptor) {
-		this.bundleDescriptor = descriptor;
-	}
-
-	/**
-	 * Returns a reference to the descriptor of the migrated file.
-	 * 
-	 * @return a reference to the descriptor of the migrated file
-	 */
-	public BundleDescriptor getDescriptor() {
-		return bundleDescriptor;
-	}
-
-	/**
 	 * Sets the identifier of the NAM.
 	 * 
 	 * @param id
@@ -351,7 +335,7 @@ public abstract class NetworkedAutonomicMachine implements
 	public String getMigrationStore() {
 		return migrationStore;
 	}
-	
+
 	/**
 	 * Set the number of times a client tries to connect to a server.
 	 * 
@@ -361,7 +345,7 @@ public abstract class NetworkedAutonomicMachine implements
 	public void setTrialsNumber(int num) {
 		trialsNumber = num;
 	}
-	
+
 	/**
 	 * Get the number of times a client tries to connect to a server.
 	 * 
@@ -424,18 +408,77 @@ public abstract class NetworkedAutonomicMachine implements
 	}
 
 	/**
+	 * Add the address of a copied FM sender to a HashMap.
+	 * 
+	 * @param fm
+	 *            The file name and extension of the sent FM
+	 * @param sender
+	 *            The address of the sender
+	 */
+	public void addFmSender(String fm, String sender) {
+		fmSender.put(fm, sender);
+	}
+
+	/**
+	 * Remove the address of a copied FM sender from the HashMap.
+	 * 
+	 * @param fm
+	 *            The file name and extension of the FM to be removed
+	 */
+	public void removeFmSender(String fm) {
+		fmSender.remove(fm);
+	}
+
+	/**
+	 * Add the address of a Service sender to a HashMap.
+	 * 
+	 * @param service
+	 *            The file name and extension of the sent Service
+	 * @param sender
+	 *            The address of the sender
+	 */
+	public void addServiceSender(String service, String sender) {
+		serviceSender.put(service, sender);
+	}
+
+	/**
+	 * Remove the address of a FM sender from the HashMap.
+	 * 
+	 * @param fm
+	 *            The file name and extension of the Service to be removed
+	 */
+	public void removeServiceSender(String service) {
+		serviceSender.remove(service);
+	}
+	
+	/**
 	 * Creates the thread pool to manage the migration requests.
 	 * newFixedThreadPool(int nThreads) method creates a thread pool that reuses
 	 * a fixed number of threads operating off a shared unbounded queue. At any
-	 * point, at most nThreads threads will be active processing tasks.
-	 * If additional tasks are submitted when all threads are active, they will
+	 * point, at most nThreads threads will be active processing tasks. If
+	 * additional tasks are submitted when all threads are active, they will
 	 * wait in the queue until a thread is available.
 	 * 
 	 * @return a reference to the pool
 	 */
-	public ExecutorService createThreadPoolForMigration() {
-		poolForMigration = Executors.newFixedThreadPool(poolSize);
-		return poolForMigration;
+	private ExecutorService createPoolForServerMobilityAction() {
+		poolForServerMobilityAction = Executors.newFixedThreadPool(poolSize);
+		return poolForServerMobilityAction;
+	}
+
+	/**
+	 * Creates the thread pool to manage the migration requests.
+	 * newFixedThreadPool(int nThreads) method creates a thread pool that reuses
+	 * a fixed number of threads operating off a shared unbounded queue. At any
+	 * point, at most nThreads threads will be active processing tasks. If
+	 * additional tasks are submitted when all threads are active, they will
+	 * wait in the queue until a thread is available.
+	 * 
+	 * @return a reference to the pool
+	 */
+	private ExecutorService createPoolForClientMobilityAction() {
+		poolForClientMobilityAction = Executors.newFixedThreadPool(poolSize);
+		return poolForClientMobilityAction;
 	}
 
 	/**
@@ -459,126 +502,10 @@ public abstract class NetworkedAutonomicMachine implements
 	}
 
 	/**
-	 * Returns an object of the main class of the file dynamically added to the
-	 * path.
-	 * 
-	 * @param cName
-	 *            complete class name of the functional module, or the service,
-	 *            added to the class path.
-	 * @param cType
-	 *            the type of the class to be added - SERVICE or FM (Functional
-	 *            Module)
-	 * @return an object of the class added to the path
+	 * Server implementation: it waits for incoming connections and dispatches
+	 * them to the threadpool.
 	 */
-	private Object getItemFromFile(String cName, String cType) {
-
-		Object obj = null;
-
-		try {
-
-			if (cType.equalsIgnoreCase("SERVICE")) {
-				Class<?> c = ClassLoader.getSystemClassLoader()
-						.loadClass(cName);
-				obj = c.newInstance();
-			}
-
-			if (cType.equalsIgnoreCase("FM")) {
-				Constructor<?> cs;
-				cs = ClassLoader.getSystemClassLoader().loadClass(cName)
-						.getConstructor(NetworkedAutonomicMachine.class);
-				obj = cs.newInstance(this);
-			}
-
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
-		return obj;
-	}
-
-	/**
-	 * Dynamically adds a file to the path and returns an object of its main
-	 * class.
-	 * 
-	 * @param receivedFilename
-	 *            a String representing the name of the file received from the
-	 *            server
-	 * @param completeClassName
-	 *            a String representing the complete name of the file main class
-	 * @param fType
-	 *            the type of the class to be added - SERVICE or FM (Functional
-	 *            Module)
-	 * @throws IOException
-	 */
-	private Object addToClassPath(String receivedFilename,
-			String completeClassName, String fType) {
-
-		Object obj = null;
-
-		try {
-			File f = new File(receivedFilename);
-			URL u = f.toURI().toURL();
-
-			if (getClientPlatform(0) == Platform.DESKTOP) {
-
-				// Adding to classpath on a desktop node
-				URLClassLoader sysloader = (URLClassLoader) ClassLoader
-						.getSystemClassLoader();
-
-				Class<?> sysclass = URLClassLoader.class;
-
-				try {
-					Method method = sysclass.getDeclaredMethod("addURL",
-							parameters);
-					method.setAccessible(true);
-					method.invoke(sysloader, new Object[] { u });
-				} catch (Throwable t) {
-					t.printStackTrace();
-					throw new IOException(
-							"Error, could not add URL to system classloader");
-				}
-			} else {
-				/*
-				 * Adding to the classpath on an Android node happens locally on
-				 * the device
-				 */
-			}
-
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		if (getClientPlatform(0) == Platform.DESKTOP) {
-			if (fType.equalsIgnoreCase("SERVICE"))
-				obj = getItemFromFile(completeClassName, "SERVICE");
-			if (fType.equalsIgnoreCase("FM"))
-				obj = getItemFromFile(completeClassName, "FM");
-		} else
-			System.out.println("CLIENT: Android platform");
-
-		return obj;
-
-	}
-
-	int index = 0;
-
-	/**
-	 * Server implementation: it creates the threads of the pool and starts them
-	 * to manage incoming requests.
-	 */
-	public void activateMigration() {
+	public void startMobilityAction() {
 
 		try {
 
@@ -599,7 +526,8 @@ public abstract class NetworkedAutonomicMachine implements
 
 				cs = ss.accept();
 
-				poolForMigration.execute(new ConnectionManager(cs));
+				poolForServerMobilityAction
+						.execute(new ServerMobilityActionManager(cs, this));
 
 				System.out
 						.println("SERVER: thread "
@@ -615,580 +543,26 @@ public abstract class NetworkedAutonomicMachine implements
 	}
 
 	/**
-	 * Returns a reference to the required Functional Module or Service.
-	 * 
-	 * @param fName
-	 *            the name of the functional module or of the service to migrate
-	 * @param clientType
-	 *            (ANDROID or DESKTOP)
-	 * @param fType
-	 *            a String representing the type of the item to migrate -
-	 *            SERVICE or FM (Functional Module)
-	 * */
-	private Object findRemoteItem(String fName, Platform clientType,
-			String fType) {
-
-		setClientPlatform(clientType, 0);
-
-		Socket s = null;
-
-		BufferedReader is = null;
-		PrintStream os = null;
-
-		Object obj = null;
-
-		int bytesRead;
-		int current = 0;
-		int filesize = 6022386; // Temporary hardcoded filesize
-
-		boolean connected = false;
-
-		/* The client tries 3 times to connect to server */
-		for (int j = 0; j < getTrialsNumber(); j++) {
-			try {
-				s = new Socket(serverAddress, serverPort);
-				is = new BufferedReader(new InputStreamReader(
-						s.getInputStream()));
-				os = new PrintStream(new BufferedOutputStream(
-						s.getOutputStream()));
-				connected = true;
-				break;
-			} catch (IOException e) {
-				if (j < 2)
-					System.out
-							.println("CLIENT: connection failed. Trying again...");
-				else
-					System.out.println("CLIENT: connection failed");
-			}
-		}
-
-		if (connected) {
-
-			System.out.println("CLIENT: created socket " + s);
-
-			/*
-			 * To send the platform enum on the socket it is converted to a
-			 * String
-			 */
-			os.println(clientType.name());
-			os.flush();
-
-			os.println(fType);
-			os.flush();
-
-			os.println(fName);
-			os.flush();
-
-			System.out.println("CLIENT: waiting for " + fType
-					+ " descriptor...");
-
-			String fileNameAndExt = "";
-			String className = "";
-			String completeClassName = "";
-
-			try {
-
-				InputStream inputS = s.getInputStream();
-				ObjectInputStream ois = new ObjectInputStream(inputS);
-				bundleDescriptor = (BundleDescriptor) ois.readObject();
-				fileNameAndExt = bundleDescriptor.getFileName();
-				className = bundleDescriptor.getMainClassName();
-				completeClassName = bundleDescriptor.getCompleteName();
-
-				String fileName = fileNameAndExt.split("\\.")[0];
-				String ext = fileNameAndExt.split("\\.")[1];
-
-				if (!fileNameAndExt.equalsIgnoreCase("notAvailable")) {
-
-					System.out
-							.println("CLIENT: file name received from server = "
-									+ fileNameAndExt);
-					System.out
-							.println("CLIENT: main class name received from server = "
-									+ className);
-					System.out
-							.println("CLIENT: complete class name received from server = "
-									+ completeClassName);
-					System.out.println("CLIENT: waiting for " + fType
-							+ " file " + fileNameAndExt);
-
-					/* Writing the received file */
-
-					byte[] mybytearray = new byte[filesize];
-					InputStream inputStr = s.getInputStream();
-					
-					String receivedFilename = getMigrationStore() + "/"
-							+ fileName + "." + ext;
-
-					FileOutputStream fos = new FileOutputStream(
-							receivedFilename);
-					BufferedOutputStream bos = new BufferedOutputStream(fos);
-					bytesRead = inputStr.read(mybytearray, 0,
-							mybytearray.length);
-					current = bytesRead;
-
-					bos.write(mybytearray, 0, current);
-					bos.flush();
-					bos.close();
-					fos.close();
-
-					/* End of writing */
-
-					is.close();
-					os.close();
-					s.close();
-
-					s.close();
-
-					File f = new File(receivedFilename);
-					if (f.exists()) {
-						System.out.println("CLIENT: " + f.toURI().toURL()
-								+ " received");
-
-						obj = addToClassPath(receivedFilename,
-								completeClassName, fType);
-					} else {
-						System.out.println("CLIENT: file not received");
-					}
-
-				}
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-
-		} else
-			System.out.println("CLIENT: could not connect to server");
-
-		return obj;
-	}
-
-	/**
-	 * Returns a reference to the required Functional Module.
+	 * Start a COPY mobility action.
 	 * 
 	 * @param functionalModule
-	 *            the name of the FM to transfer
-	 * @param clientType
-	 *            (ANDROID or DESKTOP)
-	 * */
-	public FunctionalModule findRemoteFM(String functionalModule,
-			Platform clientType) {
-		FunctionalModule fm = (FunctionalModule) findRemoteItem(
-				functionalModule, clientType, "FM");
-		return fm;
-	}
-
-	/**
-	 * Returns a reference to the required Service.
-	 * 
+	 *            the name of the FM to copy
 	 * @param service
-	 *            the name of the Service to transfer
+	 *            the name of the Service of functionalModule to be copied (can
+	 *            be null if you need to copy just a FM)
+	 * @param serviceId
+	 *            the id of the Service of functionalModule to be copied (can be
+	 *            null if you need to copy just a FM)
 	 * @param clientType
 	 *            (ANDROID or DESKTOP)
 	 * */
-	public Service findRemoteService(String service, Platform clientType) {
-		Service serv = (Service) findRemoteItem(service, clientType, "SERVICE");
-		return serv;
+	public void startCopyAction(String functionalModule, String[] service,
+			String[] serviceId, Platform clientType) {
+
+		ClientCopyActionManager cmam = new ClientCopyActionManager(
+				this, functionalModule, service, serviceId, clientType,
+				Action.COPY);
+		poolForClientMobilityAction.execute(cmam);
 	}
 
-	private class ConnectionManager implements Runnable {
-
-		Socket cs = null;
-
-		public ConnectionManager(Socket connection) {
-			this.cs = connection;
-		}
-
-		private void migrateFM(String line, Socket cs) {
-
-			try {
-				// Get the list of all files
-				String filename = "";
-				File folder = new File(getMigrationStore());
-				File[] listOfFiles = folder.listFiles();
-				boolean found = false; // It is set to true when the file to
-										// be migrated is found
-
-				System.out.println("SERVER: thread "
-						+ Thread.currentThread().getId()
-						+ " received a FM requested from client");
-
-				System.out.println("SERVER: thread "
-						+ Thread.currentThread().getId()
-						+ " received a request for \"" + line + "\"");
-
-				// Data of the file to be migrated
-				String className = line;
-				String completeName = null;
-				String fileToBeMigrated = "";
-				File file = null;
-
-				for (int i = 0; i < listOfFiles.length; i++) {
-
-					if (listOfFiles[i].isFile()
-							&& listOfFiles[i].getName().endsWith(".jar")) {
-						filename = listOfFiles[i].getAbsolutePath();
-
-						System.out.println("SERVER: thread "
-								+ Thread.currentThread().getId()
-								+ " is checking inside file " + filename);
-
-						/*
-						 * The JarFile class allows to read the content of a Jar
-						 * 
-						 * @param: a string representing the path of the jar to
-						 * open
-						 * 
-						 * @param: a boolean stating whether or not to verify if
-						 * the Jar is signed
-						 */
-						JarFile jarFile = new JarFile(filename, false);
-
-						Enumeration<JarEntry> entries = jarFile.entries();
-
-						while (entries.hasMoreElements()) {
-
-							JarEntry entry = entries.nextElement();
-							String entryName = entry.getName();
-
-							if (entryName.endsWith(".class")) {
-
-								String[] currentClassName = entryName
-										.split("/");
-								String justClassName = currentClassName[currentClassName.length - 1]
-										.replace(".class", "");
-
-								System.out.println("SERVER: thread "
-										+ Thread.currentThread().getId()
-										+ " is comparing " + justClassName
-										+ " with " + line);
-
-								if (line.equalsIgnoreCase(justClassName)) {
-
-									/*
-									 * listOfFiles[i] is the file to be migrated
-									 * 
-									 * Using BCEL class parser to get the
-									 * package name for the class: a temporary
-									 * copy of the class file is created locally
-									 * and then parsed to get the package
-									 */
-
-									File f = new File("temp.class");
-
-									// Copying the content of the class in
-									// the new file
-									InputStream inputS = jarFile
-											.getInputStream(entry);
-									java.io.FileOutputStream fos = new FileOutputStream(
-											f);
-									while (inputS.available() > 0) {
-										fos.write(inputS.read());
-									}
-									fos.close();
-									inputS.close();
-
-									if (f.exists()) {
-
-										found = true;
-
-										fileToBeMigrated = listOfFiles[i]
-												.getAbsolutePath();
-
-										// Parsing the class to get its
-										// package name
-										ClassParser parser = new ClassParser(
-												f.getAbsolutePath());
-										completeName = parser.parse()
-												.getPackageName()
-												+ "."
-												+ className;
-
-										// Deleting the copy of the class
-										boolean success = f.delete();
-										if (!success)
-											throw new IllegalArgumentException(
-													"Delete: deletion failed");
-
-										break;
-									}
-								}
-							}
-						}
-					}
-
-					if (found)
-						break;
-				}
-
-				if (found) {
-
-					if (getClientPlatform(0) == Platform.DESKTOP)
-						file = new File(fileToBeMigrated);
-					else
-						file = new File(
-								fileToBeMigrated.replace(".jar", ".dex"));
-
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " is sending file name = " + file.getName());
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " is sending FM main class name = " + className);
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " is sending FM main class complete name = "
-							+ completeName);
-
-					OutputStream outputStream = cs.getOutputStream();
-					ObjectOutputStream oos = new ObjectOutputStream(
-							outputStream);
-					bundleDescriptor = new BundleDescriptor(file.getName(),
-							className, completeName);
-					oos.writeObject(bundleDescriptor);
-
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " is sending file...");
-
-					byte[] myBytearray = new byte[(int) file.length()];
-					FileInputStream fis = new FileInputStream(file);
-					BufferedInputStream bis = new BufferedInputStream(fis);
-					bis.read(myBytearray, 0, myBytearray.length);
-					OutputStream outStream = cs.getOutputStream();
-					outStream.write(myBytearray, 0, myBytearray.length);
-					outStream.flush();
-
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " has finished sending");
-
-					bis.close();
-					oos.close();
-
-				} else {
-					System.out
-							.println("SERVER: thread "
-									+ Thread.currentThread().getId()
-									+ " could not send requested FM since it is not available on the node");
-
-					// Informing the client that the FM could not be found
-					OutputStream outputStream = cs.getOutputStream();
-					ObjectOutputStream oos = new ObjectOutputStream(
-							outputStream);
-					bundleDescriptor = new BundleDescriptor("notAvailable", "",
-							"");
-					oos.writeObject(bundleDescriptor);
-					oos.close();
-				}
-			} catch (IOException e) {
-				System.err.println(e.getMessage());
-			}
-		}
-
-		private void migrateService(String line, Socket cs) {
-
-			try {
-				// Get the list of all files
-				String filename = "";
-				File folder = new File(getMigrationStore());
-				File[] listOfFiles = folder.listFiles();
-				boolean found = false; // It is set to true when the file to
-										// be migrated is found
-
-				System.out.println("SERVER: thread "
-						+ Thread.currentThread().getId()
-						+ " received a service request from a client");
-
-				System.out.println("SERVER: thread "
-						+ Thread.currentThread().getId()
-						+ " received a request for \"" + line + "\"");
-
-				// Data of the file to be migrated
-				String className = line;
-				String completeName = null;
-				String fileToBeMigrated = "";
-				File file = null;
-
-				for (int i = 0; i < listOfFiles.length; i++) {
-
-					if (listOfFiles[i].isFile()
-							&& listOfFiles[i].getName().endsWith(".java")) {
-						filename = listOfFiles[i].getAbsolutePath();
-
-						System.out.println("SERVER: thread "
-								+ Thread.currentThread().getId()
-								+ " is checking file " + filename);
-
-						String[] currentClassName = filename.split("/");
-						String justClassName = currentClassName[currentClassName.length - 1]
-								.replace(".java", "");
-
-						/*
-						 * Since NAME.java file contain the class NAME, if the
-						 * name of the current file is equal to the required
-						 * service's name, then current file is the correct one
-						 */
-						if (line.equalsIgnoreCase(justClassName)) {
-							fileToBeMigrated = listOfFiles[i].getAbsolutePath();
-
-							FileInputStream fis = new FileInputStream(
-									listOfFiles[i]);
-
-							String fileContent = "";
-							int oneByte;
-							while ((oneByte = fis.read()) != -1) {
-								char l = (char) oneByte;
-								fileContent += l;
-							}
-							System.out.flush();
-							fis.close();
-
-							Pattern p = Pattern.compile("package.*;");
-							Matcher m = p.matcher(fileContent);
-							if (m.find()) {
-								int occurrenceStart = m.start();
-								int occurrenceEnd = m.end();
-
-								completeName = fileContent
-										.substring(occurrenceStart,
-												occurrenceEnd)
-										.replace("package ", "")
-										.replace(";", "")
-										+ "." + className;
-
-								found = true;
-							}
-
-							break;
-						}
-					}
-				}
-
-				if (found) {
-
-					if (getClientPlatform(0) == Platform.DESKTOP)
-						file = new File(fileToBeMigrated);
-					else
-						file = new File(fileToBeMigrated.replace(".java",
-								".dex"));
-
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " is sending file name = " + file.getName());
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " is sending service class name = " + className);
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " is sending service class complete name = "
-							+ completeName);
-
-					OutputStream outputStream = cs.getOutputStream();
-					ObjectOutputStream oos = new ObjectOutputStream(
-							outputStream);
-					bundleDescriptor = new BundleDescriptor(file.getName(),
-							className, completeName);
-					oos.writeObject(bundleDescriptor);
-
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " is sending file...");
-
-					byte[] myBytearray = new byte[(int) file.length()];
-					FileInputStream fis = new FileInputStream(file);
-					BufferedInputStream bis = new BufferedInputStream(fis);
-					bis.read(myBytearray, 0, myBytearray.length);
-					OutputStream outStream = cs.getOutputStream();
-					outStream.write(myBytearray, 0, myBytearray.length);
-					outStream.flush();
-
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " has finished sending");
-
-					bis.close();
-					oos.close();
-				} else {
-					System.out
-							.println("SERVER: thread "
-									+ Thread.currentThread().getId()
-									+ " could not send requested service since it is not available on the node");
-
-					// Informing the client that the FM could not be found
-					OutputStream outputStream = cs.getOutputStream();
-					ObjectOutputStream oos = new ObjectOutputStream(
-							outputStream);
-					bundleDescriptor = new BundleDescriptor("notAvailable", "",
-							"");
-					oos.writeObject(bundleDescriptor);
-					oos.close();
-				}
-			} catch (IOException e) {
-				System.err.println(e.getMessage());
-			}
-		}
-
-		public void run() {
-
-			BufferedReader is = null;
-			PrintStream os = null;
-
-			System.out.println("SERVER: thread " + Thread.currentThread().getId()
-					+ " accepted connection from " + cs);
-
-			try {
-				BufferedInputStream ib = new BufferedInputStream(
-						cs.getInputStream());
-				is = new BufferedReader(new InputStreamReader(ib));
-				BufferedOutputStream ob = new BufferedOutputStream(
-						cs.getOutputStream());
-				os = new PrintStream(ob, false);
-
-				String line;
-				line = new String(is.readLine());
-
-				/*
-				 * To send the platform enum on the socket, the client converted
-				 * it to a String so it is necessary to convert it back to enum
-				 * when passing it to the setClientPlatform function.
-				 */
-				setClientPlatform(Platform.valueOf(line), 0);
-
-				if (getClientPlatform(0) == Platform.DESKTOP)
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " connected to a desktop node");
-				else
-					System.out.println("SERVER: thread "
-							+ Thread.currentThread().getId()
-							+ " connected to an Android node");
-
-				line = new String(is.readLine());
-
-				System.out.println("SERVER: thread "
-						+ Thread.currentThread().getId()
-						+ " received a message from client = \"" + line + "\"");
-
-				if (line.equalsIgnoreCase("FM")) {
-					line = new String(is.readLine());
-					migrateFM(line, cs);
-				}
-
-				else if (line.equalsIgnoreCase("SERVICE")) {
-					line = new String(is.readLine());
-					migrateService(line, cs);
-				}
-
-				os.close();
-				is.close();
-				cs.close();
-
-			} catch (Exception e) {
-				System.out.println("SERVER: error: " + e + " for thread "
-						+ Thread.currentThread().getId());
-			}
-		}
-	}
 }
