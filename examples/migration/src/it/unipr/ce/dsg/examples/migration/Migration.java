@@ -20,9 +20,11 @@ public class Migration extends NetworkedAutonomicMachine {
 			migration.startMobilityAction();
 		} else if (args[0].equals("CLIENT")) {
 
+			/* Request Chord FM */
 			migration.startCopyAction("ChordFunctionalModule", null, null,
 					Platform.DESKTOP);
 
+			/* Request a FM and a Service */
 			migration.startCopyAction("TestFunctionalModule",
 					new String[] { "TestService" },
 					new String[] { "serviceId" }, Platform.DESKTOP);
