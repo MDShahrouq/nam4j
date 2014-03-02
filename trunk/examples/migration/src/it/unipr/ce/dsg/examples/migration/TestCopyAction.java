@@ -2,9 +2,9 @@ package it.unipr.ce.dsg.examples.migration;
 
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 
-public class Migration extends NetworkedAutonomicMachine {
+public class TestCopyAction extends NetworkedAutonomicMachine {
 
-	public Migration(String configuration) {
+	public TestCopyAction(String configuration) {
 
 		super(10, "examples/migration", 3);
 
@@ -14,7 +14,7 @@ public class Migration extends NetworkedAutonomicMachine {
 
 	public static void main(String[] args) {
 
-		Migration migration = new Migration(args[0]);
+		TestCopyAction migration = new TestCopyAction(args[0]);
 
 		if (args[0].equals("SERVER")) {
 			migration.startMobilityAction();
