@@ -118,7 +118,7 @@ public abstract class NetworkedAutonomicMachine implements
 	 * A HashMap to store the address of NAMs which sent Services.
 	 */
 	HashMap<String, String> serviceSender = new HashMap<String, String>();
-	
+
 	/**
 	 * An int representing the size of the threads pool for the migration.
 	 */
@@ -450,7 +450,7 @@ public abstract class NetworkedAutonomicMachine implements
 	public void removeServiceSender(String service) {
 		serviceSender.remove(service);
 	}
-	
+
 	/**
 	 * Creates the thread pool to manage the migration requests.
 	 * newFixedThreadPool(int nThreads) method creates a thread pool that reuses
@@ -559,10 +559,9 @@ public abstract class NetworkedAutonomicMachine implements
 	public void startCopyAction(String functionalModule, String[] service,
 			String[] serviceId, Platform clientType) {
 
-		ClientCopyActionManager cmam = new ClientCopyActionManager(
-				this, functionalModule, service, serviceId, clientType,
-				Action.COPY);
-		poolForClientMobilityAction.execute(cmam);
+		ClientCopyActionManager clientCopyActionManager = new ClientCopyActionManager(this,
+				functionalModule, service, serviceId, clientType, Action.COPY);
+		poolForClientMobilityAction.execute(clientCopyActionManager);
 	}
 
 }
