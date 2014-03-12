@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
@@ -180,6 +181,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	double menuWidth = 0.66;
 
 	ListView listView;
+	
+	boolean isTablet;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -188,6 +191,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		setContentView(R.layout.main);
 
 		context = this;
+		
+		isTablet = isTablet();
 
 		/* Settings menu elements */
 		ArrayList<MenuListElement> listElements = new ArrayList<MenuListElement>();
@@ -212,6 +217,13 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 		mainRL = (RelativeLayout) findViewById(R.id.rlContainer);
 		listRL = (RelativeLayout) findViewById(R.id.listContainer);
+		
+		/* If the app is running on a tablet set the list width to 40% */
+		if(isTablet)
+			menuWidth = 0.4;
+		else
+			menuWidth = 0.66;
+		
 		titleBarRL = (RelativeLayout) findViewById(R.id.titleLl);
 
 		/* Adding swipe gesture listener to the top bar */
@@ -247,7 +259,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			showErrorDialog(code);
 
 			System.out.println("Google Play Services error");
-			
+
 			FrameLayout fl = (FrameLayout) findViewById(R.id.frameId);
 			fl.removeAllViews();
 		}
@@ -336,6 +348,16 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 		}
 
+	}
+
+	/**
+	 * Method to check if the app is running on a smartphone or on a tablet.
+	 * 
+	 * @param context
+	 * @return true if the app is running on a tablet, false otherwise
+	 */
+	private boolean isTablet() {
+		return (this.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
 	}
 
 	/**
@@ -784,12 +806,12 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			return mDialog;
 		}
-		
+
 		/* Close the app when the user clicks on the dialog button */
 		@Override
 		public void onDismiss(DialogInterface dialog) {
 			super.onDismiss(dialog);
-			
+
 			getActivity().finish();
 		}
 	}
@@ -1140,16 +1162,17 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		dialog.setMessage("Do you want to see information about building located in "
 				+ addressTouch + " ?");
 		dialog.setCancelable(true);
-		dialog.setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				dialog.dismiss();
-				Intent intent = new Intent(NAM4JAndroidActivity.this,
-						BuildingLookupActivity.class);
+		dialog.setPositiveButton(getResources().getString(R.string.yes),
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						dialog.dismiss();
+						Intent intent = new Intent(NAM4JAndroidActivity.this,
+								BuildingLookupActivity.class);
 
-				intent.putExtra("AddressBuilding", addressTouch);
-				NAM4JAndroidActivity.this.startActivity(intent);
-			}
-		});
+						intent.putExtra("AddressBuilding", addressTouch);
+						NAM4JAndroidActivity.this.startActivity(intent);
+					}
+				});
 		dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
 
 			@Override
@@ -1598,7 +1621,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 								bDialog.setMessage(getResources().getString(
 										R.string.leave));
 								bDialog.setCancelable(true);
-								bDialog.setPositiveButton(getResources().getString(R.string.yes),
+								bDialog.setPositiveButton(getResources()
+										.getString(R.string.yes),
 										new DialogInterface.OnClickListener() {
 											public void onClick(
 													DialogInterface iDialog,
@@ -1715,7 +1739,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 														R.string.exitOnBackButtonPressed))
 										.setCancelable(false)
 										.setPositiveButton(
-												getResources().getString(R.string.yes),
+												getResources().getString(
+														R.string.yes),
 												new DialogInterface.OnClickListener() {
 													public void onClick(
 															DialogInterface iDialog,
@@ -1745,7 +1770,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 													}
 												})
 										.setNegativeButton(
-												getResources().getString(R.string.no),
+												getResources().getString(
+														R.string.no),
 												new DialogInterface.OnClickListener() {
 													public void onClick(
 															DialogInterface dialog,
@@ -1787,7 +1813,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 														R.string.exitOnBackButtonPressed))
 										.setCancelable(false)
 										.setPositiveButton(
-												getResources().getString(R.string.yes),
+												getResources().getString(
+														R.string.yes),
 												new DialogInterface.OnClickListener() {
 													public void onClick(
 															DialogInterface iDialog,
@@ -1817,7 +1844,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 													}
 												})
 										.setNegativeButton(
-												getResources().getString(R.string.no),
+												getResources().getString(
+														R.string.no),
 												new DialogInterface.OnClickListener() {
 													public void onClick(
 															DialogInterface dialog,
