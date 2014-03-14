@@ -1,6 +1,8 @@
 package it.unipr.ce.dsg.gamidroid.android;
 
 import it.unipr.ce.dsg.gamidroid.gaminode.GamiNode;
+import it.unipr.ce.dsg.gamidroid.monitor.DeviceMonitorService;
+import it.unipr.ce.dsg.gamidroid.monitor.ResourceMonitor;
 import it.unipr.ce.dsg.gamidroid.taskmanagerfm.UPCPFTaskDescriptor;
 import it.unipr.ce.dsg.s2pchord.msg.MessageListener;
 import it.unipr.ce.dsg.s2pchord.resource.ResourceDescriptor;
@@ -9,6 +11,7 @@ import it.unipr.ce.dsg.s2pchord.resource.ResourceParameter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -29,16 +32,24 @@ import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -56,6 +67,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
@@ -183,6 +195,15 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	ListView listView;
 	
 	boolean isTablet;
+	
+	/* Monitors */
+	WifiManager wifiManager;
+	SensorManager sensorManager;
+	
+	/* Tag for the cpu and mem usage message received from DeviceMonitorService */
+	public static final String RECEIVED_RESOURCES_UPDATE = "RECEIVED_RESOURCES_UPDATE";
+	
+	LinearLayout cpuBar, memoryBar;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -193,6 +214,11 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		context = this;
 		
 		isTablet = isTablet();
+		
+		/* Starting the resources monitoring service */
+		startService(new Intent(this, DeviceMonitorService.class));
+		
+		wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
 		/* Settings menu elements */
 		ArrayList<MenuListElement> listElements = new ArrayList<MenuListElement>();
@@ -217,6 +243,9 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 		mainRL = (RelativeLayout) findViewById(R.id.rlContainer);
 		listRL = (RelativeLayout) findViewById(R.id.listContainer);
+		
+		cpuBar = (LinearLayout) findViewById(R.id.CpuBar);
+		memoryBar = (LinearLayout) findViewById(R.id.MemoryBar);
 		
 		/* If the app is running on a tablet set the list width to 40% */
 		if(isTablet)
@@ -513,13 +542,21 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	public void onStart() {
 
 		super.onStart();
-
-		/*
-		 * Connect the client. Don't re-start any requests here; instead, wait
-		 * for onResume()
-		 */
+		
 		if (mLocationClient != null)
 			mLocationClient.connect();
+		
+		/* Registering the broadcast receivers */
+		registerReceiver(bReceiver, new IntentFilter(RECEIVED_RESOURCES_UPDATE));
+
+		registerReceiver(mConnReceiver, new IntentFilter(
+				ConnectivityManager.CONNECTIVITY_ACTION));
+
+		registerReceiver(wifiReceiver, new IntentFilter(
+				WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+
+		registerReceiver(batteryReceiver, new IntentFilter(
+				Intent.ACTION_BATTERY_CHANGED));
 
 	}
 
@@ -831,6 +868,13 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface iDialog,
 										int id) {
+									
+									stopService(new Intent(context, DeviceMonitorService.class));
+
+									/* Unregistering the broadcast receivers */
+									unregisterReceiver(bReceiver);
+									unregisterReceiver(mConnReceiver);
+									unregisterReceiver(wifiReceiver);
 
 									if (connected) {
 
@@ -1327,6 +1371,171 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		}
 
 	}
+	
+	/*
+	 * BroadcastReceiver objects used to receive messages informing about
+	 * changes which occur in the state of the CPU, the memory and the wifi.
+	 */
+
+	/*
+	 * CPU and memory changes BroadcastReceiver (provided by
+	 * DeviceMonitorService class)
+	 */
+	private final BroadcastReceiver bReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			/* Checking if received message is from the monitoring Service */
+			if (intent.getAction().equals(RECEIVED_RESOURCES_UPDATE)) {
+
+				ResourceMonitor rm = (ResourceMonitor) intent
+						.getSerializableExtra("resourceDescriptor");
+
+				float usedCpuPerc = rm.getUsedCpuPerc();
+				float availableMem = rm.getAvailableMem();
+				float totalMem = rm.getTotalMem();
+
+				float memUsagePerc = (new BigDecimal(
+						Float.toString(availableMem / totalMem)).setScale(2,
+						BigDecimal.ROUND_HALF_UP)).floatValue() * 100;
+
+				/*
+				String cpuUsageMsg = "CPU usage: " + (usedCpuPerc * 100) + "%";
+
+				String memUsageMsg = "Mem usage: " + memUsagePerc + "% (using "
+						+ availableMem + " MB out of " + totalMem + " MB)";
+
+				tvCPU.setText(cpuUsageMsg);
+				tvMem.setText(memUsageMsg);
+				*/
+				
+				LayoutParams memoryLp = (LayoutParams) memoryBar.getLayoutParams();
+				memoryLp.height = (int) (10 * Math.ceil(memUsagePerc / 10));
+				memoryBar.setLayoutParams(memoryLp);
+				
+				LayoutParams barLp = (LayoutParams) cpuBar.getLayoutParams();
+				barLp.height = (int) (10 * Math.ceil((usedCpuPerc * 100) / 10));
+				cpuBar.setLayoutParams(barLp);
+			}
+		}
+	};
+
+	/*
+	 * Network changes BroadcastReceiver (provided by Android's
+	 * ConnectivityManager class)
+	 */
+	private BroadcastReceiver mConnReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			String networkStatus = "";
+
+			boolean noConnectivity = intent.getBooleanExtra(
+					ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+
+			String reason = intent
+					.getStringExtra(ConnectivityManager.EXTRA_REASON);
+
+			/* No connectivity is available */
+			if (noConnectivity) {
+				networkStatus += "No Connectivity. The reason is: " + reason
+						+ "\n";
+			}
+
+			NetworkInfo currentNetworkInfo = (NetworkInfo) intent
+					.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+
+			NetworkInfo otherNetworkInfo = (NetworkInfo) intent
+					.getParcelableExtra(ConnectivityManager.EXTRA_OTHER_NETWORK_INFO);
+
+			if (currentNetworkInfo != null)
+				networkStatus += "Current Network info: "
+						+ currentNetworkInfo.getTypeName() + " ("
+						+ currentNetworkInfo.getType() + ") ["
+						+ currentNetworkInfo.getState() + "]\n";
+
+			if (otherNetworkInfo != null)
+				networkStatus += "Other Network info: "
+						+ otherNetworkInfo.getTypeName() + " ("
+						+ currentNetworkInfo.getType() + ") ["
+						+ currentNetworkInfo.getState() + "]";
+
+			// tvNetwork.setText(networkStatus);
+			System.out.println("--- networkStatus = " + networkStatus);
+		}
+	};
+
+	/* Wifi changes BroadcastReceiver (provided by Android's WifiManager class) */
+	private BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+
+			List<ScanResult> results = wifiManager.getScanResults();
+
+			List<String> networks = new ArrayList<String>();
+
+			ScanResult bestSignal = null;
+
+			String wifiMsg = results.size() + " access points found\n";
+
+			for (ScanResult result : results) {
+
+				if (!networks.contains(result.SSID)) {
+					networks.add(result.SSID);
+				}
+
+				wifiMsg += result.SSID + " (strength: " + result.level + "); ";
+
+				if (bestSignal == null
+						|| WifiManager.compareSignalLevel(bestSignal.level,
+								result.level) < 0)
+					bestSignal = result;
+			}
+
+			wifiMsg += "\nThe strongest is: " + bestSignal.SSID;
+
+			// tvWifi.setText(wifiMsg);
+			System.out.println("--- wifiMsg = " + wifiMsg);
+
+		}
+	};
+
+	/* Battery changes broadcast receiver */
+	private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+			boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
+					|| status == BatteryManager.BATTERY_STATUS_FULL;
+
+			/*
+			int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED,
+					-1);
+			boolean usbCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_USB;
+			boolean acCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_AC;
+			*/
+
+			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+			int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+			float batteryPct = level / (float) scale;
+
+			String batteryStatus = "";
+
+			if (isCharging)
+				batteryStatus += "The battery is charging";
+			else
+				batteryStatus += "The battery is not charging";
+
+			batteryStatus += "\nBattery is " + (batteryPct * 100) + "% charged";
+
+			// tvBattery.setText(batteryStatus);
+			System.out.println("--- batteryStatus = " + batteryStatus);
+		}
+	};
 
 	private class ReverseGeocodingTask extends AsyncTask<LatLng, Void, String> {
 		Context mContext;
@@ -1745,6 +1954,13 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 													public void onClick(
 															DialogInterface iDialog,
 															int id) {
+														
+														stopService(new Intent(context, DeviceMonitorService.class));
+
+														/* Unregistering the broadcast receivers */
+														unregisterReceiver(bReceiver);
+														unregisterReceiver(mConnReceiver);
+														unregisterReceiver(wifiReceiver);
 
 														if (connected) {
 
@@ -1819,6 +2035,13 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 													public void onClick(
 															DialogInterface iDialog,
 															int id) {
+														
+														stopService(new Intent(context, DeviceMonitorService.class));
+
+														/* Unregistering the broadcast receivers */
+														unregisterReceiver(bReceiver);
+														unregisterReceiver(mConnReceiver);
+														unregisterReceiver(wifiReceiver);
 
 														if (connected) {
 

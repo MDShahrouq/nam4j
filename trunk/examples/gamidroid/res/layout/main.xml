@@ -21,6 +21,82 @@
                 android:id="@+id/ListViewContent"
                 style="@style/ListViewContentStyle" >
             </ListView>
+
+            <RelativeLayout
+                android:id="@+id/CpuBarContainer"
+                android:layout_width="30dp"
+                android:layout_height="100dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="10dp"
+                android:background="#4E4D57" >
+
+                <LinearLayout
+                    android:id="@+id/CpuBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:background="#00B800"
+                    android:orientation="horizontal" >
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/CpuBarBg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/barbg"
+                    android:orientation="horizontal" >
+                </LinearLayout>
+                
+                <TextView
+                    android:id="@+id/CpuText"
+                    style="@style/TitleStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/cpuBarText"
+                    android:textSize="12sp" >
+                </TextView>
+                
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/BatteryBarContainer"
+                android:layout_width="30dp"
+                android:layout_height="100dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/CpuBarContainer"
+                android:background="#4E4D57" >
+
+                <LinearLayout
+                    android:id="@+id/MemoryBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:background="#00B800"
+                    android:orientation="horizontal" >
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/MemoryBarBg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/barbg"
+                    android:orientation="horizontal" >
+                </LinearLayout>
+                
+                <TextView
+                    android:id="@+id/MemoryText"
+                    style="@style/TitleStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/memoryBarText"
+                    android:textSize="12sp" >
+                </TextView>
+            </RelativeLayout>
         </RelativeLayout>
 
         <RelativeLayout
