@@ -522,6 +522,13 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		// After disconnect() is called, the client is considered "dead".
 		if (mLocationClient != null)
 			mLocationClient.disconnect();
+		
+		stopService(new Intent(context, DeviceMonitorService.class));
+
+		/* Unregistering the broadcast receivers */
+		unregisterReceiver(bReceiver);
+		unregisterReceiver(mConnReceiver);
+		unregisterReceiver(wifiReceiver);
 
 		super.onStop();
 	}
