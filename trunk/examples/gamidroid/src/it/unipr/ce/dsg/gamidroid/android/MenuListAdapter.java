@@ -41,7 +41,7 @@ public class MenuListAdapter extends ArrayAdapter<MenuListElement> {
 
             TextView tt = (TextView) v.findViewById(R.id.TextViewTitleList);
             TextView tt1 = (TextView) v.findViewById(R.id.TextViewSubtitleList);
-
+            
             if (tt != null) {
                 tt.setText(p.getTitle());
             }
@@ -52,4 +52,5 @@ public class MenuListAdapter extends ArrayAdapter<MenuListElement> {
 
         return v;
     }
+    
 }

@@ -40,45 +40,46 @@
         </activity>
         <activity
             android:name=".NAM4JAndroidActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity android:name=".SettingsActivity"
-            android:theme="@android:style/Theme.Black.NoTitleBar" >
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="orientation" >
         </activity>
         <activity
             android:name=".SensorDataViewActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name=".BuildingLookupActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name=".BuildingPublishActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name=".AddSensorsToBuildingActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name=".SensorPublishActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name=".FloorActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name=".RoomActivity"
-            android:screenOrientation="portrait"
+            android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
 

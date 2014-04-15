@@ -1,5 +1,7 @@
 package it.unipr.ce.dsg.gamidroid.android;
 
+import it.unipr.ce.dsg.gamidroid.android.utils.Utils;
+import it.unipr.ce.dsg.gamidroid.android.utils.Utils.Orientation;
 import it.unipr.ce.dsg.gamidroid.gaminode.GamiNode;
 import it.unipr.ce.dsg.gamidroid.monitor.DeviceMonitorService;
 import it.unipr.ce.dsg.gamidroid.monitor.ResourceMonitor;
@@ -39,7 +41,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.res.Configuration;
-import android.graphics.Rect;
+import android.graphics.BitmapFactory;
 import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -53,13 +55,11 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
@@ -67,6 +67,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -131,6 +132,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	private GoogleMap map;
 
 	MarkerOptions markerOptions;
+	private Marker marker;
 
 	HashMap<String, Marker> ml;
 
@@ -150,6 +152,10 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	private int animationDuration = 300;
 
 	private boolean showingMenu = false;
+	
+	Orientation screenOrientation;
+	
+	ImageView connectButtonIv;
 
 	/*
 	 * The boolean is used to decide what to do after a LatLng has been
@@ -179,12 +185,12 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	 * Descriptors to set marker colors (blue ones are placed for assigned
 	 * resources, red for researched resources)
 	 */
-	BitmapDescriptor bitmapDescriptorBlue, bitmapDescriptorRed;
+	BitmapDescriptor bitmapDescriptorBlue, bitmapDescriptorRed, blueCircle;
 
 	/* Set to true when the user asks to close the app. */
 	private boolean close = false;
 
-	Button menuButton, infoButton;
+	Button menuButton, infoButton, centerButton;
 
 	int screenWidth = 0;
 	int screenHeight = 0;
@@ -247,12 +253,6 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		cpuBar = (LinearLayout) findViewById(R.id.CpuBar);
 		memoryBar = (LinearLayout) findViewById(R.id.MemoryBar);
 		
-		/* If the app is running on a tablet set the list width to 40% */
-		if(isTablet)
-			menuWidth = 0.4;
-		else
-			menuWidth = 0.66;
-		
 		titleBarRL = (RelativeLayout) findViewById(R.id.titleLl);
 
 		/* Adding swipe gesture listener to the top bar */
@@ -266,15 +266,90 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			@Override
 			public void onClick(View v) {
 
-				AlertDialog dialog = new AlertDialog.Builder(context)
-						.setMessage(R.string.aboutApp).setTitle(R.string.nam4j)
-						.setCancelable(true).create();
+				AlertDialog dialog = new AlertDialog(NAM4JAndroidActivity.this){
 
-				dialog.show();
+                    @Override
+                    public boolean dispatchTouchEvent(MotionEvent event)  
+                    {
+                        dismiss();
+                        return false;
+                    }
 
+                };
+                
+                String text = getResources().getString(R.string.aboutApp);
+                String title = getResources().getString(R.string.nam4j);
+                
+				dialog.setMessage(text);
+				dialog.setTitle(title);
 				dialog.setCanceledOnTouchOutside(true);
+                dialog.show();
 			}
 		});
+		
+		centerButton = (Button) findViewById(R.id.centerButton);
+		centerButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				centerMap();
+			}
+		});
+		
+		isTablet = Utils.isTablet(context);
+		
+		int[] screenSize = Utils.getScreenSize(context, getWindow());
+		screenWidth = screenSize[0];
+		screenHeight = screenSize[1];
+		
+		/* Updates the display orientation each time the device is rotated */
+		if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			screenOrientation = Orientation.LANDSCAPE;
+		}
+		else {
+			screenOrientation = Orientation.PORTRAIT;
+		}
+		
+		/* If the device is portrait, the menu button is displayed, the menu is hidden and the swipe listener is added to the menu bar */
+		if(screenOrientation == Orientation.PORTRAIT) {
+			
+			menuButton.setVisibility(View.VISIBLE);
+			
+			/* Adding swipe gesture listener to the top bar */
+			titleBarRL.setOnTouchListener(new SwipeAndClickListener());
+			
+			if (isTablet) {
+				menuWidth = 0.35;
+			}
+			else {
+				menuWidth = 0.6;
+			}
+		}
+		else {
+			/* If the device is a tablet in landscape, the menu button is hidden, the menu is displayed, the swipe listener is not added to the menu bar and the mainRL width is set to the window's width minus the menu's width */
+			if (isTablet) {
+				menuWidth = 0.2;
+				menuButton.setVisibility(View.INVISIBLE);
+				
+				RelativeLayout.LayoutParams menuListLP = (LayoutParams) mainRL
+						.getLayoutParams();
+
+				/*
+				 * Setting the main view width as the container width without the menu
+				 */
+				menuListLP.width = (int) (screenWidth * (1 - menuWidth));
+				mainRL.setLayoutParams(menuListLP);
+				
+				displaySideMenu();
+			}
+			else {
+				menuWidth = 0.4;
+				menuButton.setVisibility(View.VISIBLE);
+				
+				/* Adding swipe gesture listener to the top bar */
+				titleBarRL.setOnTouchListener(new SwipeAndClickListener());
+			}
+		}
 
 		/*
 		 * Check if the device has the Google Play Services installed and
@@ -311,6 +386,9 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 			bitmapDescriptorBlue = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+			
+			blueCircle = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),
+                    R.drawable.blue_circle));
 
 			bitmapDescriptorRed = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_RED);
@@ -351,7 +429,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 				 * displays UI controls that allow the interaction with the
 				 * location itself
 				 */
-				map.setMyLocationEnabled(true);
+				// map.setMyLocationEnabled(true);
 
 				ml = new HashMap<String, Marker>();
 
@@ -393,11 +471,93 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	 * Method to display the menu of the app.
 	 */
 	private void displaySideMenu() {
-
+		
 		TranslateAnimation animation = null;
-
-		if (!showingMenu) {
-
+		
+		/* If it's a tablet in landscape, the menu is always displayed, else it's activated by the user */
+		if(!isTablet || (isTablet && screenOrientation == Orientation.PORTRAIT)) {
+	
+			if (!showingMenu) {
+	
+				RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
+						.getLayoutParams();
+	
+				animation = new TranslateAnimation(0, listRL.getMeasuredWidth()
+						- layoutParams.leftMargin, 0, 0);
+	
+				animation.setDuration(animationDuration);
+				animation.setFillEnabled(true);
+				animation.setAnimationListener(new AnimationListener() {
+	
+					@Override
+					public void onAnimationStart(Animation animation) {
+					}
+	
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+					}
+	
+					@Override
+					public void onAnimationEnd(Animation animation) {
+	
+						/*
+						 * At the end, set the final position as the current one
+						 */
+						RelativeLayout.LayoutParams lpList = (LayoutParams) mainRL
+								.getLayoutParams();
+						lpList.setMargins(listRL.getMeasuredWidth(), 0,
+								-listRL.getMeasuredWidth(), 0);
+						mainRL.setLayoutParams(lpList);
+	
+						showingMenu = true;
+	
+					}
+				});
+	
+			} else {
+	
+				RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
+						.getLayoutParams();
+	
+				animation = new TranslateAnimation(0, -layoutParams.leftMargin, 0,
+						0);
+	
+				animation.setDuration(animationDuration);
+				animation.setFillEnabled(true);
+				animation.setAnimationListener(new AnimationListener() {
+	
+					@Override
+					public void onAnimationStart(Animation animation) {
+					}
+	
+					@Override
+					public void onAnimationRepeat(Animation animation) {
+					}
+	
+					@Override
+					public void onAnimationEnd(Animation animation) {
+	
+						/*
+						 * At the end, set the final position as the current one
+						 */
+						RelativeLayout.LayoutParams mainContenrLP = (LayoutParams) mainRL
+								.getLayoutParams();
+						mainContenrLP.setMargins(0, 0, 0, 0);
+						mainRL.setLayoutParams(mainContenrLP);
+	
+						showingMenu = false;
+	
+					}
+				});
+			}
+	
+			mainRL.startAnimation(animation);
+		
+		}
+		
+		else {
+			/* Showing the menu since the tablet is in landscape orientation */
+			
 			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
 					.getLayoutParams();
 
@@ -432,45 +592,10 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 				}
 			});
-
-		} else {
-
-			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
-					.getLayoutParams();
-
-			animation = new TranslateAnimation(0, -layoutParams.leftMargin, 0,
-					0);
-
-			animation.setDuration(animationDuration);
-			animation.setFillEnabled(true);
-			animation.setAnimationListener(new AnimationListener() {
-
-				@Override
-				public void onAnimationStart(Animation animation) {
-				}
-
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-				}
-
-				@Override
-				public void onAnimationEnd(Animation animation) {
-
-					/*
-					 * At the end, set the final position as the current one
-					 */
-					RelativeLayout.LayoutParams mainContenrLP = (LayoutParams) mainRL
-							.getLayoutParams();
-					mainContenrLP.setMargins(0, 0, 0, 0);
-					mainRL.setLayoutParams(mainContenrLP);
-
-					showingMenu = false;
-
-				}
-			});
-		}
+		
 
 		mainRL.startAnimation(animation);
+		}
 
 	}
 
@@ -574,7 +699,9 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	public void onResume() {
 		super.onResume();
 
-		getScreenSize();
+		int[] screenSize = Utils.getScreenSize(context, getWindow());
+		screenWidth = screenSize[0];
+		screenHeight = screenSize[1];
 
 		final RelativeLayout listRL = (RelativeLayout) findViewById(R.id.listContainer);
 		final RelativeLayout listRLContainer = (RelativeLayout) findViewById(R.id.rlListViewContent);
@@ -595,26 +722,6 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		listP.width = (int) (screenWidth * menuWidth)
 				- shadowRL.getLayoutParams().width;
 		listRLContainer.setLayoutParams(listP);
-
-	}
-
-	/**
-	 * Method to get the size of the screen.
-	 */
-	private void getScreenSize() {
-		final DisplayMetrics metrics = this.getResources().getDisplayMetrics();
-
-		Rect rect = new Rect();
-		Window win = getWindow();
-		win.getDecorView().getWindowVisibleDisplayFrame(rect);
-		int statusHeight = rect.top;
-		int contentViewTop = win.findViewById(Window.ID_ANDROID_CONTENT)
-				.getTop();
-		int titleHeight = contentViewTop - statusHeight;
-
-		/* Getting screen size */
-		screenWidth = metrics.widthPixels;
-		screenHeight = metrics.heightPixels - titleHeight - statusHeight;
 
 	}
 
@@ -752,10 +859,35 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 				map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
 						zoom));
 			}
+			
+			if(marker == null) {
+				marker = map.addMarker(new MarkerOptions()
+							.position(currentLocation)
+							.icon(blueCircle));
+			}
+			else {
+				marker.setPosition(currentLocation);
+			}
 
 		} else
 			Log.d(NAM4JAndroidActivity.TAG,
 					this.getString(R.string.location_not_available));
+	}
+	
+	/**
+	 * Center the map on current user location.
+	 */
+	private void centerMap() {
+		if(currentLocation != null) {
+			CameraPosition newCamPos = new CameraPosition(new LatLng(currentLocation.latitude, currentLocation.longitude), 
+                zoom, 
+                map.getCameraPosition().tilt, //use old tilt 
+                map.getCameraPosition().bearing); //use old bearing
+			map.animateCamera(CameraUpdateFactory.newCameraPosition(newCamPos), 400, null);
+		}
+		else {
+			Toast.makeText(context, "Location information is not available", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	/**
@@ -917,7 +1049,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 										// finish();
 
 										/*
-										 * AFTER LEAVING THE CHORD NETOWRK, THE
+										 * AFTER LEAVING THE CHORD NETWORK, THE
 										 * APP GETS CLOSED
 										 */
 
@@ -1357,7 +1489,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 					R.layout.menu_list_view_row, listElements);
 
 			connected = true;
-
+			
 			runOnUiThread(new Runnable() {
 				public void run() {
 
@@ -1796,306 +1928,394 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 				long clickedRowId) {
 
 			if (showingMenu) {
+				
+				/* If it's a tablet in landscape, the menu is always displayed so no animation is necessary */
+				if(!isTablet || (isTablet && screenOrientation == Orientation.PORTRAIT)) {
 
-				final RelativeLayout mainRL = (RelativeLayout) findViewById(R.id.rlContainer);
-				final RelativeLayout listRL = (RelativeLayout) findViewById(R.id.listContainer);
+					final RelativeLayout mainRL = (RelativeLayout) findViewById(R.id.rlContainer);
+					final RelativeLayout listRL = (RelativeLayout) findViewById(R.id.listContainer);
+	
+					TranslateAnimation animation = new TranslateAnimation(0,
+							-listRL.getMeasuredWidth(), 0, 0);
+	
+					animation.setDuration(animationDuration);
+					animation.setFillEnabled(true);
+					animation.setAnimationListener(new AnimationListener() {
+	
+						@Override
+						public void onAnimationStart(Animation animation) {
+						}
+	
+						@Override
+						public void onAnimationRepeat(Animation animation) {
+						}
+	
+						@Override
+						public void onAnimationEnd(Animation animation) {
+	
+							/*
+							 * At the end, set the final position as the current one
+							 */
+							RelativeLayout.LayoutParams mainContainerLP = (LayoutParams) mainRL
+									.getLayoutParams();
+							mainContainerLP.setMargins(0, 0, 0, 0);
+							mainRL.setLayoutParams(mainContainerLP);
+	
+							showingMenu = false;
+	
+							if (connected) {
+								switch (clickedElementPosition) {
+								case 0:
+	
+									AlertDialog.Builder bDialog = new AlertDialog.Builder(
+											context);
+									bDialog.setMessage(getResources().getString(
+											R.string.leave));
+									bDialog.setCancelable(true);
+									bDialog.setPositiveButton(getResources()
+											.getString(R.string.yes),
+											new DialogInterface.OnClickListener() {
+												public void onClick(
+														DialogInterface iDialog,
+														int id) {
+													iDialog.dismiss();
+	
+													/*
+													 * The progress dialog is not
+													 * created by the AsyncTask
+													 * because the peer just sends a
+													 * message to the bootstrap.
+													 * This takes very few time and
+													 * the dialog would disappear
+													 * almost immediately. By
+													 * showing it before executing
+													 * the AsyncTask, it can stay on
+													 * the screen until the
+													 * bootstrap informs the peer
+													 * that it is part of the
+													 * network. Thus, the dialog is
+													 * removed from the function
+													 * listening for received
+													 * messages
+													 * onReceivedMessage(String).
+													 */
+													dialog = new ProgressDialog(
+															NAM4JAndroidActivity.this);
+													dialog.setMessage(NAM4JAndroidActivity.this
+															.getString(R.string.pwLeaving));
+													dialog.show();
+	
+													new LeaveNetwork(null)
+															.execute();
+	
+													connected = false;
+												}
+											});
+									bDialog.setNegativeButton("No",
+											new DialogInterface.OnClickListener() {
+	
+												@Override
+												public void onClick(
+														DialogInterface dialog,
+														int id) {
+													dialog.dismiss();
+												}
+											});
+	
+									bDialog.show();
+	
+									break;
+	
+								case 1:
+	
+									if (currentLocation != null) {
+	
+										/*
+										 * Specifying that the GeoCoder class must
+										 * call the function to start publishing by
+										 * setting the boolean to true
+										 */
+										requestPendingForBuilding = true;
+	
+										new ReverseGeocodingTask(getBaseContext())
+												.execute(currentLocation);
+									} else {
+										Bundle args = new Bundle();
+										args.putParcelable("CurrentLocation", null);
+	
+										Intent i = new Intent(context,
+												BuildingPublishActivity.class);
+										i.putExtra("Address", "");
+										i.putExtra("Bundle", args);
+	
+										startActivity(i);
+									}
+	
+									break;
+	
+								case 2:
+	
+									if (currentLocation != null) {
+	
+										/*
+										 * Specifying that the GeoCoder class must
+										 * call the function to start publishing by
+										 * setting the boolean to true
+										 */
+										requestPendingForSensor = true;
+	
+										new ReverseGeocodingTask(getBaseContext())
+												.execute(currentLocation);
+									} else {
+										Bundle args = new Bundle();
+										args.putParcelable("CurrentLocation", null);
+	
+										Intent i = new Intent(context,
+												SensorPublishActivity.class);
+										i.putExtra("Address", "");
+										i.putExtra("Bundle", args);
+	
+										startActivity(i);
+									}
+	
+									break;
+	
+								case 3:
+	
+									AlertDialog.Builder builder = new AlertDialog.Builder(
+											context);
+									builder.setMessage(
+											context.getResources()
+													.getString(
+															R.string.exitOnBackButtonPressed))
+											.setCancelable(false)
+											.setPositiveButton(
+													getResources().getString(
+															R.string.yes),
+													new DialogInterface.OnClickListener() {
+														public void onClick(
+																DialogInterface iDialog,
+																int id) {
+															
+															stopService(new Intent(context, DeviceMonitorService.class));
+	
+															/* Unregistering the broadcast receivers */
+															unregisterReceiver(bReceiver);
+															unregisterReceiver(mConnReceiver);
+															unregisterReceiver(wifiReceiver);
+	
+															if (connected) {
+	
+																close = true;
+	
+																dialog = new ProgressDialog(
+																		NAM4JAndroidActivity.this);
+																dialog.setMessage(NAM4JAndroidActivity.this
+																		.getString(R.string.pwLeaving));
+																dialog.show();
+	
+																new LeaveNetwork(
+																		null)
+																		.execute();
+	
+																connected = false;
+	
+															} else {
+																System.runFinalizersOnExit(true);
+	
+																System.exit(0);
+															}
+														}
+													})
+											.setNegativeButton(
+													getResources().getString(
+															R.string.no),
+													new DialogInterface.OnClickListener() {
+														public void onClick(
+																DialogInterface dialog,
+																int id) {
+															dialog.cancel();
+														}
+													});
+	
+									AlertDialog alert = builder.create();
+									alert.show();
+	
+									break;
+								}
+							} else {
+								switch (clickedElementPosition) {
+								case 0:
+	
+									connect();
+									Log.d(NAM4JAndroidActivity.TAG, context
+											.getString(R.string.menu_connect));
+	
+									break;
+	
+								case 1:
+	
+									showSettings();
+									Log.d(NAM4JAndroidActivity.TAG, context
+											.getString(R.string.menu_settings));
+	
+									break;
+	
+								case 2:
+	
+									AlertDialog.Builder builder = new AlertDialog.Builder(
+											context);
+									builder.setMessage(
+											context.getResources()
+													.getString(
+															R.string.exitOnBackButtonPressed))
+											.setCancelable(false)
+											.setPositiveButton(
+													getResources().getString(
+															R.string.yes),
+													new DialogInterface.OnClickListener() {
+														public void onClick(
+																DialogInterface iDialog,
+																int id) {
+															
+															stopService(new Intent(context, DeviceMonitorService.class));
+	
+															/* Unregistering the broadcast receivers */
+															unregisterReceiver(bReceiver);
+															unregisterReceiver(mConnReceiver);
+															unregisterReceiver(wifiReceiver);
+	
+															if (connected) {
+	
+																close = true;
+	
+																dialog = new ProgressDialog(
+																		NAM4JAndroidActivity.this);
+																dialog.setMessage(NAM4JAndroidActivity.this
+																		.getString(R.string.pwLeaving));
+																dialog.show();
+	
+																new LeaveNetwork(
+																		null)
+																		.execute();
+	
+																connected = false;
+	
+															} else {
+																System.runFinalizersOnExit(true);
+	
+																System.exit(0);
+															}
+														}
+													})
+											.setNegativeButton(
+													getResources().getString(
+															R.string.no),
+													new DialogInterface.OnClickListener() {
+														public void onClick(
+																DialogInterface dialog,
+																int id) {
+															dialog.cancel();
+														}
+													});
+	
+									AlertDialog alert = builder.create();
+									alert.show();
+	
+									break;
+								}
+							}
+	
+						}
+					});
+	
+					mainRL.startAnimation(animation);
+	
+				}
+				
+				else {
+					switch (clickedElementPosition) {
+					case 0:
 
-				TranslateAnimation animation = new TranslateAnimation(0,
-						-listRL.getMeasuredWidth(), 0, 0);
+						connect();
+						Log.d(NAM4JAndroidActivity.TAG, context
+								.getString(R.string.menu_connect));
 
-				animation.setDuration(animationDuration);
-				animation.setFillEnabled(true);
-				animation.setAnimationListener(new AnimationListener() {
+						break;
 
-					@Override
-					public void onAnimationStart(Animation animation) {
-					}
+					case 1:
 
-					@Override
-					public void onAnimationRepeat(Animation animation) {
-					}
+						showSettings();
+						Log.d(NAM4JAndroidActivity.TAG, context
+								.getString(R.string.menu_settings));
 
-					@Override
-					public void onAnimationEnd(Animation animation) {
+						break;
 
-						/*
-						 * At the end, set the final position as the current one
-						 */
-						RelativeLayout.LayoutParams mainContainerLP = (LayoutParams) mainRL
-								.getLayoutParams();
-						mainContainerLP.setMargins(0, 0, 0, 0);
-						mainRL.setLayoutParams(mainContainerLP);
+					case 2:
 
-						showingMenu = false;
-
-						if (connected) {
-							switch (clickedElementPosition) {
-							case 0:
-
-								AlertDialog.Builder bDialog = new AlertDialog.Builder(
-										context);
-								bDialog.setMessage(getResources().getString(
-										R.string.leave));
-								bDialog.setCancelable(true);
-								bDialog.setPositiveButton(getResources()
-										.getString(R.string.yes),
+						AlertDialog.Builder builder = new AlertDialog.Builder(
+								context);
+						builder.setMessage(
+								context.getResources()
+										.getString(
+												R.string.exitOnBackButtonPressed))
+								.setCancelable(false)
+								.setPositiveButton(
+										getResources().getString(
+												R.string.yes),
 										new DialogInterface.OnClickListener() {
 											public void onClick(
 													DialogInterface iDialog,
 													int id) {
-												iDialog.dismiss();
+												
+												stopService(new Intent(context, DeviceMonitorService.class));
 
-												/*
-												 * The progress dialog is not
-												 * created by the AsyncTask
-												 * because the peer just sends a
-												 * message to the bootstrap.
-												 * This takes very few time and
-												 * the dialog would disappear
-												 * almost immediately. By
-												 * showing it before executing
-												 * the AsyncTask, it can stay on
-												 * the screen until the
-												 * bootstrap informs the peer
-												 * that it is part of the
-												 * network. Thus, the dialog is
-												 * removed from the function
-												 * listening for received
-												 * messages
-												 * onReceivedMessage(String).
-												 */
-												dialog = new ProgressDialog(
-														NAM4JAndroidActivity.this);
-												dialog.setMessage(NAM4JAndroidActivity.this
-														.getString(R.string.pwLeaving));
-												dialog.show();
+												/* Unregistering the broadcast receivers */
+												unregisterReceiver(bReceiver);
+												unregisterReceiver(mConnReceiver);
+												unregisterReceiver(wifiReceiver);
 
-												new LeaveNetwork(null)
-														.execute();
+												if (connected) {
 
-												connected = false;
+													close = true;
+
+													dialog = new ProgressDialog(
+															NAM4JAndroidActivity.this);
+													dialog.setMessage(NAM4JAndroidActivity.this
+															.getString(R.string.pwLeaving));
+													dialog.show();
+
+													new LeaveNetwork(
+															null)
+															.execute();
+
+													connected = false;
+
+												} else {
+													System.runFinalizersOnExit(true);
+
+													System.exit(0);
+												}
 											}
-										});
-								bDialog.setNegativeButton("No",
+										})
+								.setNegativeButton(
+										getResources().getString(
+												R.string.no),
 										new DialogInterface.OnClickListener() {
-
-											@Override
 											public void onClick(
 													DialogInterface dialog,
 													int id) {
-												dialog.dismiss();
+												dialog.cancel();
 											}
 										});
 
-								bDialog.show();
+						AlertDialog alert = builder.create();
+						alert.show();
 
-								break;
-
-							case 1:
-
-								if (currentLocation != null) {
-
-									/*
-									 * Specifying that the GeoCoder class must
-									 * call the function to start publishing by
-									 * setting the boolean to true
-									 */
-									requestPendingForBuilding = true;
-
-									new ReverseGeocodingTask(getBaseContext())
-											.execute(currentLocation);
-								} else {
-									Bundle args = new Bundle();
-									args.putParcelable("CurrentLocation", null);
-
-									Intent i = new Intent(context,
-											BuildingPublishActivity.class);
-									i.putExtra("Address", "");
-									i.putExtra("Bundle", args);
-
-									startActivity(i);
-								}
-
-								break;
-
-							case 2:
-
-								if (currentLocation != null) {
-
-									/*
-									 * Specifying that the GeoCoder class must
-									 * call the function to start publishing by
-									 * setting the boolean to true
-									 */
-									requestPendingForSensor = true;
-
-									new ReverseGeocodingTask(getBaseContext())
-											.execute(currentLocation);
-								} else {
-									Bundle args = new Bundle();
-									args.putParcelable("CurrentLocation", null);
-
-									Intent i = new Intent(context,
-											SensorPublishActivity.class);
-									i.putExtra("Address", "");
-									i.putExtra("Bundle", args);
-
-									startActivity(i);
-								}
-
-								break;
-
-							case 3:
-
-								AlertDialog.Builder builder = new AlertDialog.Builder(
-										context);
-								builder.setMessage(
-										context.getResources()
-												.getString(
-														R.string.exitOnBackButtonPressed))
-										.setCancelable(false)
-										.setPositiveButton(
-												getResources().getString(
-														R.string.yes),
-												new DialogInterface.OnClickListener() {
-													public void onClick(
-															DialogInterface iDialog,
-															int id) {
-														
-														stopService(new Intent(context, DeviceMonitorService.class));
-
-														/* Unregistering the broadcast receivers */
-														unregisterReceiver(bReceiver);
-														unregisterReceiver(mConnReceiver);
-														unregisterReceiver(wifiReceiver);
-
-														if (connected) {
-
-															close = true;
-
-															dialog = new ProgressDialog(
-																	NAM4JAndroidActivity.this);
-															dialog.setMessage(NAM4JAndroidActivity.this
-																	.getString(R.string.pwLeaving));
-															dialog.show();
-
-															new LeaveNetwork(
-																	null)
-																	.execute();
-
-															connected = false;
-
-														} else {
-															System.runFinalizersOnExit(true);
-
-															System.exit(0);
-														}
-													}
-												})
-										.setNegativeButton(
-												getResources().getString(
-														R.string.no),
-												new DialogInterface.OnClickListener() {
-													public void onClick(
-															DialogInterface dialog,
-															int id) {
-														dialog.cancel();
-													}
-												});
-
-								AlertDialog alert = builder.create();
-								alert.show();
-
-								break;
-							}
-						} else {
-							switch (clickedElementPosition) {
-							case 0:
-
-								connect();
-								Log.d(NAM4JAndroidActivity.TAG, context
-										.getString(R.string.menu_connect));
-
-								break;
-
-							case 1:
-
-								showSettings();
-								Log.d(NAM4JAndroidActivity.TAG, context
-										.getString(R.string.menu_settings));
-
-								break;
-
-							case 2:
-
-								AlertDialog.Builder builder = new AlertDialog.Builder(
-										context);
-								builder.setMessage(
-										context.getResources()
-												.getString(
-														R.string.exitOnBackButtonPressed))
-										.setCancelable(false)
-										.setPositiveButton(
-												getResources().getString(
-														R.string.yes),
-												new DialogInterface.OnClickListener() {
-													public void onClick(
-															DialogInterface iDialog,
-															int id) {
-														
-														stopService(new Intent(context, DeviceMonitorService.class));
-
-														/* Unregistering the broadcast receivers */
-														unregisterReceiver(bReceiver);
-														unregisterReceiver(mConnReceiver);
-														unregisterReceiver(wifiReceiver);
-
-														if (connected) {
-
-															close = true;
-
-															dialog = new ProgressDialog(
-																	NAM4JAndroidActivity.this);
-															dialog.setMessage(NAM4JAndroidActivity.this
-																	.getString(R.string.pwLeaving));
-															dialog.show();
-
-															new LeaveNetwork(
-																	null)
-																	.execute();
-
-															connected = false;
-
-														} else {
-															System.runFinalizersOnExit(true);
-
-															System.exit(0);
-														}
-													}
-												})
-										.setNegativeButton(
-												getResources().getString(
-														R.string.no),
-												new DialogInterface.OnClickListener() {
-													public void onClick(
-															DialogInterface dialog,
-															int id) {
-														dialog.cancel();
-													}
-												});
-
-								AlertDialog alert = builder.create();
-								alert.show();
-
-								break;
-							}
-						}
-
+						break;
 					}
-				});
-
-				mainRL.startAnimation(animation);
-
+				}
+			
 			}
 		}
 	}
