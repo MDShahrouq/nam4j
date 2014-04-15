@@ -20,7 +20,7 @@
                 android:color="#CCCCCC" />
 
             <!-- Background color -->
-            <solid android:color="#3F9BBF" />
+            <solid android:color="#BB3F9BBF" />
 
             <padding
                 android:bottom="0dp"

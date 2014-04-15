@@ -47,7 +47,7 @@
                     android:background="@drawable/barbg"
                     android:orientation="horizontal" >
                 </LinearLayout>
-                
+
                 <TextView
                     android:id="@+id/CpuText"
                     style="@style/TitleStyle"
@@ -57,7 +57,6 @@
                     android:text="@string/cpuBarText"
                     android:textSize="12sp" >
                 </TextView>
-                
             </RelativeLayout>
 
             <RelativeLayout
@@ -86,7 +85,7 @@
                     android:background="@drawable/barbg"
                     android:orientation="horizontal" >
                 </LinearLayout>
-                
+
                 <TextView
                     android:id="@+id/MemoryText"
                     style="@style/TitleStyle"
@@ -97,6 +96,15 @@
                     android:textSize="12sp" >
                 </TextView>
             </RelativeLayout>
+
+            <Button
+                android:id="@+id/infoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/ic_action_about"
+                android:contentDescription="@string/about" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -114,6 +122,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="0dp" >
+
+        <FrameLayout
+            android:id="@+id/frameId"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/title_gradient_bg" >
+
+            <fragment
+                android:id="@+id/mapview"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
         <RelativeLayout
             android:id="@+id/titleLl"
@@ -141,29 +162,15 @@
                 android:contentDescription="@string/dsgLogoDescription" />
 
             <Button
-                android:id="@+id/infoButton"
+                android:id="@+id/centerButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/ic_action_about"
+                android:background="@drawable/center_map"
                 android:contentDescription="@string/about" />
         </RelativeLayout>
-
-        <FrameLayout
-            android:id="@+id/frameId"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/titleLl"
-            android:background="@drawable/title_gradient_bg" >
-
-            <fragment
-                android:id="@+id/mapview"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </FrameLayout>
     </RelativeLayout>
 
 </RelativeLayout>
