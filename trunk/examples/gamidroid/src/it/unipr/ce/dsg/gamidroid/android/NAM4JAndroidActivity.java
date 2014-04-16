@@ -152,9 +152,9 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	private int animationDuration = 300;
 
 	private boolean showingMenu = false;
-	
+
 	Orientation screenOrientation;
-	
+
 	ImageView connectButtonIv;
 
 	/*
@@ -199,16 +199,16 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	double menuWidth = 0.66;
 
 	ListView listView;
-	
+
 	boolean isTablet;
-	
+
 	/* Monitors */
 	WifiManager wifiManager;
 	SensorManager sensorManager;
-	
+
 	/* Tag for the cpu and mem usage message received from DeviceMonitorService */
 	public static final String RECEIVED_RESOURCES_UPDATE = "RECEIVED_RESOURCES_UPDATE";
-	
+
 	LinearLayout cpuBar, memoryBar;
 
 	@Override
@@ -218,12 +218,12 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		setContentView(R.layout.main);
 
 		context = this;
-		
+
 		isTablet = isTablet();
-		
+
 		/* Starting the resources monitoring service */
 		startService(new Intent(this, DeviceMonitorService.class));
-		
+
 		wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
 		/* Settings menu elements */
@@ -249,10 +249,10 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 		mainRL = (RelativeLayout) findViewById(R.id.rlContainer);
 		listRL = (RelativeLayout) findViewById(R.id.listContainer);
-		
+
 		cpuBar = (LinearLayout) findViewById(R.id.CpuBar);
 		memoryBar = (LinearLayout) findViewById(R.id.MemoryBar);
-		
+
 		titleBarRL = (RelativeLayout) findViewById(R.id.titleLl);
 
 		/* Adding swipe gesture listener to the top bar */
@@ -266,86 +266,90 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			@Override
 			public void onClick(View v) {
 
-				AlertDialog dialog = new AlertDialog(NAM4JAndroidActivity.this){
+				AlertDialog dialog = new AlertDialog(NAM4JAndroidActivity.this) {
 
-                    @Override
-                    public boolean dispatchTouchEvent(MotionEvent event)  
-                    {
-                        dismiss();
-                        return false;
-                    }
+					@Override
+					public boolean dispatchTouchEvent(MotionEvent event) {
+						dismiss();
+						return false;
+					}
 
-                };
-                
-                String text = getResources().getString(R.string.aboutApp);
-                String title = getResources().getString(R.string.nam4j);
-                
+				};
+
+				String text = getResources().getString(R.string.aboutApp);
+				String title = getResources().getString(R.string.nam4j);
+
 				dialog.setMessage(text);
 				dialog.setTitle(title);
 				dialog.setCanceledOnTouchOutside(true);
-                dialog.show();
+				dialog.show();
 			}
 		});
-		
+
 		centerButton = (Button) findViewById(R.id.centerButton);
 		centerButton.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				centerMap();
 			}
 		});
-		
+
 		isTablet = Utils.isTablet(context);
-		
+
 		int[] screenSize = Utils.getScreenSize(context, getWindow());
 		screenWidth = screenSize[0];
 		screenHeight = screenSize[1];
-		
+
 		/* Updates the display orientation each time the device is rotated */
-		if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			screenOrientation = Orientation.LANDSCAPE;
-		}
-		else {
+		} else {
 			screenOrientation = Orientation.PORTRAIT;
 		}
-		
-		/* If the device is portrait, the menu button is displayed, the menu is hidden and the swipe listener is added to the menu bar */
-		if(screenOrientation == Orientation.PORTRAIT) {
-			
+
+		/*
+		 * If the device is portrait, the menu button is displayed, the menu is
+		 * hidden and the swipe listener is added to the menu bar
+		 */
+		if (screenOrientation == Orientation.PORTRAIT) {
+
 			menuButton.setVisibility(View.VISIBLE);
-			
+
 			/* Adding swipe gesture listener to the top bar */
 			titleBarRL.setOnTouchListener(new SwipeAndClickListener());
-			
+
 			if (isTablet) {
 				menuWidth = 0.35;
-			}
-			else {
+			} else {
 				menuWidth = 0.6;
 			}
-		}
-		else {
-			/* If the device is a tablet in landscape, the menu button is hidden, the menu is displayed, the swipe listener is not added to the menu bar and the mainRL width is set to the window's width minus the menu's width */
+		} else {
+			/*
+			 * If the device is a tablet in landscape, the menu button is
+			 * hidden, the menu is displayed, the swipe listener is not added to
+			 * the menu bar and the mainRL width is set to the window's width
+			 * minus the menu's width
+			 */
 			if (isTablet) {
 				menuWidth = 0.2;
 				menuButton.setVisibility(View.INVISIBLE);
-				
+
 				RelativeLayout.LayoutParams menuListLP = (LayoutParams) mainRL
 						.getLayoutParams();
 
 				/*
-				 * Setting the main view width as the container width without the menu
+				 * Setting the main view width as the container width without
+				 * the menu
 				 */
 				menuListLP.width = (int) (screenWidth * (1 - menuWidth));
 				mainRL.setLayoutParams(menuListLP);
-				
+
 				displaySideMenu();
-			}
-			else {
+			} else {
 				menuWidth = 0.4;
 				menuButton.setVisibility(View.VISIBLE);
-				
+
 				/* Adding swipe gesture listener to the top bar */
 				titleBarRL.setOnTouchListener(new SwipeAndClickListener());
 			}
@@ -386,9 +390,10 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 			bitmapDescriptorBlue = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
-			
-			blueCircle = BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.blue_circle));
+
+			blueCircle = BitmapDescriptorFactory.fromBitmap(BitmapFactory
+					.decodeResource(context.getResources(),
+							R.drawable.blue_circle));
 
 			bitmapDescriptorRed = BitmapDescriptorFactory
 					.defaultMarker(BitmapDescriptorFactory.HUE_RED);
@@ -471,35 +476,39 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	 * Method to display the menu of the app.
 	 */
 	private void displaySideMenu() {
-		
+
 		TranslateAnimation animation = null;
-		
-		/* If it's a tablet in landscape, the menu is always displayed, else it's activated by the user */
-		if(!isTablet || (isTablet && screenOrientation == Orientation.PORTRAIT)) {
-	
+
+		/*
+		 * If it's a tablet in landscape, the menu is always displayed, else
+		 * it's activated by the user
+		 */
+		if (!isTablet
+				|| (isTablet && screenOrientation == Orientation.PORTRAIT)) {
+
 			if (!showingMenu) {
-	
+
 				RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
 						.getLayoutParams();
-	
+
 				animation = new TranslateAnimation(0, listRL.getMeasuredWidth()
 						- layoutParams.leftMargin, 0, 0);
-	
+
 				animation.setDuration(animationDuration);
 				animation.setFillEnabled(true);
 				animation.setAnimationListener(new AnimationListener() {
-	
+
 					@Override
 					public void onAnimationStart(Animation animation) {
 					}
-	
+
 					@Override
 					public void onAnimationRepeat(Animation animation) {
 					}
-	
+
 					@Override
 					public void onAnimationEnd(Animation animation) {
-	
+
 						/*
 						 * At the end, set the final position as the current one
 						 */
@@ -508,35 +517,35 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 						lpList.setMargins(listRL.getMeasuredWidth(), 0,
 								-listRL.getMeasuredWidth(), 0);
 						mainRL.setLayoutParams(lpList);
-	
+
 						showingMenu = true;
-	
+
 					}
 				});
-	
+
 			} else {
-	
+
 				RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
 						.getLayoutParams();
-	
-				animation = new TranslateAnimation(0, -layoutParams.leftMargin, 0,
-						0);
-	
+
+				animation = new TranslateAnimation(0, -layoutParams.leftMargin,
+						0, 0);
+
 				animation.setDuration(animationDuration);
 				animation.setFillEnabled(true);
 				animation.setAnimationListener(new AnimationListener() {
-	
+
 					@Override
 					public void onAnimationStart(Animation animation) {
 					}
-	
+
 					@Override
 					public void onAnimationRepeat(Animation animation) {
 					}
-	
+
 					@Override
 					public void onAnimationEnd(Animation animation) {
-	
+
 						/*
 						 * At the end, set the final position as the current one
 						 */
@@ -544,20 +553,20 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 								.getLayoutParams();
 						mainContenrLP.setMargins(0, 0, 0, 0);
 						mainRL.setLayoutParams(mainContenrLP);
-	
+
 						showingMenu = false;
-	
+
 					}
 				});
 			}
-	
+
 			mainRL.startAnimation(animation);
-		
+
 		}
-		
+
 		else {
 			/* Showing the menu since the tablet is in landscape orientation */
-			
+
 			RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mainRL
 					.getLayoutParams();
 
@@ -592,9 +601,8 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 				}
 			});
-		
 
-		mainRL.startAnimation(animation);
+			mainRL.startAnimation(animation);
 		}
 
 	}
@@ -647,7 +655,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		// After disconnect() is called, the client is considered "dead".
 		if (mLocationClient != null)
 			mLocationClient.disconnect();
-		
+
 		stopService(new Intent(context, DeviceMonitorService.class));
 
 		/* Unregistering the broadcast receivers */
@@ -674,10 +682,10 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 	public void onStart() {
 
 		super.onStart();
-		
+
 		if (mLocationClient != null)
 			mLocationClient.connect();
-		
+
 		/* Registering the broadcast receivers */
 		registerReceiver(bReceiver, new IntentFilter(RECEIVED_RESOURCES_UPDATE));
 
@@ -859,13 +867,11 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 				map.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation,
 						zoom));
 			}
-			
-			if(marker == null) {
-				marker = map.addMarker(new MarkerOptions()
-							.position(currentLocation)
-							.icon(blueCircle));
-			}
-			else {
+
+			if (marker == null) {
+				marker = map.addMarker(new MarkerOptions().position(
+						currentLocation).icon(blueCircle));
+			} else {
 				marker.setPosition(currentLocation);
 			}
 
@@ -873,20 +879,22 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 			Log.d(NAM4JAndroidActivity.TAG,
 					this.getString(R.string.location_not_available));
 	}
-	
+
 	/**
 	 * Center the map on current user location.
 	 */
 	private void centerMap() {
-		if(currentLocation != null) {
-			CameraPosition newCamPos = new CameraPosition(new LatLng(currentLocation.latitude, currentLocation.longitude), 
-                zoom, 
-                map.getCameraPosition().tilt, //use old tilt 
-                map.getCameraPosition().bearing); //use old bearing
-			map.animateCamera(CameraUpdateFactory.newCameraPosition(newCamPos), 400, null);
-		}
-		else {
-			Toast.makeText(context, "Location information is not available", Toast.LENGTH_SHORT).show();
+		if (currentLocation != null) {
+			CameraPosition newCamPos = new CameraPosition(new LatLng(
+					currentLocation.latitude, currentLocation.longitude), zoom,
+					map.getCameraPosition().tilt, // use old tilt
+					map.getCameraPosition().bearing); // use old bearing
+			map.animateCamera(CameraUpdateFactory.newCameraPosition(newCamPos),
+					400, null);
+		} else {
+			Toast.makeText(context,
+					getResources().getString(R.string.noLocationInfoAvailable),
+					Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -1007,8 +1015,9 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface iDialog,
 										int id) {
-									
-									stopService(new Intent(context, DeviceMonitorService.class));
+
+									stopService(new Intent(context,
+											DeviceMonitorService.class));
 
 									/* Unregistering the broadcast receivers */
 									unregisterReceiver(bReceiver);
@@ -1489,7 +1498,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 					R.layout.menu_list_view_row, listElements);
 
 			connected = true;
-			
+
 			runOnUiThread(new Runnable() {
 				public void run() {
 
@@ -1510,7 +1519,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 		}
 
 	}
-	
+
 	/*
 	 * BroadcastReceiver objects used to receive messages informing about
 	 * changes which occur in the state of the CPU, the memory and the wifi.
@@ -1539,19 +1548,21 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 						BigDecimal.ROUND_HALF_UP)).floatValue() * 100;
 
 				/*
-				String cpuUsageMsg = "CPU usage: " + (usedCpuPerc * 100) + "%";
+				 * String cpuUsageMsg = "CPU usage: " + (usedCpuPerc * 100) +
+				 * "%";
+				 * 
+				 * String memUsageMsg = "Mem usage: " + memUsagePerc +
+				 * "% (using " + availableMem + " MB out of " + totalMem +
+				 * " MB)";
+				 * 
+				 * tvCPU.setText(cpuUsageMsg); tvMem.setText(memUsageMsg);
+				 */
 
-				String memUsageMsg = "Mem usage: " + memUsagePerc + "% (using "
-						+ availableMem + " MB out of " + totalMem + " MB)";
-
-				tvCPU.setText(cpuUsageMsg);
-				tvMem.setText(memUsageMsg);
-				*/
-				
-				LayoutParams memoryLp = (LayoutParams) memoryBar.getLayoutParams();
+				LayoutParams memoryLp = (LayoutParams) memoryBar
+						.getLayoutParams();
 				memoryLp.height = (int) (10 * Math.ceil(memUsagePerc / 10));
 				memoryBar.setLayoutParams(memoryLp);
-				
+
 				LayoutParams barLp = (LayoutParams) cpuBar.getLayoutParams();
 				barLp.height = (int) (10 * Math.ceil((usedCpuPerc * 100) / 10));
 				cpuBar.setLayoutParams(barLp);
@@ -1643,7 +1654,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 
 	/* Battery changes broadcast receiver */
 	private BroadcastReceiver batteryReceiver = new BroadcastReceiver() {
-		
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
@@ -1651,11 +1662,11 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 					|| status == BatteryManager.BATTERY_STATUS_FULL;
 
 			/*
-			int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED,
-					-1);
-			boolean usbCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_USB;
-			boolean acCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_AC;
-			*/
+			 * int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED,
+			 * -1); boolean usbCharge = chargePlug ==
+			 * BatteryManager.BATTERY_PLUGGED_USB; boolean acCharge = chargePlug
+			 * == BatteryManager.BATTERY_PLUGGED_AC;
+			 */
 
 			int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
 			int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
@@ -1928,92 +1939,102 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 				long clickedRowId) {
 
 			if (showingMenu) {
-				
-				/* If it's a tablet in landscape, the menu is always displayed so no animation is necessary */
-				if(!isTablet || (isTablet && screenOrientation == Orientation.PORTRAIT)) {
+
+				/*
+				 * If it's a tablet in landscape, the menu is always displayed
+				 * so no animation is necessary
+				 */
+				if (!isTablet
+						|| (isTablet && screenOrientation == Orientation.PORTRAIT)) {
 
 					final RelativeLayout mainRL = (RelativeLayout) findViewById(R.id.rlContainer);
 					final RelativeLayout listRL = (RelativeLayout) findViewById(R.id.listContainer);
-	
+
 					TranslateAnimation animation = new TranslateAnimation(0,
 							-listRL.getMeasuredWidth(), 0, 0);
-	
+
 					animation.setDuration(animationDuration);
 					animation.setFillEnabled(true);
 					animation.setAnimationListener(new AnimationListener() {
-	
+
 						@Override
 						public void onAnimationStart(Animation animation) {
 						}
-	
+
 						@Override
 						public void onAnimationRepeat(Animation animation) {
 						}
-	
+
 						@Override
 						public void onAnimationEnd(Animation animation) {
-	
+
 							/*
-							 * At the end, set the final position as the current one
+							 * At the end, set the final position as the current
+							 * one
 							 */
 							RelativeLayout.LayoutParams mainContainerLP = (LayoutParams) mainRL
 									.getLayoutParams();
 							mainContainerLP.setMargins(0, 0, 0, 0);
 							mainRL.setLayoutParams(mainContainerLP);
-	
+
 							showingMenu = false;
-	
+
 							if (connected) {
 								switch (clickedElementPosition) {
 								case 0:
-	
+
 									AlertDialog.Builder bDialog = new AlertDialog.Builder(
 											context);
-									bDialog.setMessage(getResources().getString(
-											R.string.leave));
+									bDialog.setMessage(getResources()
+											.getString(R.string.leave));
 									bDialog.setCancelable(true);
-									bDialog.setPositiveButton(getResources()
-											.getString(R.string.yes),
+									bDialog.setPositiveButton(
+											getResources().getString(
+													R.string.yes),
 											new DialogInterface.OnClickListener() {
 												public void onClick(
 														DialogInterface iDialog,
 														int id) {
 													iDialog.dismiss();
-	
+
 													/*
-													 * The progress dialog is not
-													 * created by the AsyncTask
-													 * because the peer just sends a
-													 * message to the bootstrap.
-													 * This takes very few time and
-													 * the dialog would disappear
-													 * almost immediately. By
-													 * showing it before executing
-													 * the AsyncTask, it can stay on
+													 * The progress dialog is
+													 * not created by the
+													 * AsyncTask because the
+													 * peer just sends a message
+													 * to the bootstrap. This
+													 * takes very few time and
+													 * the dialog would
+													 * disappear almost
+													 * immediately. By showing
+													 * it before executing the
+													 * AsyncTask, it can stay on
 													 * the screen until the
-													 * bootstrap informs the peer
-													 * that it is part of the
-													 * network. Thus, the dialog is
-													 * removed from the function
-													 * listening for received
-													 * messages
-													 * onReceivedMessage(String).
+													 * bootstrap informs the
+													 * peer that it is part of
+													 * the network. Thus, the
+													 * dialog is removed from
+													 * the function listening
+													 * for received messages
+													 * onReceivedMessage
+													 * (String).
 													 */
 													dialog = new ProgressDialog(
 															NAM4JAndroidActivity.this);
 													dialog.setMessage(NAM4JAndroidActivity.this
 															.getString(R.string.pwLeaving));
 													dialog.show();
-	
+
 													new LeaveNetwork(null)
 															.execute();
-	
+
 													connected = false;
 												}
 											});
-									bDialog.setNegativeButton("No",
+									bDialog.setNegativeButton(
+											"No",
 											new DialogInterface.OnClickListener() {
-	
+
 												@Override
 												public void onClick(
 														DialogInterface dialog,
@@ -2021,67 +2042,73 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 													dialog.dismiss();
 												}
 											});
-	
+
 									bDialog.show();
-	
+
 									break;
-	
+
 								case 1:
-	
+
 									if (currentLocation != null) {
-	
+
 										/*
-										 * Specifying that the GeoCoder class must
-										 * call the function to start publishing by
-										 * setting the boolean to true
+										 * Specifying that the GeoCoder class
+										 * must call the function to start
+										 * publishing by setting the boolean to
+										 * true
 										 */
 										requestPendingForBuilding = true;
-	
-										new ReverseGeocodingTask(getBaseContext())
+
+										new ReverseGeocodingTask(
+												getBaseContext())
 												.execute(currentLocation);
 									} else {
 										Bundle args = new Bundle();
-										args.putParcelable("CurrentLocation", null);
-	
+										args.putParcelable("CurrentLocation",
+												null);
+
 										Intent i = new Intent(context,
 												BuildingPublishActivity.class);
 										i.putExtra("Address", "");
 										i.putExtra("Bundle", args);
-	
+
 										startActivity(i);
 									}
-	
+
 									break;
-	
+
 								case 2:
-	
+
 									if (currentLocation != null) {
-	
+
 										/*
-										 * Specifying that the GeoCoder class must
-										 * call the function to start publishing by
-										 * setting the boolean to true
+										 * Specifying that the GeoCoder class
+										 * must call the function to start
+										 * publishing by setting the boolean to
+										 * true
 										 */
 										requestPendingForSensor = true;
-	
-										new ReverseGeocodingTask(getBaseContext())
+
+										new ReverseGeocodingTask(
+												getBaseContext())
 												.execute(currentLocation);
 									} else {
 										Bundle args = new Bundle();
-										args.putParcelable("CurrentLocation", null);
-	
+										args.putParcelable("CurrentLocation",
+												null);
+
 										Intent i = new Intent(context,
 												SensorPublishActivity.class);
 										i.putExtra("Address", "");
 										i.putExtra("Bundle", args);
-	
+
 										startActivity(i);
 									}
-	
+
 									break;
-	
+
 								case 3:
-	
+
 									AlertDialog.Builder builder = new AlertDialog.Builder(
 											context);
 									builder.setMessage(
@@ -2096,33 +2123,39 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 														public void onClick(
 																DialogInterface iDialog,
 																int id) {
-															
-															stopService(new Intent(context, DeviceMonitorService.class));
-	
-															/* Unregistering the broadcast receivers */
+
+															stopService(new Intent(
+																	context,
+																	DeviceMonitorService.class));
+
+															/*
+															 * Unregistering the
+															 * broadcast
+															 * receivers
+															 */
 															unregisterReceiver(bReceiver);
 															unregisterReceiver(mConnReceiver);
 															unregisterReceiver(wifiReceiver);
-	
+
 															if (connected) {
-	
+
 																close = true;
-	
+
 																dialog = new ProgressDialog(
 																		NAM4JAndroidActivity.this);
 																dialog.setMessage(NAM4JAndroidActivity.this
 																		.getString(R.string.pwLeaving));
 																dialog.show();
-	
+
 																new LeaveNetwork(
 																		null)
 																		.execute();
-	
+
 																connected = false;
-	
+
 															} else {
 																System.runFinalizersOnExit(true);
-	
+
 																System.exit(0);
 															}
 														}
@@ -2137,32 +2170,32 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 															dialog.cancel();
 														}
 													});
-	
+
 									AlertDialog alert = builder.create();
 									alert.show();
-	
+
 									break;
 								}
 							} else {
 								switch (clickedElementPosition) {
 								case 0:
-	
+
 									connect();
 									Log.d(NAM4JAndroidActivity.TAG, context
 											.getString(R.string.menu_connect));
-	
+
 									break;
-	
+
 								case 1:
-	
+
 									showSettings();
 									Log.d(NAM4JAndroidActivity.TAG, context
 											.getString(R.string.menu_settings));
-	
+
 									break;
-	
+
 								case 2:
-	
+
 									AlertDialog.Builder builder = new AlertDialog.Builder(
 											context);
 									builder.setMessage(
@@ -2177,33 +2210,39 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 														public void onClick(
 																DialogInterface iDialog,
 																int id) {
-															
-															stopService(new Intent(context, DeviceMonitorService.class));
-	
-															/* Unregistering the broadcast receivers */
+
+															stopService(new Intent(
+																	context,
+																	DeviceMonitorService.class));
+
+															/*
+															 * Unregistering the
+															 * broadcast
+															 * receivers
+															 */
 															unregisterReceiver(bReceiver);
 															unregisterReceiver(mConnReceiver);
 															unregisterReceiver(wifiReceiver);
-	
+
 															if (connected) {
-	
+
 																close = true;
-	
+
 																dialog = new ProgressDialog(
 																		NAM4JAndroidActivity.this);
 																dialog.setMessage(NAM4JAndroidActivity.this
 																		.getString(R.string.pwLeaving));
 																dialog.show();
-	
+
 																new LeaveNetwork(
 																		null)
 																		.execute();
-	
+
 																connected = false;
-	
+
 															} else {
 																System.runFinalizersOnExit(true);
-	
+
 																System.exit(0);
 															}
 														}
@@ -2218,36 +2257,36 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 															dialog.cancel();
 														}
 													});
-	
+
 									AlertDialog alert = builder.create();
 									alert.show();
-	
+
 									break;
 								}
 							}
-	
+
 						}
 					});
-	
+
 					mainRL.startAnimation(animation);
-	
+
 				}
-				
+
 				else {
 					switch (clickedElementPosition) {
 					case 0:
 
 						connect();
-						Log.d(NAM4JAndroidActivity.TAG, context
-								.getString(R.string.menu_connect));
+						Log.d(NAM4JAndroidActivity.TAG,
+								context.getString(R.string.menu_connect));
 
 						break;
 
 					case 1:
 
 						showSettings();
-						Log.d(NAM4JAndroidActivity.TAG, context
-								.getString(R.string.menu_settings));
+						Log.d(NAM4JAndroidActivity.TAG,
+								context.getString(R.string.menu_settings));
 
 						break;
 
@@ -2256,21 +2295,24 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 						AlertDialog.Builder builder = new AlertDialog.Builder(
 								context);
 						builder.setMessage(
-								context.getResources()
-										.getString(
-												R.string.exitOnBackButtonPressed))
+								context.getResources().getString(
+										R.string.exitOnBackButtonPressed))
 								.setCancelable(false)
 								.setPositiveButton(
-										getResources().getString(
-												R.string.yes),
+										getResources().getString(R.string.yes),
 										new DialogInterface.OnClickListener() {
 											public void onClick(
 													DialogInterface iDialog,
 													int id) {
-												
-												stopService(new Intent(context, DeviceMonitorService.class));
 
-												/* Unregistering the broadcast receivers */
+												stopService(new Intent(
+														context,
+														DeviceMonitorService.class));
+
+												/*
+												 * Unregistering the broadcast
+												 * receivers
+												 */
 												unregisterReceiver(bReceiver);
 												unregisterReceiver(mConnReceiver);
 												unregisterReceiver(wifiReceiver);
@@ -2285,8 +2327,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 															.getString(R.string.pwLeaving));
 													dialog.show();
 
-													new LeaveNetwork(
-															null)
+													new LeaveNetwork(null)
 															.execute();
 
 													connected = false;
@@ -2299,8 +2340,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 											}
 										})
 								.setNegativeButton(
-										getResources().getString(
-												R.string.no),
+										getResources().getString(R.string.no),
 										new DialogInterface.OnClickListener() {
 											public void onClick(
 													DialogInterface dialog,
@@ -2315,7 +2355,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 						break;
 					}
 				}
-			
+
 			}
 		}
 	}
