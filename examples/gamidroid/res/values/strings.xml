@@ -121,6 +121,7 @@
     <string name="menu_connect">onOptionsItemSelected MENU_CONNECT</string>
     <string name="menu_settings">onOptionsItemSelected MENU_SETTINGS</string>
     <string name="exitOnBackButtonPressed">Are you sure you want to exit?</string>
+    <string name="noLocationInfoAvailable">Location information not available</string>
     
     <!-- Side Menu -->
     <string name="connectMenuTitle">Connect</string>
