@@ -52,11 +52,10 @@ public class GpsAndNetworkManager {
 	}
 
 	/**
-	 * Metodo per avviare il rilevamento della posizione dell'utente sia da rete
-	 * internet, sia da gps.
+	 * Method to start the user geo-localization from the Internet and GPS.
 	 * 
-	 * @param l
-	 *            location listener
+	 * @param l 
+	 * location listener
 	 */
 	public void startLocalizationService(LocationListener l) {
 		if (locationManager == null) {
@@ -77,10 +76,10 @@ public class GpsAndNetworkManager {
 	}
 
 	/**
-	 * Metodo per stopppare il listener del location manager.
+	 * Method to stop the listener of the location manager.
 	 * 
-	 * @param l
-	 *            location listener
+	 * @param l 
+	 * location listener
 	 */
 	public void stopLocalizationService(LocationListener l) {
 		if (locationManager != null) {
@@ -91,8 +90,8 @@ public class GpsAndNetworkManager {
 	}
 
 	/**
-	 * Metodo che inizializza la locazione dell'utene in base al provider attivo
-	 * (internet o gps)
+	 * Method that initializes the user location based on the active provider
+	 * (Internet or GPS).
 	 */
 	public void initUserLocation() {
 
@@ -107,7 +106,7 @@ public class GpsAndNetworkManager {
 	}
 
 	/**
-	 * Metodo che inizializza la locazione custom scelta dall'utente.
+	 * Method that initializes the custom location chosen by the user.
 	 */
 	public void initUserLocationFromPick() {
 
@@ -128,11 +127,11 @@ public class GpsAndNetworkManager {
 	}
 
 	/**
-	 * Metodo che arrotonda a 2 cifre decimali la locazione
+	 * Method that rounds the location to 2 decimals
 	 * 
 	 * @param location
-	 *            latitudine e longitudine
-	 * @return location arrotondata
+	 *            latitudine and longitude
+	 * @return rounded location 
 	 */
 	public static Location roundLocation(Location location) {
 
@@ -153,12 +152,12 @@ public class GpsAndNetworkManager {
 	}
 
 	/**
-	 * Metodo che controllo se la nuova location rilevata dai sensori e' cambiata
-	 * in modo relativamente sostanziale rispetto a quella dell'utente.
+	 * Method that checks if the new sensed location has changed
+	 * with respect to the user's one.
 	 * 
 	 * @param location
-	 * @return true se la location corrente e' sostanzialmente diversa oppure
-	 *         false in caso contrario.
+	 * @return true if the current location is substantially different 
+	 *         false otherwise.
 	 */
 	public boolean filterLocationChanges(Location location) {
 
