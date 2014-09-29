@@ -1,12 +1,10 @@
 package it.unipr.ce.dsg.examples.chordfm;
 
-//import java.math.BigInteger;
 import it.unipr.ce.dsg.examples.ontology.Lookup;
 import it.unipr.ce.dsg.examples.ontology.Publish;
 import it.unipr.ce.dsg.examples.ontology.Subscribe;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
-import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.nam4j.interfaces.IService;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
@@ -48,16 +46,7 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 		// create and start ChordPeer
 		Random ran = new Random();
 		int port = 1024 + ran.nextInt(9999-1024);
-		try {
-			/* vecchio sp2Chord 0.1
-			int unL = ran.nextInt(bitNumber);
-			String key = SHA1.convertToHex(SHA1.calculateSHA1(BigInteger.valueOf(unL + System.currentTimeMillis()).toString(16)));
-			chordPeer = new ChordPeer("config/chordPeer.cfg", key, key, port, bitNumber, false);
-			chordPeer.startPeer();
-			chordPeer.setChordEventListener(this);
-			*/
-			// chordPeer = new ChordPeer("config/chordPeer.cfg", null);
-			
+		try {			
 			String key = getRandomKey();
 			chordPeer = new ChordPeer("config/chordPeer.cfg", key, key, port);
 			

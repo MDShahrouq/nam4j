@@ -59,7 +59,6 @@ public class LookupRunnable implements Runnable {
 		cfm.getLogger().log(
 				"Generated Resource Descriptor: "
 						+ rd.resourceDescriptorToString());
-		// cp.searchResource(resourceKey); s2pChord 0.1
 
 		try {
 			cp.searchResource(resourceKey, cp.getMyPeerDescriptor()
