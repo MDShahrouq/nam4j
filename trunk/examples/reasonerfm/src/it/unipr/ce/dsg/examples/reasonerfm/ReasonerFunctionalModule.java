@@ -192,12 +192,11 @@ public class ReasonerFunctionalModule extends FunctionalModule {
 
 		locationMap.put(locationString, initDay);
 
-		str = new SearchTemperatureRunnable(this);
-
 		// create and start a thread that periodically looks up for Temperature
 		// notification events
-		Thread t = new Thread(str, "Search temperature thread");
-		// System.out.println("Child thread: " + t);
+		
+		Thread t = new Thread(new SearchTemperatureRunnable(this),
+				"Search temperature thread");
 		t.start();
 
 	}

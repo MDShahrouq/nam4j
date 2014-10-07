@@ -3,6 +3,7 @@ package it.unipr.ce.dsg.gamidroid.chordfm;
 import it.unipr.ce.dsg.gamidroid.ontology.Lookup;
 import it.unipr.ce.dsg.gamidroid.ontology.Publish;
 import it.unipr.ce.dsg.gamidroid.ontology.Subscribe;
+import it.unipr.ce.dsg.gamidroid.utils.Constants;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.interfaces.IService;
@@ -34,7 +35,7 @@ public class ChordFunctionalModule extends FunctionalModule implements
 		this.setName("ChordFunctionalModule");
 
 		File sdLog = new File(Environment.getExternalStorageDirectory()
-				+ "/Android/data/it.unipr.ce.dsg.nam4j.android/log/");
+				+ Constants.CONFIGURATION_FILES_PATH);
 
 		this.cLogger = new ChordLogger(sdLog.getAbsolutePath() + "/");
 
@@ -60,29 +61,19 @@ public class ChordFunctionalModule extends FunctionalModule implements
 		int port = 1024 + ran.nextInt(9999-1024);
 		// int bitNumber = 160;
 		try {
-			/*
-			 * vecchio sp2Chord 0.1 int unL = ran.nextInt(bitNumber); String key
-			 * = SHA1.convertToHex(SHA1.calculateSHA1(BigInteger.valueOf(unL +
-			 * System.currentTimeMillis()).toString(16))); chordPeer = new
-			 * ChordPeer("config/chordPeer.cfg", key, key, port, bitNumber,
-			 * false); chordPeer.startPeer();
-			 * chordPeer.setChordEventListener(this);
-			 */
 
 			File sdCache = new File(Environment.getExternalStorageDirectory()
-					+ "/Android/data/it.unipr.ce.dsg.nam4j.android/cache/");
-			File configFile = new File(sdCache, "chordPeer.cfg");
+					+ Constants.CONFIGURATION_FILES_PATH);
+			File configFile = new File(sdCache, Constants.PEER_CONFIGURATION_FILE_NAME);
 
 			String configFilePath = configFile.getAbsolutePath();
 
 			String key = getRandomKey();
 			
-			// chordPeer = new ChordPeer(configFilePath, null);
 			chordPeer = new ChordPeer(null, key, key, port);
 			PeerConfig peerConfig = new PeerConfig(configFilePath);
 			chordPeer.setPeerConfig(peerConfig);
 
-			// chordPeer.insert_key();
 			chordPeer.join();
 			chordPeer.setChordEventListener(this);
 

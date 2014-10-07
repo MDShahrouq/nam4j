@@ -9,17 +9,17 @@
 	<classpathentry kind="src" path="examples/demonam/src"/>
 	<classpathentry kind="src" path="examples/chordfm/src"/>
 	<classpathentry kind="src" path="examples/migration/src"/>
-	<classpathentry kind="lib" path="lib/2p.jar"/>
-	<classpathentry kind="lib" path="lib/mysqlDAO.jar"/>
-	<classpathentry kind="lib" path="lib/sip2peer/server.jar"/>
-	<classpathentry kind="lib" path="lib/sip2peer/sip.jar"/>
-	<classpathentry kind="lib" path="lib/tuprolog-extensions.jar"/>
-	<classpathentry kind="lib" path="lib/tuprolog-ide.jar"/>
-	<classpathentry kind="lib" path="lib/tuprolog.jar"/>
+	<classpathentry kind="src" path="examples/galileo/src"/>
+	<classpathentry kind="src" path="examples/kademliafm/src"/>
+	<classpathentry kind="src" path="examples/centralizednetworkfm/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/sip2peer/sip.jar"/>
+	<classpathentry kind="lib" path="lib/sip2peer/server.jar"/>
 	<classpathentry kind="lib" path="lib/gson-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/sip2peer/sip2peer-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/sip2peer/sip2peer-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/s2pKademlia.jar"/>
+	<classpathentry kind="lib" path="lib/s2pMesh.jar"/>
 	<classpathentry kind="lib" path="lib/s2pChord.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -57,7 +57,7 @@ public class SearchTemperatureRunnable implements Runnable {
 		
 		Gson gson = new Gson();
 
-		while (true) {
+		while (!stopThread) {
 			// pick a random location among those allowed
 			List<String> locations = new ArrayList<String>(rfm.getLocationMap()
 					.keySet());

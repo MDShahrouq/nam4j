@@ -21,8 +21,8 @@ public class SensorFunctionalModule extends FunctionalModule {
 		return sLogger;
 	}
 	
-	public void startTemperatureNotification(String buildingName , String floorName , String roomName , String sensorName, String temperatureValue , String latitude , String longitude ) {
-		Thread t = new Thread(new ProvideTemperatureRunnable(this, buildingName , floorName , roomName , sensorName , temperatureValue , latitude , longitude ), "Provide temperature thread");
+	public void startTemperatureNotification(String buildingName , String floorName , String roomName , String sensorName, String sensorValue , String latitude , String longitude ) {
+		Thread t = new Thread(new ProvideTemperatureRunnable(this, buildingName , floorName , roomName , sensorName , sensorValue , latitude , longitude ), "Provide sensor info thread");
 		t.start();
 	}
 

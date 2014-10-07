@@ -28,66 +28,77 @@
             style="@style/TitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:text="@string/bootstrap_ip"
-            android:textSize="18sp"
-            android:layout_centerVertical="true" >
+            android:textSize="18sp" >
         </TextView>
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/sensorFulldata"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/rlSensorDataText" >
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rlSensorDataText"
+        android:layout_marginTop="10dp" >
 
         <TextView
             android:id="@+id/textAddress"
+            style="@style/TopInputLabelStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="@string/emptyList"
-            style="@style/TopInputLabelStyle" />
+            android:text="@string/emptyList" />
 
         <TextView
             android:id="@+id/textFloor"
+            style="@style/MiddleInputLabelStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textAddress"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="@string/emptyList"
-            style="@style/MiddleInputLabelStyle" />
+            android:text="@string/emptyList" />
 
         <TextView
             android:id="@+id/textRoom"
+            style="@style/MiddleInputLabelStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textFloor"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="@string/emptyList"
-            style="@style/MiddleInputLabelStyle" />
+            android:text="@string/emptyList" />
 
         <TextView
             android:id="@+id/textSensor"
+            style="@style/MiddleInputLabelStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textRoom"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:text="@string/emptyList"
-            style="@style/MiddleInputLabelStyle" />
+            android:text="@string/emptyList" />
 
         <TextView
             android:id="@+id/textTemperature"
+            style="@style/BottomInputLabelStyle"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/textSensor"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_below="@+id/textSensor"
-            android:text="@string/emptyList"
-            style="@style/BottomInputLabelStyle" />
+            android:text="@string/emptyList" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/graph"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sensorFulldata"
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:background="@drawable/sensor_graph_background"
+        android:orientation="vertical" />
 
 </RelativeLayout>

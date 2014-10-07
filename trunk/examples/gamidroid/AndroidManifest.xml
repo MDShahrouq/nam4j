@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.unipr.ce.dsg.gamidroid.android"
+    package="it.unipr.ce.dsg.gamidroid"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -16,8 +16,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GPS" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> 
-	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <uses-feature
@@ -28,7 +28,7 @@
         android:icon="@drawable/nam4j_icon"
         android:label="@string/app_name" >
         <activity
-            android:name=".SplashScreen"
+            android:name=".activities.SplashScreenActivity"
             android:configChanges="orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
@@ -39,46 +39,47 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NAM4JAndroidActivity"
-            android:configChanges="orientation"
-            android:theme="@android:style/Theme.Black.NoTitleBar" >
-        </activity>
-        <activity android:name=".SettingsActivity"
-            android:theme="@android:style/Theme.Black.NoTitleBar"
-            android:configChanges="orientation" >
-        </activity>
-        <activity
-            android:name=".SensorDataViewActivity"
+            android:name=".activities.NAM4JAndroidActivity"
             android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
-            android:name=".BuildingLookupActivity"
+            android:name=".activities.SettingsActivity"
             android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
-            android:name=".BuildingPublishActivity"
+            android:name=".activities.SensorDataViewActivity"
             android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
-            android:name=".AddSensorsToBuildingActivity"
+            android:name=".activities.BuildingLookupActivity"
             android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
-            android:name=".SensorPublishActivity"
+            android:name=".activities.BuildingPublishActivity"
             android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
-            android:name=".FloorActivity"
+            android:name=".activities.AddSensorsToBuildingActivity"
             android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
-            android:name=".RoomActivity"
+            android:name=".activities.SensorPublishActivity"
+            android:configChanges="orientation"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".activities.FloorActivity"
+            android:configChanges="orientation"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+        </activity>
+        <activity
+            android:name=".activities.RoomActivity"
             android:configChanges="orientation"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
@@ -89,10 +90,10 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBRrD--p6eF62hGVOR89Fo09684rTRWmMc" />
-        
-         <service
-            android:name="it.unipr.ce.dsg.gamidroid.monitor.DeviceMonitorService"
-            android:exported="false"/>
+
+        <service
+            android:name="it.unipr.ce.dsg.gamidroid.devicemonitor.DeviceMonitorService"
+            android:exported="false" />
     </application>
 
 </manifest>

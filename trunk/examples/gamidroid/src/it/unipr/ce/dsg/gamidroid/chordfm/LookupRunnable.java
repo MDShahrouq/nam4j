@@ -60,7 +60,6 @@ public class LookupRunnable implements Runnable {
 				"Generated Resource Descriptor: "
 						+ rd.resourceDescriptorToString());
 
-		// cp.searchResource(resourceKey); s2pChord 0.1
 		try {
 			cp.searchResource(resourceKey, cp.getMyPeerDescriptor()
 					.getAddress());

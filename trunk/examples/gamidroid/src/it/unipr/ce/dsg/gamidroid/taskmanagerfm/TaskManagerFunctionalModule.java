@@ -1,13 +1,17 @@
 package it.unipr.ce.dsg.gamidroid.taskmanagerfm;
 
-import java.util.ArrayList;
-
-import com.google.gson.Gson;
-
+import it.unipr.ce.dsg.gamidroid.utils.Constants;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.task.TaskDescriptor;
 import it.unipr.ce.dsg.nam4j.interfaces.IService;
+
+import java.io.File;
+import java.util.ArrayList;
+
+import android.os.Environment;
+
+import com.google.gson.Gson;
 
 public class TaskManagerFunctionalModule extends FunctionalModule {
 
@@ -22,7 +26,12 @@ public class TaskManagerFunctionalModule extends FunctionalModule {
 		super(nam);
 		this.setId("tmfm");
 		this.setName("TaskManagerFunctionalModule");
-		this.tmLogger = new TaskManagerLogger("mnt/sdcard/Android/data/it.unipr.ce.dsg.nam4j.android/cache/");
+		
+		File sdLog = new File(Environment.getExternalStorageDirectory()
+				+ Constants.CONFIGURATION_FILES_PATH);
+		
+		this.tmLogger = new TaskManagerLogger(sdLog.getAbsolutePath() + "/");
+		
 		tmLogger.log("I am " + this.getId() + " and I own to " + nam.getId());
 		this.tasks = new ArrayList<TaskDescriptor>();
 	}

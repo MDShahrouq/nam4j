@@ -8,8 +8,8 @@ import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.interfaces.IService;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 import it.unipr.ce.dsg.s2pchord.ChordPeer;
-import it.unipr.ce.dsg.s2pchord.Resource.ResourceDescriptor;
 import it.unipr.ce.dsg.s2pchord.eventlistener.ChordEventListener;
+import it.unipr.ce.dsg.s2pchord.resource.ResourceDescriptor;
 
 import java.security.MessageDigest;
 import java.util.Collection;
@@ -22,14 +22,14 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 	private ChordPeer chordPeer = null;
 	private ChordLogger cLogger = null;
 	
-	public ChordFunctionalModule(NetworkedAutonomicMachine nam) {
+	public ChordFunctionalModule(NetworkedAutonomicMachine nam, String configPath) {
 		super(nam);
 		this.setId("cfm");
 		this.setName("ChordFunctionalModule");
 		this.cLogger = new ChordLogger("log/");
 		this.cLogger.log("I am " + this.getId() + " and I own to " + nam.getId());
 		
-		// create Service objects and add to providedServices hashmap
+		// Create Service objects and add to providedServices hashmap
 		
 		Lookup lookupService = new Lookup();
 		lookupService.setId("s1");
@@ -43,14 +43,15 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 		subscribeService.setId("s3");
 		this.addProvidedService(subscribeService.getId(), subscribeService);
 		
-		// create and start ChordPeer
+		// Random key
+		String peerKey = getRandomKey();
+		
+		// Random port
 		Random ran = new Random();
 		int port = 1024 + ran.nextInt(9999-1024);
-		try {			
-			String key = getRandomKey();
-			chordPeer = new ChordPeer("config/chordPeer.cfg", key, key, port);
-			
-			//chordPeer.insert_key();
+		
+		try {
+			chordPeer = new ChordPeer(configPath, peerKey, peerKey, port);
 			chordPeer.join();
 			chordPeer.setChordEventListener(this);
 		} catch (Exception e) {
@@ -66,7 +67,8 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 			byte[] bytesOfMessage = key.getBytes("UTF-8");
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			byte[] thedigest = md.digest(bytesOfMessage);
-			// convert the byte to hex format method 1
+			
+			// Convert the byte to hex format method 1
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < thedigest.length; i++) {
 				sb.append(Integer.toString((thedigest[i] & 0xff) + 0x100, 16)
@@ -125,38 +127,34 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 
 	@Override
 	public void searchResultEvent(String resourceKey, ResourceDescriptor rd, PeerDescriptor responsiblePeer, PeerDescriptor ownerPeer) {
+		
 		// look into other functional modules, looking for requested service
+		
 		Collection<FunctionalModule> c = this.getNam().getFunctionalModules().values();
 		Iterator<FunctionalModule> itr = c.iterator();
 		String serviceName = null;
 		FunctionalModule fm = null;
 		FunctionalModule tempfm = null;
+		
 		while (itr.hasNext()) {
+			
 			tempfm = itr.next();
+			
 			if (tempfm.getName().equals(this.getName()))
 				continue;
-			// System.out.println("Temp FM: " + tempfm.getName());
+			
 			Collection<IService> cc = tempfm.getProvidedServices().values();
 			Iterator<IService> itrr = cc.iterator();
+			
 			while (itrr.hasNext()) {
 				serviceName = itrr.next().getName();
-				// System.out.println("Service: " + serviceName);
+				
 				if (serviceName.equals("Notify")) {
 					fm = tempfm;
-					//System.out.println("FM: " + fm.getName());
 				}
 			}
 		}
 		
-		//ArrayList<ResourceParameter> results = rd.getParameterList();
-		/*
-		String parameters = "Received a Search Result Event Notification for resource: " + resourceKey 
-				+ " Resource Descriptor Key: " + rd.getKey() 
-				+ " with responsible: " + responsiblePeer.getKey() 
-				+ " and owner: " + ownerPeer.getKey();
-		*/
-		
-		//System.out.println("CFM rd.getAttachment(): " + rd.getAttachment());
 		fm.execute(this.getId(), "Notify", rd.getAttachment());
 	}
 
@@ -167,13 +165,11 @@ public class ChordFunctionalModule extends FunctionalModule implements ChordEven
 
 	@Override
 	public void addConsumableService(String id, IService service) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void addProvidedService(String id, IService service) {
-		// TODO Auto-generated method stub
 		
 	}
 

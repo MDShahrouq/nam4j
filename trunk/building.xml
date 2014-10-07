@@ -15,5 +15,5 @@
 			<ROOM name="Kitchen">
 				<SENSOR name="Temperature1"></SENSOR>
 			</ROOM>
-		</FLOOR> 
+		</FLOOR>
 	</BUILDING>
