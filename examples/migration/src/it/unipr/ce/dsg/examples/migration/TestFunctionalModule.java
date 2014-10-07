@@ -17,13 +17,11 @@ public class TestFunctionalModule extends FunctionalModule {
 
 	@Override
 	public void addConsumableService(String id, IService service) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void addProvidedService(String id, IService service) {
-		// TODO Auto-generated method stub
 		
 	}
 }

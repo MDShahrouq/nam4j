@@ -142,7 +142,7 @@ public class ProvideTemperatureRunnable implements Runnable {
 			sfm.getLogger().log(tempNotif);
 			
 			/*
-			 * fm is a ChordFunctionalModule and its "execute" method takes, as
+			 * fm is a functional module and its "execute" method takes, as
 			 * second parameter, the requested service which can be Join, Leave,
 			 * Lookup, Publish, Subscribe.
 			 */

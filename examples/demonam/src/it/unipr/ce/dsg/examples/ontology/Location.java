@@ -24,6 +24,7 @@ public class Location {
 		latitude.setValue("");
 		longitude.setValue("");
 		sensor.setValue("");
+		sensor.setType("");
 		
 	}
 
@@ -80,6 +81,5 @@ public class Location {
 	public void setSensor(Sensor sensor) {
 		this.sensor = sensor;
 	}
-	
 	
 }

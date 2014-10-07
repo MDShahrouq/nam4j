@@ -22,12 +22,13 @@ public class SensorFunctionalModule extends FunctionalModule {
 
 	public void startTemperatureNotification(String buildingName,
 			String floorName, String roomName, String sensorName,
-			String temperatureValue, String latitude, String longitude) {
+			String sensorValue, String latitude, String longitude) {
 
 		System.out
 				.println("\n*************************************************************");
 		System.out
-				.println("I'm SensorFM and I'm starting to notify:\n* building: "
+				.println("I'm SensorFM and I'm starting to notify:"
+						+ "\n* building: "
 						+ buildingName
 						+ "\n* floor: "
 						+ floorName
@@ -35,26 +36,25 @@ public class SensorFunctionalModule extends FunctionalModule {
 						+ roomName
 						+ "\n* sensor: "
 						+ sensorName
-						+ "\n* value: " + temperatureValue);
+						+ "\n* value: " + sensorValue);
 		System.out
 				.println("*************************************************************");
 
 		Thread t = new Thread(new ProvideTemperatureRunnable(this,
 				buildingName, floorName, roomName, sensorName,
-				temperatureValue, latitude, longitude),
-				"Provide temperature thread");
+				sensorValue, latitude, longitude),
+				"Provide sensor info thread");
 		t.start();
+		
 	}
 
 	@Override
 	public void addConsumableService(String id, IService service) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void addProvidedService(String id, IService service) {
-		// TODO Auto-generated method stub
 		
 	}
 }

@@ -5,7 +5,8 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry exported="true" kind="lib" path="libs/sip2peer/server.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/sip2peer/sip.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/sip2peer/sip2peer-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/sip2peer/sip2peer-1.1.jar"/>
+	<classpathentry kind="lib" path="libs/graphview-3.1.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin/classes"/>

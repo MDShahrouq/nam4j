@@ -1,7 +1,7 @@
 package it.unipr.ce.dsg.gamidroid.gaminode;
 
 import android.util.Log;
-import it.unipr.ce.dsg.gamidroid.android.NAM4JAndroidActivity;
+import it.unipr.ce.dsg.gamidroid.activities.NAM4JAndroidActivity;
 import it.unipr.ce.dsg.s2p.peer.Peer;
 import it.unipr.ce.dsg.s2p.sip.Address;
 import it.unipr.ce.dsg.s2pchord.PeerConfig;

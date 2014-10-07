@@ -24,6 +24,7 @@ public class Location {
 		latitude.setValue("");
 		longitude.setValue("");
 		sensor.setValue("");
+		sensor.setType("");
 		
 	}
 

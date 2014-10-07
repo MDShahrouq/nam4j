@@ -25,10 +25,8 @@ public class TestService extends Service {
 
 class TestServiceRunnable implements Runnable {
 
-	private TestService ts = null;
-
 	public TestServiceRunnable(TestService ts) {
-		this.ts = ts;
+		
 	}
 
 	public void run() {

@@ -4,6 +4,7 @@
     <string name="emptyList">Searching&#8230;</string>
     <string name="dsg_contacts">http://dsg.ce.unipr.it\n\ndsg@ce.unipr.it</string>
     <string name="bootstrap_ip">BootStrap IP</string>
+    <string name="network">Select network</string>
     <string name="nam4j">NAM4J</string>
     <string name="confirmButton">Confirm</string>
     <string name="dashedLine">Dashed Line</string>
@@ -127,7 +128,7 @@
     <string name="connectMenuTitle">Connect</string>
     <string name="connectMenuSubTitle">Join the network</string>
     <string name="settingsMenuTitle">Settings</string>
-    <string name="settingsMenuSubTitle">Configure the bootstrap address</string>
+    <string name="settingsMenuSubTitle">Configure the network</string>
     
      <string name="cpuBarText">C\nP\nU</string>
       <string name="memoryBarText">M\nE\nM\nO\nR\nY</string>
