@@ -35,17 +35,22 @@ public class BackActionImplementation extends BackActionHandler {
 	NetworkedAutonomicMachine nam = null;
 	BufferedReader is;
 	OutputStream os;
+	String receiver;
 	
 	// The descriptor of the object to be migrated.
 	BundleDescriptor bundleDescriptor;
 	
-	public BackActionImplementation(NetworkedAutonomicMachine nam, BufferedReader is, OutputStream os) {
+	public BackActionImplementation(NetworkedAutonomicMachine nam, BufferedReader is, OutputStream os, String receiver) {
 		this.nam = nam;
 		this.is = is;
 		this.os = os;
+		this.receiver = receiver;
 		
 		System.out.println("SERVER: starting BACK action...");
 	}
+	
+	// TODO: when a FM or Service is sent back to the offloader, remove from
+	// fmSender and serviceSender hashMaps the relative record
 	
 	private void fmMobility(String line, Socket cs) {
 		

@@ -57,7 +57,7 @@ public class ServerMobilityActionManager implements Runnable {
 				case BACK: {
 	
 					backActionImplementation = new BackActionImplementation(
-							this.nam, is, os);
+							this.nam, is, os, cs.getRemoteSocketAddress().toString());
 	
 					Thread backActionThreadStart = new Thread(
 							backActionImplementation);
@@ -68,7 +68,7 @@ public class ServerMobilityActionManager implements Runnable {
 				case COPY: {
 	
 					copyActionImplementation = new CopyActionImplementation(
-							this.nam, is, os);
+							this.nam, is, os, cs.getRemoteSocketAddress().toString());
 	
 					Thread copyActionThreadStart = new Thread(
 							copyActionImplementation);
@@ -79,7 +79,7 @@ public class ServerMobilityActionManager implements Runnable {
 				case GO: {
 	
 					goActionImplementation = new GoActionImplementation(this.nam,
-							is, os);
+							is, os, cs.getRemoteSocketAddress().toString());
 	
 					Thread goActionThreadStart = new Thread(goActionImplementation);
 					goActionThreadStart.start();
@@ -89,7 +89,7 @@ public class ServerMobilityActionManager implements Runnable {
 				case MIGRATE: {
 	
 					migrateActionImplementation = new MigrateActionImplementation(
-							this.nam, is, os);
+							this.nam, is, os, cs.getRemoteSocketAddress().toString());
 	
 					Thread migrateActionThreadStart = new Thread(
 							migrateActionImplementation);
@@ -100,7 +100,7 @@ public class ServerMobilityActionManager implements Runnable {
 				case OFFLOAD: {
 	
 					offloadActionImplementation = new OffloadActionImplementation(
-							this.nam, is, os);
+							this.nam, is, os, cs.getRemoteSocketAddress().toString());
 	
 					Thread offloadActionThreadStart = new Thread(
 							offloadActionImplementation);
