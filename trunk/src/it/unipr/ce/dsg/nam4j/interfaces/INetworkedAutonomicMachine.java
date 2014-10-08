@@ -20,8 +20,9 @@ import java.util.HashMap;
  *  Free Documentation License".
  * </p>
  * 
- * @author Marco Muro 
  * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
+ * @author Marco Muro 
  * 
  */
 

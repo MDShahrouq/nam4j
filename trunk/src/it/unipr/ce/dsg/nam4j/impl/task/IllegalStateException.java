@@ -17,6 +17,7 @@ package it.unipr.ce.dsg.nam4j.impl.task;
  * </p>
  * 
  * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
 

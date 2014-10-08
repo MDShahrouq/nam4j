@@ -17,8 +17,8 @@ import java.util.concurrent.Executors;
  * This is the main class of nam4j.
  * 
  * @author Michele Amoretti (michele.amoretti@unipr.it)
- * @author Marco Muro
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
+ * @author Marco Muro
  * 
  * This file is part of nam4j.
  *
@@ -569,7 +569,7 @@ public abstract class NetworkedAutonomicMachine implements
 
 			System.out.println("SERVER: thread "
 					+ Thread.currentThread().getId()
-					+ " is waiting for connection...");
+					+ " is waiting for connections.");
 
 			while (!stopAcceptingMobilityActions) {
 
@@ -581,7 +581,7 @@ public abstract class NetworkedAutonomicMachine implements
 				System.out
 						.println("SERVER: thread "
 								+ Thread.currentThread().getId()
-								+ " accepted connection; now is waiting for another one...");
+								+ " accepted connection. Waiting for another one.");
 
 			}
 			
@@ -591,7 +591,6 @@ public abstract class NetworkedAutonomicMachine implements
 			System.err.println("SERVER: connection failed for thread "
 					+ Thread.currentThread().getId());
 		}
-
 	}
 
 	/**
