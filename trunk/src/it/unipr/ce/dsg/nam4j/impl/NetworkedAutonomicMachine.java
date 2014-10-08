@@ -77,7 +77,7 @@ public abstract class NetworkedAutonomicMachine implements
 	Platform[] clientPlatform;
 
 	/**
-	 * A HashMap for the functional modules added to the NAM The keys are String
+	 * A HashMap for the functional modules added to the NAM. The keys are String
 	 * identifying the functional modules. The values are FunctionalModule
 	 * objects.
 	 */
@@ -98,6 +98,16 @@ public abstract class NetworkedAutonomicMachine implements
 	 * A HashMap to store the address of NAMs which sent Services.
 	 */
 	HashMap<String, String> serviceSender = new HashMap<String, String>();
+	
+	/**
+	 * A HashMap to store the address of NAMs to which a Functional Module was sent.
+	 */
+	HashMap<String, String> fmReceiver = new HashMap<String, String>();
+
+	/**
+	 * A HashMap to store the address of NAMs to which a Service was sent.
+	 */
+	HashMap<String, String> serviceReceiver = new HashMap<String, String>();
 
 	/**
 	 * An int representing the size of the threads pool for the migration.
@@ -128,7 +138,12 @@ public abstract class NetworkedAutonomicMachine implements
 	 * Ports of the server to which the migration requests should be sent. Each
 	 * thread of the pool listens on a different port
 	 */
-	int serverPort = 11111;
+	private int serverPort = 11111;
+	
+	/**
+	 * Boolean allowing to stop mobility action's management
+	 */
+	private boolean stopAcceptingMobilityActions = false;
 
 	/**
 	 * The path where the java, Jar and Dex files for migration are stored (both
@@ -385,51 +400,98 @@ public abstract class NetworkedAutonomicMachine implements
 	}
 
 	/**
-	 * Add the address of a copied FM sender to a HashMap.
+	 * Add to a HashMap the address of a NAM which sent a FM.
 	 * 
+	 *  @param sender
+	 *            The address of the sender's socket
+	 * @param fm
+	 *            The file name and extension of the received FM
+	 *            
+	 */
+	public void addFmSender(String sender, String fm) {
+		fmSender.put(sender, fm);
+	}
+
+	/**
+	 * Remove from the HashMap the address of a NAM which sent a FM.
+	 * 
+	 * @param sender
+	 *            The socket's address of the node to be removed
+	 */
+	public void removeFmSender(String sender) {
+		fmSender.remove(sender);
+	}
+	
+	/**
+	 * Add to a HashMap the address of a NAM which sent a Service.
+	 * 
+	 * @param sender
+	 *            The address of the sender's socket 
+	 * @param service
+	 *            The file name and extension of the received Service
+	 *            
+	 */
+	public void addServiceSender(String sender, String service) {
+		serviceSender.put(sender, service);
+	}
+
+	/**
+	 * Remove from the HashMap the address of a NAM which sent a Service.
+	 * 
+	 * @param sender
+	 *            The socket's address of the node to be removed
+	 */
+	public void removeServiceSender(String sender) {
+		serviceSender.remove(sender);
+	}
+	
+	/**
+	 * Add to a HashMap the address of a NAM to which a FM was sent.
+	 * 
+	 * @param receiver
+	 *            The address of the receiver's socket
 	 * @param fm
 	 *            The file name and extension of the sent FM
-	 * @param sender
-	 *            The address of the sender
+	 * 
 	 */
-	public void addFmSender(String fm, String sender) {
-		fmSender.put(fm, sender);
+	public void addFmReceiver(String receiver, String fm) {
+		fmReceiver.put(receiver, fm);
 	}
 
 	/**
-	 * Remove the address of a copied FM sender from the HashMap.
+	 * Remove from the HashMap the address of a NAM to which a FM was sent.
 	 * 
-	 * @param fm
-	 *            The file name and extension of the FM to be removed
+	 * @param receiver
+	 *            The socket's address of the node to be removed
 	 */
-	public void removeFmSender(String fm) {
-		fmSender.remove(fm);
+	public void removeFmReceiver(String receiver) {
+		fmReceiver.remove(receiver);
 	}
-
+	
 	/**
-	 * Add the address of a Service sender to a HashMap.
+	 * Add to a HashMap the address of a NAM to which a Service was sent.
 	 * 
+	 * @param receiver
+	 *            The address of the receiver's socket
 	 * @param service
 	 *            The file name and extension of the sent Service
-	 * @param sender
-	 *            The address of the sender
 	 */
-	public void addServiceSender(String service, String sender) {
-		serviceSender.put(service, sender);
+	public void addServiceReceiver(String receiver, String service) {
+		serviceReceiver.put(receiver, service);
 	}
 
 	/**
-	 * Remove the address of a FM sender from the HashMap.
+	 * Remove from the HashMap the address of a NAM to which a Service was sent.
 	 * 
-	 * @param fm
-	 *            The file name and extension of the Service to be removed
+	 * @param receiver
+	 *            The socket's address of the node to be removed
 	 */
-	public void removeServiceSender(String service) {
-		serviceSender.remove(service);
+	public void removeServiceReceiver(String receiver) {
+		serviceReceiver.remove(receiver);
 	}
 
 	/**
-	 * Creates the thread pool to manage the migration requests.
+	 * Create a thread pool to manage migration requests.
 	 * newFixedThreadPool(int nThreads) method creates a thread pool that reuses
 	 * a fixed number of threads operating off a shared unbounded queue. At any
 	 * point, at most nThreads threads will be active processing tasks. If
@@ -477,12 +539,22 @@ public abstract class NetworkedAutonomicMachine implements
 	public ResourceDescriptor getResource(String id) {
 		return resourceDescriptors.get(id);
 	}
+	
+	/**
+	 * Method to stop mobility action management
+	 */
+	public void stopMobilityActionsmanagement() {
+		stopAcceptingMobilityActions = true;
+	}
 
 	/**
 	 * Server implementation: it waits for incoming connections and dispatches
 	 * them to the threadpool.
 	 */
 	public void startMobilityAction() {
+		
+		// Reset the variable used to stop the management
+		stopAcceptingMobilityActions = false;
 
 		try {
 
@@ -499,7 +571,7 @@ public abstract class NetworkedAutonomicMachine implements
 					+ Thread.currentThread().getId()
 					+ " is waiting for connection...");
 
-			while (true) {
+			while (!stopAcceptingMobilityActions) {
 
 				cs = ss.accept();
 
@@ -512,6 +584,9 @@ public abstract class NetworkedAutonomicMachine implements
 								+ " accepted connection; now is waiting for another one...");
 
 			}
+			
+			ss.close();
+			
 		} catch (IOException e1) {
 			System.err.println("SERVER: connection failed for thread "
 					+ Thread.currentThread().getId());

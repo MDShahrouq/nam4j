@@ -35,14 +35,16 @@ public class OffloadActionImplementation extends OffloadActionHandler {
 	NetworkedAutonomicMachine nam = null;
 	BufferedReader is;
 	OutputStream os;
+	String receiver;
 	
 	// The descriptor of the object to be migrated.
 	BundleDescriptor bundleDescriptor;
 	
-	public OffloadActionImplementation(NetworkedAutonomicMachine nam, BufferedReader is, OutputStream os) {
+	public OffloadActionImplementation(NetworkedAutonomicMachine nam, BufferedReader is, OutputStream os, String receiver) {
 		this.nam = nam;
 		this.is = is;
 		this.os = os;
+		this.receiver = receiver;
 		
 		System.out.println("SERVER: starting MIGRATE action...");
 	}

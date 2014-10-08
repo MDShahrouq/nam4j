@@ -35,14 +35,16 @@ public class MigrateActionImplementation extends MigrateActionHandler {
 	NetworkedAutonomicMachine nam = null;
 	BufferedReader is;
 	OutputStream os;
+	String receiver;
 	
 	// The descriptor of the object to be migrated.
 	BundleDescriptor bundleDescriptor;
 	
-	public MigrateActionImplementation(NetworkedAutonomicMachine nam, BufferedReader is, OutputStream os) {
+	public MigrateActionImplementation(NetworkedAutonomicMachine nam, BufferedReader is, OutputStream os, String receiver) {
 		this.nam = nam;
 		this.is = is;
 		this.os = os;
+		this.receiver = receiver;
 		
 		System.out.println("SERVER: starting MIGRATE action...");
 	}

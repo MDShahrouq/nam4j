@@ -50,6 +50,7 @@ public class CopyActionImplementation extends CopyActionHandler {
 	NetworkedAutonomicMachine nam = null;
 	BufferedReader is;
 	OutputStream os;
+	String receiver;
 
 	ObjectOutputStream oos;
 
@@ -57,10 +58,11 @@ public class CopyActionImplementation extends CopyActionHandler {
 	BundleDescriptor bundleDescriptor;
 
 	public CopyActionImplementation(NetworkedAutonomicMachine nam,
-			BufferedReader is, OutputStream os) {
+			BufferedReader is, OutputStream os, String receiver) {
 		this.nam = nam;
 		this.is = is;
 		this.os = os;
+		this.receiver = receiver;
 
 		System.out.println("SERVER: starting COPY action...");
 	}
@@ -246,6 +248,8 @@ public class CopyActionImplementation extends CopyActionHandler {
 				os.write(myBytearray, 0, myBytearray.length);
 				os.flush();
 
+				nam.addFmReceiver(receiver, fileToBeMigrated);
+				
 				System.out.println("SERVER: thread "
 						+ Thread.currentThread().getId()
 						+ " has finished sending");
@@ -383,7 +387,9 @@ public class CopyActionImplementation extends CopyActionHandler {
 				bis.read(myBytearray, 0, myBytearray.length);
 				os.write(myBytearray, 0, myBytearray.length);
 				os.flush();
-
+				
+				nam.addServiceReceiver(receiver, fileToBeMigrated);
+				
 				System.out.println("SERVER: thread "
 						+ Thread.currentThread().getId()
 						+ " has finished sending");
@@ -413,7 +419,7 @@ public class CopyActionImplementation extends CopyActionHandler {
 
 		try {
 
-			/* Setting the output stream for the socket */
+			// Setting the output stream for the socket
 			oos = new ObjectOutputStream(os);
 
 			String line;
