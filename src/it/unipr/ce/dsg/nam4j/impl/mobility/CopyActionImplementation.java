@@ -22,6 +22,29 @@ import java.util.regex.Pattern;
 
 import com.sun.org.apache.bcel.internal.classfile.ClassParser;
 
+/**
+ * 
+ * Class which implements the server-side management of the COPY mobility action.
+ * 
+ * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
+ * 
+ * This file is part of nam4j.
+ *
+ * nam4j is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * nam4j is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with nam4j. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 public class CopyActionImplementation extends CopyActionHandler {
 
 	NetworkedAutonomicMachine nam = null;
@@ -30,9 +53,7 @@ public class CopyActionImplementation extends CopyActionHandler {
 
 	ObjectOutputStream oos;
 
-	/**
-	 * The descriptor of the object to be migrated.
-	 */
+	// The descriptor of the object to be migrated.
 	BundleDescriptor bundleDescriptor;
 
 	public CopyActionImplementation(NetworkedAutonomicMachine nam,
@@ -184,6 +205,8 @@ public class CopyActionImplementation extends CopyActionHandler {
 							}
 						}
 					}
+					
+					jarFile.close();
 				}
 
 				if (found)
@@ -257,8 +280,9 @@ public class CopyActionImplementation extends CopyActionHandler {
 			String filename = "";
 			File folder = new File(nam.getMigrationStore());
 			File[] listOfFiles = folder.listFiles();
-			boolean found = false; // It is set to true when the file to
-									// be migrated is found
+			
+			// The boolean is set to true if found the file to be migrated
+			boolean found = false;
 
 			System.out.println("SERVER: thread "
 					+ Thread.currentThread().getId()
@@ -289,9 +313,9 @@ public class CopyActionImplementation extends CopyActionHandler {
 							.replace(".java", "");
 
 					/*
-					 * Since NAME.java file contain the class NAME, if the name
+					 * Since NAME.java file contains NAME class, if the name
 					 * of the current file is equal to the required service's
-					 * name, then current file is the correct one
+					 * name, then current file is the one to be sent.
 					 */
 					if (line.equalsIgnoreCase(justClassName)) {
 						fileToBeMigrated = listOfFiles[i].getAbsolutePath();

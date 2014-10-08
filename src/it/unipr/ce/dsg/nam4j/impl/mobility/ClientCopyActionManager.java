@@ -24,6 +24,29 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+/**
+ * 
+ * Class which implements the client-side management of the COPY mobility action.
+ * 
+ * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
+ * 
+ * This file is part of nam4j.
+ *
+ * nam4j is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * nam4j is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with nam4j. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
 public class ClientCopyActionManager implements Runnable {
 
 	NetworkedAutonomicMachine nam = null;
@@ -39,7 +62,7 @@ public class ClientCopyActionManager implements Runnable {
 	BundleDescriptor bundleDescriptor;
 
 	/**
-	 * A Class array used for the reflection.
+	 * An array of classes used for reflection.
 	 */
 	private static final Class<?>[] parameters = new Class[] { URL.class };
 
@@ -148,10 +171,7 @@ public class ClientCopyActionManager implements Runnable {
 							"Error, could not add URL to system classloader");
 				}
 			} else {
-				/*
-				 * Adding to the classpath on an Android node happens locally on
-				 * the device
-				 */
+				// Adding to the classpath on an Android node happens locally on the device
 			}
 
 		} catch (IOException e1) {
@@ -198,7 +218,7 @@ public class ClientCopyActionManager implements Runnable {
 
 		boolean connected = false;
 
-		/* The client tries 3 times to connect to server */
+		// The client tries 3 times to connect to server
 		for (int j = 0; j < nam.getTrialsNumber(); j++) {
 			try {
 
@@ -227,14 +247,11 @@ public class ClientCopyActionManager implements Runnable {
 
 			System.out.println("CLIENT: created socket " + s);
 
-			/* Sending the mobility action */
+			// Sending the mobility action
 			os.println(a);
 			os.flush();
 
-			/*
-			 * To send the platform enum on the socket it is converted to a
-			 * String
-			 */
+			//To send the platform enum on the socket it is converted to a String
 			os.println(clientType.name());
 			os.flush();
 
@@ -277,7 +294,7 @@ public class ClientCopyActionManager implements Runnable {
 					System.out.println("CLIENT: waiting for " + fType
 							+ " file " + fileNameAndExt);
 
-					/* Writing for the received file */
+					// Writing for the received file
 
 					byte[] mybytearray = new byte[filesize];
 					InputStream inputStr = s.getInputStream();
@@ -297,7 +314,7 @@ public class ClientCopyActionManager implements Runnable {
 					bos.close();
 					fos.close();
 
-					/* End of writing */
+					// End of writing
 
 					is.close();
 					os.close();
@@ -313,10 +330,7 @@ public class ClientCopyActionManager implements Runnable {
 						obj = addToClassPath(receivedFilename,
 								completeClassName, fType);
 
-						/*
-						 * Adding the file name and the sender address to the
-						 * HashMap
-						 */
+						//Adding the file name and the sender address to the HashMap
 						if (fType == MigrationSubject.FM) {
 							
 							nam.addFmSender(fileNameAndExt, s
@@ -354,13 +368,10 @@ public class ClientCopyActionManager implements Runnable {
 		FunctionalModule fm = (FunctionalModule) findRemoteItem(
 				requiredFmClass, clientType, MigrationSubject.FM, action);
 
-		/* Adding the FM to the NAM FM HashMap */
+		// Adding the FM to the NAM FM HashMap
 		nam.addFunctionalModule(fm);
 
-		/*
-		 * Check if the client asked for one or more services of the FM to get
-		 * copied
-		 */
+		// Check if the client asked for one or more services of the FM to get copied
 		if (requiredServiceClass != null) {
 
 			for (int g = 0; g < requiredServiceClass.length; g++) {
@@ -374,12 +385,12 @@ public class ClientCopyActionManager implements Runnable {
 							.println("CLIENT: requesting Service including class "
 									+ requiredServiceClass);
 
-					/* Obtaining the Service */
+					// Obtaining the Service
 					Service serv = (Service) findRemoteItem(
 							currentServiceClassName, clientType,
 							MigrationSubject.SERVICE, action);
 
-					/* Adding the Service to the FM */
+					// Adding the Service to the FM
 					if (serv != null)
 						fm.addProvidedService(currentServiceId, serv);
 					else
@@ -389,6 +400,6 @@ public class ClientCopyActionManager implements Runnable {
 			}
 
 		}
-
 	}
+	
 }
