@@ -600,10 +600,10 @@ public abstract class NetworkedAutonomicMachine implements
 	 *            the name of the FM to copy
 	 * @param service
 	 *            the name of the Service of functionalModule to be copied (can
-	 *            be null if you need to copy just a FM)
+	 *            be null if you need to copy only a FM)
 	 * @param serviceId
 	 *            the id of the Service of functionalModule to be copied (can be
-	 *            null if you need to copy just a FM)
+	 *            null if you need to copy only a FM)
 	 * @param clientType
 	 *            (ANDROID or DESKTOP)
 	 */
