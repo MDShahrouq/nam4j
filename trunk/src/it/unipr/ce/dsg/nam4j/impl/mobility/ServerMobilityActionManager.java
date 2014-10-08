@@ -14,7 +14,7 @@ public class ServerMobilityActionManager implements Runnable {
 	NetworkedAutonomicMachine nam = null;
 	Socket cs;
 
-	/* Action Handlers */
+	// Action Handlers
 	private BackActionImplementation backActionImplementation;
 	private CopyActionImplementation copyActionImplementation;
 	private GoActionImplementation goActionImplementation;
@@ -50,71 +50,70 @@ public class ServerMobilityActionManager implements Runnable {
 
 			os = cs.getOutputStream();
 
-			/* Checking the required action */
+			// Checking the required action
 			Action a = Action.valueOf(new String(is.readLine()));
 
 			switch (a) {
-			case BACK: {
-
-				backActionImplementation = new BackActionImplementation(
-						this.nam, is, os);
-
-				Thread backActionThreadStart = new Thread(
-						backActionImplementation);
-				backActionThreadStart.start();
-
-				break;
-			}
-			case COPY: {
-
-				copyActionImplementation = new CopyActionImplementation(
-						this.nam, is, os);
-
-				Thread copyActionThreadStart = new Thread(
-						copyActionImplementation);
-				copyActionThreadStart.start();
-
-				break;
-			}
-			case GO: {
-
-				goActionImplementation = new GoActionImplementation(this.nam,
-						is, os);
-
-				Thread goActionThreadStart = new Thread(goActionImplementation);
-				goActionThreadStart.start();
-
-				break;
-			}
-			case MIGRATE: {
-
-				migrateActionImplementation = new MigrateActionImplementation(
-						this.nam, is, os);
-
-				Thread migrateActionThreadStart = new Thread(
-						migrateActionImplementation);
-				migrateActionThreadStart.start();
-
-				break;
-			}
-			case OFFLOAD: {
-
-				offloadActionImplementation = new OffloadActionImplementation(
-						this.nam, is, os);
-
-				Thread offloadActionThreadStart = new Thread(
-						offloadActionImplementation);
-				offloadActionThreadStart.start();
-
-				break;
-			}
+				case BACK: {
+	
+					backActionImplementation = new BackActionImplementation(
+							this.nam, is, os);
+	
+					Thread backActionThreadStart = new Thread(
+							backActionImplementation);
+					backActionThreadStart.start();
+	
+					break;
+				}
+				case COPY: {
+	
+					copyActionImplementation = new CopyActionImplementation(
+							this.nam, is, os);
+	
+					Thread copyActionThreadStart = new Thread(
+							copyActionImplementation);
+					copyActionThreadStart.start();
+	
+					break;
+				}
+				case GO: {
+	
+					goActionImplementation = new GoActionImplementation(this.nam,
+							is, os);
+	
+					Thread goActionThreadStart = new Thread(goActionImplementation);
+					goActionThreadStart.start();
+	
+					break;
+				}
+				case MIGRATE: {
+	
+					migrateActionImplementation = new MigrateActionImplementation(
+							this.nam, is, os);
+	
+					Thread migrateActionThreadStart = new Thread(
+							migrateActionImplementation);
+					migrateActionThreadStart.start();
+	
+					break;
+				}
+				case OFFLOAD: {
+	
+					offloadActionImplementation = new OffloadActionImplementation(
+							this.nam, is, os);
+	
+					Thread offloadActionThreadStart = new Thread(
+							offloadActionImplementation);
+					offloadActionThreadStart.start();
+	
+					break;
+				}
 			}
 
 		} catch (Exception e) {
 			System.out.println("SERVER: error: " + e + " for thread "
 					+ Thread.currentThread().getId());
 		}
-
 	}
 
 }

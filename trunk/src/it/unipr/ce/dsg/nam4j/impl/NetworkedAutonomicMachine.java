@@ -1,8 +1,22 @@
+package it.unipr.ce.dsg.nam4j.impl;
+
+import it.unipr.ce.dsg.nam4j.impl.mobility.ClientCopyActionManager;
+import it.unipr.ce.dsg.nam4j.impl.mobility.ServerMobilityActionManager;
+import it.unipr.ce.dsg.nam4j.impl.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.nam4j.interfaces.INetworkedAutonomicMachine;
+
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
- Ê* 
- Ê* This is the main class of nam4j.
- Ê* 
- Ê* @author Michele Amoretti (michele.amoretti@unipr.it)
+ * 
+ * This is the main class of nam4j.
+ * 
+ * @author Michele Amoretti (michele.amoretti@unipr.it)
  * @author Marco Muro
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
@@ -20,42 +34,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with nam4j. If not, see <http://www.gnu.org/licenses/>.
- Ê* 
- Ê*/
-
-package it.unipr.ce.dsg.nam4j.impl;
-
-import it.unipr.ce.dsg.nam4j.impl.mobility.ClientCopyActionManager;
-import it.unipr.ce.dsg.nam4j.impl.mobility.ServerMobilityActionManager;
-import it.unipr.ce.dsg.nam4j.impl.resource.ResourceDescriptor;
-import it.unipr.ce.dsg.nam4j.interfaces.INetworkedAutonomicMachine;
-
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-/**
- * <p>
- * This class represents a Networked Autonomic Machine (NAM).
- * </p>
- * 
- * <p>
- * Copyright (c) 2011, Distributed Systems Group, University of Parma, Italy.
- * Permission is granted to copy, distribute and/or modify this document under
- * the terms of the GNU Free Documentation License, Version 1.3 or any later
- * version published by the Free Software Foundation; with no Invariant
- * Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the
- * license is included in the section entitled "GNU Free Documentation License".
- * </p>
- * 
- * @author Michele Amoretti (michele.amoretti@unipr.it)
- * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
-
 public abstract class NetworkedAutonomicMachine implements
 		INetworkedAutonomicMachine {
 
@@ -175,10 +155,7 @@ public abstract class NetworkedAutonomicMachine implements
 		setMigrationStore(migrationStorePath);
 		setTrialsNumber(trials);
 
-		/*
-		 * Creation of the thread pools to manage incoming mobility action
-		 * requests.
-		 */
+		// Creation of the thread pools to manage incoming mobility action requests.
 		createPoolForServerMobilityAction();
 		createPoolForClientMobilityAction();
 
