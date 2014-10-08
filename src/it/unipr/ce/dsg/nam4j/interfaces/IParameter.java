@@ -18,6 +18,7 @@ package it.unipr.ce.dsg.nam4j.interfaces;
  * </p>
  * 
  * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
 

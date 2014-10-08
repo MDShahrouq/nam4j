@@ -18,6 +18,7 @@ import java.util.ArrayList;
  * </p>
  * 
  * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
 

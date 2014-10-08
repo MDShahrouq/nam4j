@@ -23,6 +23,7 @@ import java.util.HashMap;
  * </p>
  * 
  * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
 

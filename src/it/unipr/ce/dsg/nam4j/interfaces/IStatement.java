@@ -19,6 +19,7 @@ import it.unipr.ce.dsg.nam4j.impl.service.Parameter;
  * </p>
  * 
  * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
 

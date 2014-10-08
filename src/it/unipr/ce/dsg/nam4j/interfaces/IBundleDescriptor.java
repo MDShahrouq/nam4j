@@ -18,6 +18,7 @@ import java.io.Serializable;
  *  Free Documentation License".
  * </p>
  * 
+ * @author Michele Amoretti (michele.amoretti@unipr.it)
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
