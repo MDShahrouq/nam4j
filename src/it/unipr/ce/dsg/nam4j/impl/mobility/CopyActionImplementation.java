@@ -1,6 +1,5 @@
 package it.unipr.ce.dsg.nam4j.impl.mobility;
 
-import it.unipr.ce.dsg.nam4j.impl.BundleDescriptor;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine.Platform;
 
