@@ -1,5 +1,5 @@
 
-package it.unipr.ce.dsg.nam4j.impl;
+package it.unipr.ce.dsg.nam4j.impl.mobility;
 
 import it.unipr.ce.dsg.nam4j.interfaces.IBundleDescriptor;
 
@@ -23,7 +23,6 @@ import it.unipr.ce.dsg.nam4j.interfaces.IBundleDescriptor;
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
-
 public class BundleDescriptor implements IBundleDescriptor {
 
 	private static final long serialVersionUID = 1L;

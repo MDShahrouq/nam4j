@@ -22,8 +22,6 @@ import java.io.Serializable;
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
-
-
 public interface IBundleDescriptor extends Serializable {
 
 	/**
