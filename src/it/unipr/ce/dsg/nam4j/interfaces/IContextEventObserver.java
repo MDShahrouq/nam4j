@@ -1,6 +1,6 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
-import it.unipr.ce.dsg.examples.contextbus.FullMeshAndRandomGraphContextPeer;
+import it.unipr.ce.dsg.examples.contextbus.MeshContextPeer;
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.nam4j.impl.peer.PeerList;
 
@@ -48,11 +48,11 @@ public interface IContextEventObserver {
 	 *            The message containing the request parameters
 	 * 
 	 * @param peer
-	 *            The {@link FullMeshAndRandomGraphContextPeer} object of the requesting peer
+	 *            The {@link MeshContextPeer} object of the requesting peer
 	 * 
 	 * @param list
 	 *            A {@link PeerList} object containing the list of peers to
 	 *            which the notification has to be forwarded
 	 */
-	void manageRequest(JsonObject peerMsg, FullMeshAndRandomGraphContextPeer peer, PeerList list);
+	void manageRequest(JsonObject peerMsg, MeshContextPeer peer, PeerList list);
 }

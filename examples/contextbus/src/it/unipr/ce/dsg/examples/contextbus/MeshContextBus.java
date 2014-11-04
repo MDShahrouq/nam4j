@@ -36,12 +36,12 @@ import com.google.gson.JsonObject;
  * 
  */
 
-public class FullMeshAndRandomGraphContextBus extends ContextBus {
+public class MeshContextBus extends ContextBus {
 
 	private Logger logger = null;
 	private ArrayList<String> eventModuleList = null;
 	
-	public FullMeshAndRandomGraphContextBus(NetworkedAutonomicMachine nam, String id) {
+	public MeshContextBus(NetworkedAutonomicMachine nam, String id) {
 		super(nam);
 		this.logger = new Logger("log/", "ContextBusLogs" + id + ".txt");
 		this.eventModuleList = new ArrayList<String>();
@@ -67,7 +67,7 @@ public class FullMeshAndRandomGraphContextBus extends ContextBus {
 	 *            The sender of the request
 	 * 
 	 * @param peer
-	 *            The {@link FullMeshAndRandomGraphContextPeer} object of the requesting peer
+	 *            The {@link MeshContextPeer} object of the requesting peer
 	 * 
 	 * @param list
 	 *            The peer list of the requesting node
@@ -76,7 +76,7 @@ public class FullMeshAndRandomGraphContextBus extends ContextBus {
 	 *            The number of remaining hops for the request (time to live);
 	 *            if full mesh structure is in use, the value must be negative
 	 */
-	public void subscribe(String contextEventName, String functionalModuleId, String sender, FullMeshAndRandomGraphContextPeer peer, PeerList list, int hops) {
+	public void subscribe(String contextEventName, String functionalModuleId, String sender, MeshContextPeer peer, PeerList list, int hops) {
 		
 		if(hops < 0) {
 			
@@ -142,7 +142,7 @@ public class FullMeshAndRandomGraphContextBus extends ContextBus {
 	 *            The sender of the request
 	 * 
 	 * @param peer
-	 *            The {@link FullMeshAndRandomGraphContextPeer} object of the requesting peer
+	 *            The {@link MeshContextPeer} object of the requesting peer
 	 * 
 	 * @param list
 	 *            The peer list of the requesting node
@@ -151,7 +151,7 @@ public class FullMeshAndRandomGraphContextBus extends ContextBus {
 	 *            The number of remaining hops for the request (time to live);
 	 *            if full mesh structure is in use, the value must be negative
 	 */
-	public void unsubscribe(String contextEventName, String functionalModuleId, String sender, FullMeshAndRandomGraphContextPeer peer, PeerList list, int hops) {
+	public void unsubscribe(String contextEventName, String functionalModuleId, String sender, MeshContextPeer peer, PeerList list, int hops) {
 
 		if(hops < 0) {
 			
@@ -209,7 +209,7 @@ public class FullMeshAndRandomGraphContextBus extends ContextBus {
 	 * @param contextEvent
 	 * @param peer
 	 */
-	public void publish(ContextEvent contextEvent, FullMeshAndRandomGraphContextPeer peer) {
+	public void publish(ContextEvent contextEvent, MeshContextPeer peer) {
 
 		ArrayList<String> interestedNam = new ArrayList<String>();
 		
@@ -243,14 +243,14 @@ public class FullMeshAndRandomGraphContextBus extends ContextBus {
 	 *            The message containing the request parameters
 	 * 
 	 * @param peer
-	 *            The {@link FullMeshAndRandomGraphContextPeer} object of the requesting peer
+	 *            The {@link MeshContextPeer} object of the requesting peer
 	 * 
 	 * @param list
 	 *            A {@link PeerList} object containing the list of peers to
 	 *            which the notification has to be forwarded
 	 */
 	@Override
-	public void manageRequest(JsonObject peerMsg, FullMeshAndRandomGraphContextPeer peer, PeerList list) {
+	public void manageRequest(JsonObject peerMsg, MeshContextPeer peer, PeerList list) {
 		
 		String name = peerMsg.get("info").getAsString();
 		String type = peerMsg.get("infoType").getAsString();
