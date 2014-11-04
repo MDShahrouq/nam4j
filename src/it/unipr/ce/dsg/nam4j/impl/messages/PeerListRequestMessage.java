@@ -52,7 +52,7 @@ public class PeerListRequestMessage extends BasicMessage{
 	}
 	
 	/**
-	 * Method to obtain a JSON representation of this {@link PeerListRequestMessage}
+	 * Method to obtain a JSON representation of this {@link PeerListRequestMessage}.
 	 * 
 	 * @return a JSON representation of this {@link PeerListRequestMessage}
 	 */

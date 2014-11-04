@@ -53,7 +53,7 @@ public class LeaveRequestMessage {
 	}
 	
 	/**
-	 * Method to obtain a JSON representation of this {@link LeaveMessage}
+	 * Method to obtain a JSON representation of this {@link LeaveMessage}.
 	 * 
 	 * @return a JSON representation of this {@link LeaveMessage}
 	 */

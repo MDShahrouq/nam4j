@@ -6,8 +6,8 @@ import com.google.gson.Gson;
 
 /**
  * <p>
- * This class represents a message to request an action (e.g.
- * subscribe/unsubscribe to/from context event notifications).
+ * This class represents a message to request an action related to context
+ * events (e.g. subscribe/unsubscribe to/from context event notifications).
  * </p>
  * 
  * <p>
@@ -95,7 +95,7 @@ public class ContextEventActionRequestMessage {
 	}
 	
 	/**
-	 * Method to obtain a JSON representation of this {@link ContextEventActionRequestMessage}
+	 * Method to obtain a JSON representation of this {@link ContextEventActionRequestMessage}.
 	 * 
 	 * @return a JSON representation of this {@link ContextEventActionRequestMessage}
 	 */

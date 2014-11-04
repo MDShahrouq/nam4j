@@ -52,7 +52,7 @@ public class PingMessage {
 	}
 	
 	/**
-	 * Method to obtain a JSON representation of this {@link PingMessage}
+	 * Method to obtain a JSON representation of this {@link PingMessage}.
 	 * 
 	 * @return a JSON representation of this {@link PingMessage}
 	 */

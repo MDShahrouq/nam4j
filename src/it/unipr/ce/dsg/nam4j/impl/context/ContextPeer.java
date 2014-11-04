@@ -65,7 +65,7 @@ public class ContextPeer extends NamPeer implements IContextEventSubject {
 		
 		fileHandler = new FileHandler();
 		
-		if(nodeConfig.log_path!=null){
+		if(nodeConfig.log_path != null){
 			
 			if(!fileHandler.isDirectoryExists(nodeConfig.log_path))
 				fileHandler.createDirectory(nodeConfig.log_path);
@@ -129,7 +129,6 @@ public class ContextPeer extends NamPeer implements IContextEventSubject {
 		ContextEventNotificationMessage peerMsg = new ContextEventNotificationMessage(null, Utils.PUBLISH_REQUEST, Utils.PUBLISH_REQUEST, contextEvent);
 		
 		for(String interestedPeer : list) {
-			
 			sendMessageToPeer(new Address(interestedPeer), peerMsg.getJSONString(), Utils.JSON_MESSAGE_FORMAT);
 		}		
 	}
@@ -190,7 +189,7 @@ public class ContextPeer extends NamPeer implements IContextEventSubject {
 		
 		if (messageType.equals(PingMessage.MSG_KEY) || messageType.equals(PongMessage.MSG_KEY)) {
 			
-			// If a ping or a pong message is received, the node adds the sender
+			// If a PING or a PONG message is received, the node adds the sender
 			// to the list of known peers (if not yet included)
 			
 			PeerDescriptor senderPeerDescriptor = gson.fromJson(peerMsg.get("peer").toString(), PeerDescriptor.class);
@@ -207,11 +206,20 @@ public class ContextPeer extends NamPeer implements IContextEventSubject {
 			}
 			
 			if (messageType.equals(PingMessage.MSG_KEY)) {
+				
+				System.out.println("Received PING message from " + senderPeerDescriptor.getContactAddress() + "\nSending pong message to " + senderPeerDescriptor.getContactAddress());
+				
 				// If the message was a ping, the node answers with a pong
 				pong(senderPeerDescriptor.getContactAddress());
+			} else {
+				System.out.println("Received PONG message from " + senderPeerDescriptor.getContactAddress());
 			}
 			
 		} else if (messageType.equals(PeerListMessage.MSG_KEY)) {
+			
+			// A peer list message is sent as the answer to a join request, and
+			// whenever a peer asks for it. In the first case, a thread
+			// monitoring the number of known peers gets started.
 			
 			if(!joined) {
 				
@@ -243,7 +251,6 @@ public class ContextPeer extends NamPeer implements IContextEventSubject {
 			}
 			
 			this.getPeerList().addAll(peerSet);
-			
 			this.getPeerList().printPeerList();
 			
 		} else if (messageType.equals(ContextEventActionRequestMessage.MSG_KEY)) {
@@ -319,7 +326,7 @@ public class ContextPeer extends NamPeer implements IContextEventSubject {
 	 * @param contentType
 	 *            The format of the message (i.e. "application/json")
 	 */
-	protected void onDeliveryMsgSuccess(String sentMessage, Address receiver,	String contentType) {}
+	protected void onDeliveryMsgSuccess(String sentMessage, Address receiver, String contentType) {}
 	
 	/**
 	 * Thread to monitor the number of known peers so that it does not fall
@@ -330,9 +337,9 @@ public class ContextPeer extends NamPeer implements IContextEventSubject {
 
 		boolean stopThread = false;
 
-		private ContextPeer peer;
+		private NamPeer peer;
 
-		public CheckNumberOfKnownPeersRunnable(ContextPeer peer) {
+		public CheckNumberOfKnownPeersRunnable(NamPeer peer) {
 			this.peer = peer;
 		}
 

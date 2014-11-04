@@ -19,6 +19,27 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
+/**
+ * <p>
+ * This class represents a NAM that connects to the network through the
+ * {@link ContextBusBootstrap} and utilizes the features provided by the context
+ * bus.
+ * </p>
+ * 
+ * <p>
+ * Copyright (c) 2011, Distributed Systems Group, University of Parma, Italy.
+ * Permission is granted to copy, distribute and/or modify this document under
+ * the terms of the GNU Free Documentation License, Version 1.3 or any later
+ * version published by the Free Software Foundation; with no Invariant
+ * Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the
+ * license is included in the section entitled "GNU Free Documentation License".
+ * </p>
+ * 
+ * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
+ * 
+ */
+
 public class ContextBusTestNam extends NetworkedAutonomicMachine {
 	
 	private ContextBus contextBus = null;
@@ -104,7 +125,7 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 		else
 			return null;
 	}
-
+	
 	/**
 	 * args[0]: the path to the config file
 	 * 
@@ -142,6 +163,10 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 			peer.join(peer.getPeerConfig().getBootstrapContactAddress());
 			
 			peer.registerObserver(contextBus);
+			
+			ManageInputRunnable manageInputRunnable = new ManageInputRunnable(peer);
+			Thread manageInput = new Thread(manageInputRunnable);
+			manageInput.start();
 								
 			if(args[2].equalsIgnoreCase(Utils.SUBSCRIBE_REQUEST)) {
 				

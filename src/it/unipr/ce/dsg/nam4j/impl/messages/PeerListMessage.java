@@ -54,7 +54,7 @@ public class PeerListMessage {
 	}
 	
 	/**
-	 * Method to obtain a JSON representation of this {@link PeerListMessage}
+	 * Method to obtain a JSON representation of this {@link PeerListMessage}.
 	 * 
 	 * @return a JSON representation of this {@link PeerListMessage}
 	 */

@@ -5,7 +5,9 @@ import it.unipr.ce.dsg.nam4j.impl.messages.JoinRequestMessage;
 import it.unipr.ce.dsg.nam4j.impl.messages.LeaveRequestMessage;
 import it.unipr.ce.dsg.nam4j.impl.messages.PeerListMessage;
 import it.unipr.ce.dsg.nam4j.impl.messages.PeerListRequestMessage;
+import it.unipr.ce.dsg.nam4j.impl.messages.PingMessage;
 import it.unipr.ce.dsg.nam4j.impl.peer.NamPeer;
+import it.unipr.ce.dsg.s2p.centralized.message.PongMessage;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 import it.unipr.ce.dsg.s2p.sip.Address;
 import it.unipr.ce.dsg.s2p.util.FileHandler;
@@ -17,6 +19,25 @@ import org.zoolu.tools.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+
+/**
+ * <p>
+ * This class represents the network bootstrap.
+ * </p>
+ * 
+ * <p>
+ * Copyright (c) 2011, Distributed Systems Group, University of Parma, Italy.
+ * Permission is granted to copy, distribute and/or modify this document under
+ * the terms of the GNU Free Documentation License, Version 1.3 or any later
+ * version published by the Free Software Foundation; with no Invariant
+ * Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the
+ * license is included in the section entitled "GNU Free Documentation License".
+ * </p>
+ * 
+ * @author Michele Amoretti (michele.amoretti@unipr.it)
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
+ * 
+ */
 
 public class ContextBusBootstrap extends NamPeer {
 	
@@ -64,9 +85,9 @@ public class ContextBusBootstrap extends NamPeer {
 		String messageType = peerMsg.get("type").getAsString();
 		
 		Gson gson = new Gson();
-		PeerDescriptor neighborPeerDesc = gson.fromJson(peerMsg.get("peer").toString(), PeerDescriptor.class);
+		PeerDescriptor senderPeerDescriptor = gson.fromJson(peerMsg.get("peer").toString(), PeerDescriptor.class);
 		
-		System.out.println("Received message of type " + messageType + " from peer " + neighborPeerDesc.getContactAddress());
+		System.out.println("Received message of type " + messageType + " from peer " + senderPeerDescriptor.getContactAddress());
 		
 		// Logging
 		if (nodeConfig.log_path != null) {
@@ -83,15 +104,39 @@ public class ContextBusBootstrap extends NamPeer {
 			printJSONLog(info, log, false);
 		}
 		
-		if (messageType.equals(JoinRequestMessage.MSG_KEY)) {
+		if (messageType.equals(PingMessage.MSG_KEY) || messageType.equals(PongMessage.MSG_KEY)) {
+			
+			// If a ping or a PONG message is received, the node adds the sender
+			// to the list of known peers (if not yet included)
+			
+			if ((!(this.getPeerList().contains(senderPeerDescriptor)))
+					&& (!senderPeerDescriptor.getName().equals("bootstrap"))) {
+
+				System.out.println("--- Adding a new peer to the peers list: "
+						+ senderPeerDescriptor.getContactAddress());
+
+				this.getPeerList().add(senderPeerDescriptor);
+				
+				this.getPeerList().printPeerList();
+			}
+			
+			if (messageType.equals(PingMessage.MSG_KEY)) {
+				
+				System.out.println("Sending PONG message to " + senderPeerDescriptor.getContactAddress());
+				
+				// If the message was a ping, the node answers with a PONG
+				pong(senderPeerDescriptor.getContactAddress());
+			}
+			
+		} else if (messageType.equals(JoinRequestMessage.MSG_KEY)) {
 			
 			// A node asked to join the network
 			
-			if ((!(this.getPeerList().contains(neighborPeerDesc))) && (!neighborPeerDesc.getName().equals("bootstrap"))) {
+			if ((!(this.getPeerList().contains(senderPeerDescriptor))) && (!senderPeerDescriptor.getName().equals("bootstrap"))) {
 
-				System.out.println("--- Adding a new peer to the peers list: " + neighborPeerDesc.getContactAddress());
+				System.out.println("--- Adding a new peer to the peers list: " + senderPeerDescriptor.getContactAddress());
 
-				this.getPeerList().add(neighborPeerDesc);
+				this.getPeerList().add(senderPeerDescriptor);
 				
 				if(networkStructure.equalsIgnoreCase(Utils.FULL_MESH)) {
 					
@@ -110,13 +155,13 @@ public class ContextBusBootstrap extends NamPeer {
 					
 					// Send a list of peers to the new peer - Utils.PEER_LIST_SIZE random nodes are chosen and sent
 					
-					Set<PeerDescriptor> peerDescriptors = this.getPeerList().getRandomPeerDescriptors(Utils.PEER_LIST_ANSWER_SIZE, neighborPeerDesc);
+					Set<PeerDescriptor> peerDescriptors = this.getPeerList().getRandomPeerDescriptors(Utils.PEER_LIST_ANSWER_SIZE, senderPeerDescriptor);
 
 					PeerListMessage newPLMsg = new PeerListMessage(peerDescriptors);
-					sendMessage(new Address(neighborPeerDesc.getAddress()), new Address(neighborPeerDesc.getContactAddress()), this.getAddress(), newPLMsg.getJSONString(), Utils.JSON_MESSAGE_FORMAT);
+					sendMessage(new Address(senderPeerDescriptor.getAddress()), new Address(senderPeerDescriptor.getContactAddress()), this.getAddress(), newPLMsg.getJSONString(), Utils.JSON_MESSAGE_FORMAT);
 				}
 				
-				printPeerList();
+				this.getPeerList().printPeerList();
 				
 				int numPeer = this.getPeerList().size();
 				
@@ -135,18 +180,18 @@ public class ContextBusBootstrap extends NamPeer {
 			// A node requested a list of peers
 			
 			// Send a list of peers to the new peer - Utils.PEER_LIST_SIZE random nodes are chosen and sent
-			Set<PeerDescriptor> peerDescriptors = this.getPeerList().getRandomPeerDescriptors(Utils.PEER_LIST_ANSWER_SIZE, neighborPeerDesc);
+			Set<PeerDescriptor> peerDescriptors = this.getPeerList().getRandomPeerDescriptors(Utils.PEER_LIST_ANSWER_SIZE, senderPeerDescriptor);
 
 			PeerListMessage newPLMsg = new PeerListMessage(peerDescriptors);
-			sendMessage(new Address(neighborPeerDesc.getAddress()), new Address(neighborPeerDesc.getContactAddress()), this.getAddress(), newPLMsg.getJSONString(), Utils.JSON_MESSAGE_FORMAT);
+			sendMessage(new Address(senderPeerDescriptor.getAddress()), new Address(senderPeerDescriptor.getContactAddress()), this.getAddress(), newPLMsg.getJSONString(), Utils.JSON_MESSAGE_FORMAT);
 			
 		} else if(messageType.equalsIgnoreCase(LeaveRequestMessage.MSG_KEY)) {
 			
-			if(this.getPeerList().contains(neighborPeerDesc)) {
+			if(this.getPeerList().contains(senderPeerDescriptor)) {
 				
-				System.out.println("--- Peer " + neighborPeerDesc.getContactAddress() + " left the network");
+				System.out.println("--- Peer " + senderPeerDescriptor.getContactAddress() + " left the network");
 				
-				this.getPeerList().remove(neighborPeerDesc);
+				this.getPeerList().remove(senderPeerDescriptor);
 			}
 		}
 	}
@@ -173,7 +218,7 @@ public class ContextBusBootstrap extends NamPeer {
 				System.out.println("Removing the peer from the peer list.");
 				
 				this.getPeerList().remove(pd);
-				printPeerList();
+				this.getPeerList().printPeerList();
 				
 				break;
 			}
@@ -194,31 +239,6 @@ public class ContextBusBootstrap extends NamPeer {
 	 *            The format of the message (i.e. "application/json")
 	 */
 	protected void onDeliveryMsgSuccess(String sentMessage, Address receiver,	String contentType) {}
-	
-	/**
-	 * Method to print the list of known peers.
-	 * 
-	 * @param list
-	 *            The list of peers to be printed
-	 */
-	public void printPeerList() {
-		
-		if(!this.getPeerList().isEmpty()) {
-
-			System.out.println("********** Known peers **********");
-
-			int i = 1;
-
-			for(PeerDescriptor pd : this.getPeerList()) {
-				System.out.println(i++ + ") " +  pd.getContactAddress());
-			}
-
-			System.out.println("*********************************");
-
-		} else {
-			System.out.println("No known peer");
-		}
-	}
 
 	/*
 	 * args[0]: path to the config file
@@ -230,7 +250,11 @@ public class ContextBusBootstrap extends NamPeer {
 	public static void main(String[] args) {
 		
 		if(args.length == 3) {
-			new ContextBusBootstrap(args[0], args[1], args[2]);			
+			ContextBusBootstrap contextBusBootstrap = new ContextBusBootstrap(args[0], args[1], args[2]);
+			
+			ManageInputRunnable manageInputRunnable = new ManageInputRunnable(contextBusBootstrap);
+			Thread manageInput = new Thread(manageInputRunnable);
+			manageInput.start();
 		}
 		else {
 			System.out

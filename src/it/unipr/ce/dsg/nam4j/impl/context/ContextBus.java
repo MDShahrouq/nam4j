@@ -34,6 +34,7 @@ import com.google.gson.JsonObject;
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
+
 public class ContextBus extends FunctionalModule implements IContextEventObserver {
 
 	private Logger logger = null;
