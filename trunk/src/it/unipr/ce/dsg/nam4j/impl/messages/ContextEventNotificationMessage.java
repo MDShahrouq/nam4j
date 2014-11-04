@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 
 /**
  * <p>
- * This class represents a message notifying the happening of a context event.
+ * This class represents a message notifying context event updates.
  * </p>
  * 
  * <p>

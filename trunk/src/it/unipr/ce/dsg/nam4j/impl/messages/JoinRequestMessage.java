@@ -51,7 +51,7 @@ public class JoinRequestMessage {
 	}
 	
 	/**
-	 * Method to obtain a JSON representation of this {@link JoinRequestMessage}
+	 * Method to obtain a JSON representation of this {@link JoinRequestMessage}.
 	 * 
 	 * @return a JSON representation of this {@link JoinRequestMessage}
 	 */

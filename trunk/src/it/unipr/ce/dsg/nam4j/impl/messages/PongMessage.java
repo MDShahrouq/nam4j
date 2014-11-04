@@ -52,7 +52,7 @@ public class PongMessage {
 	}
 	
 	/**
-	 * Method to obtain a JSON representation of this {@link PongMessage}
+	 * Method to obtain a JSON representation of this {@link PongMessage}.
 	 * 
 	 * @return a JSON representation of this {@link PongMessage}
 	 */

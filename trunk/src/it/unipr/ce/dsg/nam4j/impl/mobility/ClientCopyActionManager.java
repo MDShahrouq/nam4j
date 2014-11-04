@@ -68,14 +68,14 @@ public class ClientCopyActionManager implements Runnable {
 
 	public ClientCopyActionManager(NetworkedAutonomicMachine nam,
 			String requiredFmClass, String[] requiredServiceClass,
-			String[] requiredServiceId, Platform p, Action a) {
+			String[] requiredServiceId, Platform platform, Action action) {
 
 		this.nam = nam;
 		this.requiredFmClass = requiredFmClass;
 		this.requiredServiceClass = requiredServiceClass;
 		this.requiredServiceId = requiredServiceId;
-		this.action = a;
-		this.clientType = p;
+		this.action = action;
+		this.clientType = platform;
 
 	}
 
@@ -85,10 +85,12 @@ public class ClientCopyActionManager implements Runnable {
 	 * 
 	 * @param cName
 	 *            complete class name of the functional module, or the service,
-	 *            added to the class path.
+	 *            added to the class path
+	 *            
 	 * @param cType
 	 *            the type of the class to be added - SERVICE or FM (Functional
 	 *            Module)
+	 *            
 	 * @return an object of the class added to the path
 	 */
 	private Object getItemFromFile(String cName, MigrationSubject cType) {
@@ -136,11 +138,14 @@ public class ClientCopyActionManager implements Runnable {
 	 * @param receivedFilename
 	 *            a String representing the name of the file received from the
 	 *            server
+	 *            
 	 * @param completeClassName
 	 *            a String representing the complete name of the file main class
+	 *            
 	 * @param fType
 	 *            the type of the class to be added - SERVICE or FM (Functional
 	 *            Module)
+	 *            
 	 * @throws IOException
 	 */
 	private Object addToClassPath(String receivedFilename,
@@ -192,12 +197,15 @@ public class ClientCopyActionManager implements Runnable {
 	 * Returns a reference to the required Functional Module or Service.
 	 * 
 	 * @param fName
-	 *            the name of the functional module or of the service to migrate
+	 *            the name of the functional module or of the service to be migrated
+	 *            
 	 * @param clientType
 	 *            (ANDROID or DESKTOP)
+	 *            
 	 * @param fType
 	 *            a String representing the type of the item to migrate -
 	 *            SERVICE or FM (Functional Module)
+	 *            
 	 * @param a
 	 *            the mobility action
 	 * */
@@ -356,8 +364,9 @@ public class ClientCopyActionManager implements Runnable {
 				System.out.println(e.getMessage());
 			}
 
-		} else
+		} else {
 			System.out.println("CLIENT: could not connect to server");
+		}
 
 		return obj;
 	}

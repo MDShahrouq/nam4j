@@ -2,7 +2,7 @@ package it.unipr.ce.dsg.nam4j.impl.context;
 
 /**
  * <p>
- * This class includes constants for the distributed context bus.
+ * This class includes configuration constants for the distributed context bus.
  * </p>
  *
  * <p>
@@ -15,20 +15,25 @@ package it.unipr.ce.dsg.nam4j.impl.context;
  * </p>
  *
  * @author Michele Amoretti (michele.amoretti@unipr.it)
- * @author Nicholas Barbieri
- * @author Luca Barili
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  *
  */
+
 public class Utils {
 
-	/** Network structure identifiers */
+	/** Full mesh network structure identifier */
 	public static String FULL_MESH = "full_mesh";
+
+	/** Random graph (Gnutella) network structure identifier */
 	public static String RANDOM_GRAPH = "random_graph";
 
-	/** Strings identifying the requests. */
+	/** Event publishing action request */
 	public static String PUBLISH_REQUEST = "publish";
+
+	/** Subscribe to event updates request */
 	public static String SUBSCRIBE_REQUEST = "subscribe";
+
+	/** Unsubscribe from event updates request */
 	public static String UNSUBSCRIBE_REQUEST = "unsubscribe";
 
 	/**
