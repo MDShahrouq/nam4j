@@ -39,9 +39,9 @@ import java.util.Random;
 
 public class ContextBusTestNam extends NetworkedAutonomicMachine {
 	
-	private FullMeshAndRandomGraphContextBus contextBus = null;
+	private MeshContextBus contextBus = null;
 	private FunctionalModule reasonerFunctionalModule = null;
-	private FullMeshAndRandomGraphContextPeer peer;
+	private MeshContextPeer peer;
 	
 	/**
 	 * Constructor of the CBusNam
@@ -64,28 +64,28 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 		
 		this.setId("CBusNam");
 		
-		peer = new FullMeshAndRandomGraphContextPeer(pathConfig, key.toString(), key.toString(), port);
+		peer = new MeshContextPeer(pathConfig, key.toString(), key.toString(), port);
 		
 		peer.setContextEventLocation(contextEventLocation);
 		peer.setContextEventName(contextEventName);
 		peer.setContextEventValue(contextEventValue);
 		
-		contextBus = new FullMeshAndRandomGraphContextBus(this, peer.getPeerConfig().getName());
+		contextBus = new MeshContextBus(this, peer.getPeerConfig().getName());
 		this.addFunctionalModule(contextBus);
 		
 		reasonerFunctionalModule = new ReasonerFunctionalModule(this);
 		this.addFunctionalModule(reasonerFunctionalModule);
 	}
 	
-	private FullMeshAndRandomGraphContextBus getContextBus(){
+	private MeshContextBus getContextBus(){
 		return contextBus;
 	}
 	
-	private FullMeshAndRandomGraphContextPeer getContextPeer(){
+	private MeshContextPeer getContextPeer(){
 		return peer;
 	}
 	
-	private ContextEvent setContextEvent(FullMeshAndRandomGraphContextPeer peer) {
+	private ContextEvent setContextEvent(MeshContextPeer peer) {
 		
 		if(peer.getContextEventName().equals("TemperatureNotification")) {
 			
@@ -150,8 +150,8 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 			boolean publisherNode = (args.length == 6); // true if the node is a publisher, false otherwise
 			ContextBusTestNam cBusNam = (publisherNode) ? new ContextBusTestNam(10, "examples/migration", 3, args[0], args[3], args[4], args[5]) : new ContextBusTestNam(10, "examples/migration", 3, args[0], args[3], args[4], null);
 			
-			FullMeshAndRandomGraphContextBus contextBus = cBusNam.getContextBus(); 
-			FullMeshAndRandomGraphContextPeer peer = cBusNam.getContextPeer();
+			MeshContextBus contextBus = cBusNam.getContextBus(); 
+			MeshContextPeer peer = cBusNam.getContextPeer();
 			
 			contextBus.setId(peer.getPeerDescriptor().getContactAddress());
 			

@@ -1,6 +1,6 @@
 package it.unipr.ce.dsg.nam4j.impl.context;
 
-import it.unipr.ce.dsg.examples.contextbus.FullMeshAndRandomGraphContextPeer;
+import it.unipr.ce.dsg.examples.contextbus.MeshContextPeer;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.peer.PeerList;
@@ -48,6 +48,6 @@ public abstract class ContextBus extends FunctionalModule implements IContextEve
 	
 	@Override
 	public void manageRequest(JsonObject peerMsg,
-			FullMeshAndRandomGraphContextPeer peer, PeerList list) {}
+			MeshContextPeer peer, PeerList list) {}
 
 }

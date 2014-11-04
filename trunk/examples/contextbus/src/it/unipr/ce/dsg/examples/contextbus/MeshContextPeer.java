@@ -46,7 +46,7 @@ import com.google.gson.reflect.TypeToken;
  *
  */
 
-public class FullMeshAndRandomGraphContextPeer extends NamPeer implements IContextEventSubject {
+public class MeshContextPeer extends NamPeer implements IContextEventSubject {
 	
 	private FileHandler fileHandler;
 	private Log log;
@@ -58,7 +58,7 @@ public class FullMeshAndRandomGraphContextPeer extends NamPeer implements IConte
 	private String contextEventLocation;
 	private String contextEventValue;
 	
-	public FullMeshAndRandomGraphContextPeer(String pathConfig, String key, String name, int port) {
+	public MeshContextPeer(String pathConfig, String key, String name, int port) {
 		super(pathConfig, key, name, port);
 		init();
 	}
