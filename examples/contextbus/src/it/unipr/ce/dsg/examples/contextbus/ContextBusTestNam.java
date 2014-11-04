@@ -8,10 +8,7 @@ import it.unipr.ce.dsg.examples.ontology.TemperatureNotification;
 import it.unipr.ce.dsg.examples.reasonerfm.ReasonerFunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
-import it.unipr.ce.dsg.nam4j.impl.context.ContextBus;
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
-import it.unipr.ce.dsg.nam4j.impl.context.ContextPeer;
-import it.unipr.ce.dsg.nam4j.impl.context.Utils;
 import it.unipr.ce.dsg.s2p.centralized.utils.Key;
 
 import java.text.DateFormat;
@@ -42,9 +39,9 @@ import java.util.Random;
 
 public class ContextBusTestNam extends NetworkedAutonomicMachine {
 	
-	private ContextBus contextBus = null;
+	private FullMeshAndRandomGraphContextBus contextBus = null;
 	private FunctionalModule reasonerFunctionalModule = null;
-	private ContextPeer peer;
+	private FullMeshAndRandomGraphContextPeer peer;
 	
 	/**
 	 * Constructor of the CBusNam
@@ -67,28 +64,28 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 		
 		this.setId("CBusNam");
 		
-		peer = new ContextPeer(pathConfig, key.toString(), key.toString(), port);
+		peer = new FullMeshAndRandomGraphContextPeer(pathConfig, key.toString(), key.toString(), port);
 		
 		peer.setContextEventLocation(contextEventLocation);
 		peer.setContextEventName(contextEventName);
 		peer.setContextEventValue(contextEventValue);
 		
-		contextBus = new ContextBus(this, peer.getPeerConfig().getName());
+		contextBus = new FullMeshAndRandomGraphContextBus(this, peer.getPeerConfig().getName());
 		this.addFunctionalModule(contextBus);
 		
 		reasonerFunctionalModule = new ReasonerFunctionalModule(this);
 		this.addFunctionalModule(reasonerFunctionalModule);
 	}
 	
-	private ContextBus getContextBus(){
+	private FullMeshAndRandomGraphContextBus getContextBus(){
 		return contextBus;
 	}
 	
-	private ContextPeer getContextPeer(){
+	private FullMeshAndRandomGraphContextPeer getContextPeer(){
 		return peer;
 	}
 	
-	private ContextEvent setContextEvent(ContextPeer peer) {
+	private ContextEvent setContextEvent(FullMeshAndRandomGraphContextPeer peer) {
 		
 		if(peer.getContextEventName().equals("TemperatureNotification")) {
 			
@@ -153,8 +150,8 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 			boolean publisherNode = (args.length == 6); // true if the node is a publisher, false otherwise
 			ContextBusTestNam cBusNam = (publisherNode) ? new ContextBusTestNam(10, "examples/migration", 3, args[0], args[3], args[4], args[5]) : new ContextBusTestNam(10, "examples/migration", 3, args[0], args[3], args[4], null);
 			
-			ContextBus contextBus = cBusNam.getContextBus(); 
-			ContextPeer peer = cBusNam.getContextPeer();
+			FullMeshAndRandomGraphContextBus contextBus = cBusNam.getContextBus(); 
+			FullMeshAndRandomGraphContextPeer peer = cBusNam.getContextPeer();
 			
 			contextBus.setId(peer.getPeerDescriptor().getContactAddress());
 			

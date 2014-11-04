@@ -1,6 +1,6 @@
 package it.unipr.ce.dsg.nam4j.impl.peer;
 
-import it.unipr.ce.dsg.nam4j.impl.context.Utils;
+import it.unipr.ce.dsg.examples.contextbus.Utils;
 import it.unipr.ce.dsg.nam4j.impl.messages.JoinRequestMessage;
 import it.unipr.ce.dsg.nam4j.impl.messages.LeaveRequestMessage;
 import it.unipr.ce.dsg.nam4j.impl.messages.PeerListRequestMessage;
