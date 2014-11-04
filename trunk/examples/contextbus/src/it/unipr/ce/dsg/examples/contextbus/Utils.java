@@ -1,4 +1,4 @@
-package it.unipr.ce.dsg.nam4j.impl.context;
+package it.unipr.ce.dsg.examples.contextbus;
 
 /**
  * <p>

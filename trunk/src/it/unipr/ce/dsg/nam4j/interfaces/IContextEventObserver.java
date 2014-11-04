@@ -1,6 +1,7 @@
 package it.unipr.ce.dsg.nam4j.interfaces;
 
-import it.unipr.ce.dsg.nam4j.impl.context.ContextPeer;
+import it.unipr.ce.dsg.examples.contextbus.FullMeshAndRandomGraphContextPeer;
+import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.nam4j.impl.peer.PeerList;
 
 import com.google.gson.JsonObject;
@@ -29,6 +30,17 @@ import com.google.gson.JsonObject;
 public interface IContextEventObserver {
 	
 	/**
+	 * Method used to publish an event on the distributed context bus.
+	 * 
+	 * @param contextEvent
+	 *            The event to be published
+	 * 
+	 * @param peer
+	 *            The context event publisher
+	 */
+	void publish(ContextEvent contextEvent, IPeer peer);
+	
+	/**
 	 * Method used to manage requests received from the subjects of the Observer
 	 * design pattern.
 	 * 
@@ -36,11 +48,11 @@ public interface IContextEventObserver {
 	 *            The message containing the request parameters
 	 * 
 	 * @param peer
-	 *            The {@link ContextPeer} object of the requesting peer
+	 *            The {@link FullMeshAndRandomGraphContextPeer} object of the requesting peer
 	 * 
 	 * @param list
 	 *            A {@link PeerList} object containing the list of peers to
 	 *            which the notification has to be forwarded
 	 */
-	void manageRequest(JsonObject peerMsg, ContextPeer peer, PeerList list);
+	void manageRequest(JsonObject peerMsg, FullMeshAndRandomGraphContextPeer peer, PeerList list);
 }

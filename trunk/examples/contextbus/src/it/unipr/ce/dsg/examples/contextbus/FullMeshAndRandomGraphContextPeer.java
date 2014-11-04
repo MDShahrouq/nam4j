@@ -1,5 +1,6 @@
-package it.unipr.ce.dsg.nam4j.impl.context;
+package it.unipr.ce.dsg.examples.contextbus;
 
+import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.nam4j.impl.messages.ContextEventActionRequestMessage;
 import it.unipr.ce.dsg.nam4j.impl.messages.ContextEventNotificationMessage;
 import it.unipr.ce.dsg.nam4j.impl.messages.PeerListMessage;
@@ -25,7 +26,8 @@ import com.google.gson.reflect.TypeToken;
 
 /**
  * <p>
- * This class represents a peer for the distributed context bus.
+ * This class represents a peer for the distributed context bus. Such a peer
+ * supports a full mesh or a random graph network structure.
  * </p>
  *
  * <p>
@@ -43,7 +45,8 @@ import com.google.gson.reflect.TypeToken;
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  *
  */
-public class ContextPeer extends NamPeer implements IContextEventSubject {
+
+public class FullMeshAndRandomGraphContextPeer extends NamPeer implements IContextEventSubject {
 	
 	private FileHandler fileHandler;
 	private Log log;
@@ -55,7 +58,7 @@ public class ContextPeer extends NamPeer implements IContextEventSubject {
 	private String contextEventLocation;
 	private String contextEventValue;
 	
-	public ContextPeer(String pathConfig, String key, String name, int port) {
+	public FullMeshAndRandomGraphContextPeer(String pathConfig, String key, String name, int port) {
 		super(pathConfig, key, name, port);
 		init();
 	}
