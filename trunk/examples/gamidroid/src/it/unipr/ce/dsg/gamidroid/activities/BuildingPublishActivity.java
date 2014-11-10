@@ -85,8 +85,9 @@ public class BuildingPublishActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.building_publish);
-		
-		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
+
+		overridePendingTransition(R.anim.animate_left_in,
+				R.anim.animate_right_out);
 
 		context = this;
 
@@ -100,7 +101,7 @@ public class BuildingPublishActivity extends Activity {
 				.getParcelable("CurrentLocation");
 
 		if (currentLocationAddress != null
-				&& !currentLocationAddress.equalsIgnoreCase("")) {
+				&& !("".equals(currentLocationAddress))) {
 			EditText tvAddr = (EditText) findViewById(R.id.editBuildingAddress);
 			tvAddr.setText(currentLocationAddress);
 		}
@@ -136,7 +137,7 @@ public class BuildingPublishActivity extends Activity {
 			public void onClick(View v) {
 				EditText editText = (EditText) findViewById(R.id.editNumberOfFloors);
 
-				if (!editText.getText().toString().equalsIgnoreCase("")
+				if (!("".equals(editText.getText().toString()))
 						&& editText.getText().toString() != null) {
 
 					floorsNum = Integer.parseInt(editText.getText().toString());
@@ -225,9 +226,9 @@ public class BuildingPublishActivity extends Activity {
 										for (int q = 0; q < dynamicFloorsEditText
 												.size(); q++) {
 
-											if (dynamicFloorsEditText.get(q)
-													.getText().toString()
-													.equalsIgnoreCase("")) {
+											if ("".equals(dynamicFloorsEditText
+													.get(q).getText()
+													.toString())) {
 												allFulfilled = false;
 
 												System.out
@@ -291,15 +292,17 @@ public class BuildingPublishActivity extends Activity {
 															p3.setMargins(20,
 																	5, 20, 0);
 
-															if(h == 0 && k == 0) {
-																p3.addRule(RelativeLayout.BELOW, R.id.FloorText);
-															}
-															else {
+															if (h == 0
+																	&& k == 0) {
+																p3.addRule(
+																		RelativeLayout.BELOW,
+																		R.id.FloorText);
+															} else {
 																p3.addRule(
 																		RelativeLayout.BELOW,
 																		lastInsertedViewId);
 															}
-															
+
 															roomEd.setLayoutParams(p3);
 															roomEd.setTextSize(14);
 															roomEd.setTextColor(Color.BLACK);
@@ -318,7 +321,7 @@ public class BuildingPublishActivity extends Activity {
 
 															lastInsertedViewId = roomEd
 																	.getId();
-															
+
 														}
 													}
 												}
@@ -392,8 +395,7 @@ public class BuildingPublishActivity extends Activity {
 																	.getText()
 																	.toString();
 
-															if (!address
-																	.equalsIgnoreCase("")
+															if (!"".equals(address)
 																	&& address != null) {
 
 																/*
@@ -569,8 +571,7 @@ public class BuildingPublishActivity extends Activity {
 																						int id) {
 																					dialog.dismiss();
 
-																					GamiNode
-																							.publishBuilding(docToBeSent);
+																					GamiNode.publishBuilding(docToBeSent);
 
 																					Toast.makeText(
 																							context,
@@ -637,10 +638,11 @@ public class BuildingPublishActivity extends Activity {
 			}
 		});
 	}
-	
+
 	@Override
 	public void onBackPressed() {
-	    super.onBackPressed();
-	    overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
+		super.onBackPressed();
+		overridePendingTransition(R.anim.animate_left_in,
+				R.anim.animate_right_out);
 	}
 }
