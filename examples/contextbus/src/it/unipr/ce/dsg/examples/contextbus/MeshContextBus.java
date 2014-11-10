@@ -16,8 +16,11 @@ import com.google.gson.JsonObject;
 
 /**
  * <p>
- * This class represents an implementation of the distributed context bus. Such
- * an implementation supports a full mesh or a random graph network structure.
+ * This class represents an implementation of the distributed context bus (i.e.,
+ * in the 'Observer' Design Pattern, {@link ContextBus} is the 'Observer', this
+ * class is the 'Concrete Observer', {@link MeshContextPeer} is the 'Concrete
+ * Subject'). Such an implementation supports a full mesh or a random graph
+ * network structure.
  * </p>
  * 
  * <p>
