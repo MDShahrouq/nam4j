@@ -1,5 +1,6 @@
 package it.unipr.ce.dsg.examples.contextbus;
 
+import it.unipr.ce.dsg.nam4j.impl.context.ContextBus;
 import it.unipr.ce.dsg.nam4j.impl.context.ContextEvent;
 import it.unipr.ce.dsg.nam4j.impl.messages.ContextEventActionRequestMessage;
 import it.unipr.ce.dsg.nam4j.impl.messages.ContextEventNotificationMessage;
@@ -27,7 +28,9 @@ import com.google.gson.reflect.TypeToken;
 /**
  * <p>
  * This class represents a peer for the distributed context bus. Such a peer
- * supports a full mesh or a random graph network structure.
+ * supports a full mesh or a random graph network structure. In the 'Observer'
+ * Design Pattern, {@link ContextBus} is the 'Observer', {@link MeshContextBus}
+ * is the 'Concrete Observer', this class is the 'Concrete Subject'.
  * </p>
  *
  * <p>

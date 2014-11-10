@@ -44,7 +44,7 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 	private MeshContextPeer peer;
 	
 	/**
-	 * Constructor of the CBusNam
+	 * Constructor
 	 * 
 	 * @param poolSize
 	 * @param migrationStorePath
