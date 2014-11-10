@@ -45,7 +45,8 @@ public class SensorPublishActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.sensor_publish);
 
-		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
+		overridePendingTransition(R.anim.animate_left_in,
+				R.anim.animate_right_out);
 
 		context = this;
 
@@ -59,7 +60,7 @@ public class SensorPublishActivity extends Activity {
 				.getParcelable("CurrentLocation");
 
 		if (currentLocationAddress != null
-				&& !currentLocationAddress.equalsIgnoreCase("")) {
+				&& !("".equals(currentLocationAddress))) {
 			EditText tvAddr = (EditText) findViewById(R.id.editSensorAddress);
 			tvAddr.setText(currentLocationAddress);
 		}
@@ -95,13 +96,13 @@ public class SensorPublishActivity extends Activity {
 						.replaceAll("\\s+", "");
 
 				String[] splitArray = instertedLatLng.split(",");
-				
+
 				if (splitArray.length == 2) {
 
 					String latStr = instertedLatLng.split(",")[0];
 					String lngStr = instertedLatLng.split(",")[1];
 
-					if (!address.equalsIgnoreCase("") && address != null) {
+					if (!"".equals(address) && address != null) {
 
 						EditText editTextName = (EditText) findViewById(R.id.editSensorName);
 						String name = editTextName.getText().toString();
@@ -115,13 +116,10 @@ public class SensorPublishActivity extends Activity {
 						EditText editTextValue = (EditText) findViewById(R.id.editSensorValue);
 						String value = editTextValue.getText().toString();
 
-						if (!name.equalsIgnoreCase("") && !(name == null)
-								&& !floor.equalsIgnoreCase("")
-								&& !(floor == null)
-								&& !room.equalsIgnoreCase("")
-								&& !(room == null)
-								&& !value.equalsIgnoreCase("")
-								&& !(value == null)) {
+						if (!"".equals(name) && !(name == null)
+								&& !"".equals(floor) && !(floor == null)
+								&& !"".equals(room) && !(room == null)
+								&& !"".equals(value) && !(value == null)) {
 
 							/* Start publishing the resource */
 
@@ -151,12 +149,9 @@ public class SensorPublishActivity extends Activity {
 								Toast.LENGTH_LONG).show();
 					}
 
-				}
-				else {
-					Toast.makeText(
-							context,
-							getResources().getString(
-									R.string.specify_latlng),
+				} else {
+					Toast.makeText(context,
+							getResources().getString(R.string.specify_latlng),
 							Toast.LENGTH_LONG).show();
 				}
 			}
@@ -166,7 +161,8 @@ public class SensorPublishActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		overridePendingTransition(R.anim.animate_left_in, R.anim.animate_right_out);
+		overridePendingTransition(R.anim.animate_left_in,
+				R.anim.animate_right_out);
 	}
 
 }
