@@ -15,12 +15,12 @@
         <shape android:shape="rectangle" >
             
             <!-- Bottom border color -->
-            <stroke
+            <!-- <stroke
                 android:width="1dp"
-                android:color="#CCCCCC" />
+                android:color="#CCCCCC" /> -->
 
             <!-- Background color -->
-            <solid android:color="#BB3F9BBF" />
+            <solid android:color="#DD3F9BBF" />
 
             <padding
                 android:bottom="0dp"
