@@ -79,8 +79,9 @@ public class CopyActionImplementation extends CopyActionHandler {
 			String filename = "";
 			File folder = new File(nam.getMigrationStore());
 			File[] listOfFiles = folder.listFiles();
-			boolean found = false; // It is set to true when the file to
-									// be migrated is found
+			
+			// Set to true when the file to be migrated is found
+			boolean found = false;
 
 			System.out.println("SERVER: thread "
 					+ Thread.currentThread().getId()
@@ -103,14 +104,6 @@ public class CopyActionImplementation extends CopyActionHandler {
 							+ Thread.currentThread().getId()
 							+ " is checking inside file " + filename);
 
-					/*
-					 * The JarFile class allows to read the content of a Jar
-					 * 
-					 * @param: a string representing the path of the jar to open
-					 * 
-					 * @param: a boolean stating whether or not to verify if the
-					 * Jar is signed
-					 */
 					JarFile jarFile = new JarFile(filename, false);
 
 					Enumeration<JarEntry> entries = jarFile.entries();
@@ -125,13 +118,7 @@ public class CopyActionImplementation extends CopyActionHandler {
 							String[] currentClassName = entryName.split("/");
 							String justClassName = currentClassName[currentClassName.length - 1]
 									.replace(".class", "");
-
-							/*
-							 * System.out.println("SERVER: thread " +
-							 * Thread.currentThread().getId() + " is comparing "
-							 * + justClassName + " with " + requestedClassname);
-							 */
-
+							
 							if (requestedClassname
 									.equalsIgnoreCase(justClassName)) {
 

@@ -50,18 +50,18 @@ public class ManageInputRunnable implements Runnable {
 			System.out.print("Enter command: ");
 			try {
 				String choice = br.readLine().trim();
-				System.out.println();
+				
 				if(choice.equals("p")) {
 					System.out.print("Enter contact address: ");
 					String ca = br.readLine().trim();
 					peer.ping(ca);				
 				}
 
-				if(choice.equals("k")) {
+				else if(choice.equals("k")) {
 					peer.getPeerList().printPeerList();
 				}
 
-				if(choice.equals("q")) {
+				else if(choice.equals("q")) {
 					br.close();
 					System.exit(0);
 				}

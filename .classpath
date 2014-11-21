@@ -12,6 +12,7 @@
 	<classpathentry kind="src" path="examples/galileo/src"/>
 	<classpathentry kind="src" path="examples/kademliafm/src"/>
 	<classpathentry kind="src" path="examples/centralizednetworkfm/src"/>
+	<classpathentry kind="src" path="examples/s2pmigration/src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/sip2peer/sip.jar"/>
 	<classpathentry kind="lib" path="lib/sip2peer/server.jar"/>
