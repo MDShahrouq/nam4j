@@ -71,14 +71,14 @@ public abstract class NetworkedAutonomicMachine implements
 	 */
 	public enum Action {
 		BACK, COPY, GO, MIGRATE, OFFLOAD
-	}
+	};
 
 	/**
 	 * The type of the mobility action subject.
 	 */
 	public enum MigrationSubject {
-		FM, SERVICE
-	}
+		FM, SERVICE, DEPENDENCY
+	};
 
 	/**
 	 * An array representing the type of the NAM (ANDROID or DESKTOP). i-th
