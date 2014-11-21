@@ -7,8 +7,8 @@
 		<!-- Library version -->
 		<version>1.0</version>
 		
-		<!-- Main class of the library -->
-		<main>TestFunctionalModule</main>
+		<!-- Complete name of the library's main class -->
+		<main>it.unipr.ce.dsg.examples.migration.TestFunctionalModule</main>
 	</info>
 	
 	<!-- List of dependencies -->
