@@ -551,9 +551,9 @@ public abstract class NetworkedAutonomicMachine implements
 	}
 	
 	/**
-	 * Method to stop mobility action management
+	 * Method to stop the management of mobility actions.
 	 */
-	public void stopMobilityActionsmanagement() {
+	public void stopMobilityActionsManagement() {
 		stopAcceptingMobilityActions = true;
 	}
 

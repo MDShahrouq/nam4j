@@ -110,6 +110,7 @@ public class ClientCopyActionManager implements Runnable {
 				cs = ClassLoader.getSystemClassLoader().loadClass(cName)
 						.getConstructor(NetworkedAutonomicMachine.class);
 				obj = cs.newInstance(nam);
+				nam.addFunctionalModule((FunctionalModule) obj);
 			}
 
 		} catch (SecurityException e) {
