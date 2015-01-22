@@ -382,7 +382,8 @@ public class ClientCopyActionManager implements Runnable {
 				requiredFmClass, clientType, MigrationSubject.FM, action);
 
 		// Adding the FM to the NAM FM HashMap
-		nam.addFunctionalModule(fm);
+		if(fm != null)
+      nam.addFunctionalModule(fm);
 
 		// Check if the client asked for one or more services of the FM to get
 		// copied
@@ -406,7 +407,8 @@ public class ClientCopyActionManager implements Runnable {
 
 					// Adding the Service to the FM
 					if (serv != null)
-						fm.addProvidedService(currentServiceId, serv);
+            if(fm != null)
+              fm.addProvidedService(currentServiceId, serv);
 					else
 						System.out
 								.println("CLIENT: Error in service migration");
