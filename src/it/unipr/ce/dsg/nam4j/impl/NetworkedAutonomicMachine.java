@@ -1,8 +1,9 @@
 package it.unipr.ce.dsg.nam4j.impl;
 
-import it.unipr.ce.dsg.nam4j.impl.mobility.ClientCopyActionManager;
-import it.unipr.ce.dsg.nam4j.impl.mobility.ServerMobilityActionManager;
 import it.unipr.ce.dsg.nam4j.impl.resource.ResourceDescriptor;
+import it.unipr.ce.dsg.nam4j.impl.socketmobility.ClientCopyActionManager;
+import it.unipr.ce.dsg.nam4j.impl.socketmobility.ServerMobilityActionManager;
+import it.unipr.ce.dsg.nam4j.interfaces.IMigrationListener;
 import it.unipr.ce.dsg.nam4j.interfaces.INetworkedAutonomicMachine;
 
 import java.io.IOException;
@@ -63,21 +64,84 @@ public abstract class NetworkedAutonomicMachine implements
 	 * The client platform.
 	 */
 	public enum Platform {
-		DESKTOP, ANDROID
+		DESKTOP, ANDROID;
+		
+		public static Platform toPlatform(String s) {
+			if (s.equals("DESKTOP"))
+				return DESKTOP;
+			else if (s.equals("ANDROID"))
+				return ANDROID;
+			else throw new IllegalArgumentException();
+		}
+		
+		@Override
+		public String toString() {
+			switch (this) {
+				case DESKTOP: return "DESKTOP";
+				case ANDROID: return "ANDROID";
+				default: throw new IllegalArgumentException();
+			}
+		}
 	};
 
 	/**
 	 * The mobility action to be performed.
 	 */
 	public enum Action {
-		BACK, COPY, GO, MIGRATE, OFFLOAD
+		BACK, COPY, GO, MIGRATE, OFFLOAD;
+		
+		public static Action toAction(String s) {
+			if (s.equals("BACK"))
+				return BACK;
+			else if (s.equals("COPY"))
+				return COPY;
+			else if (s.equals("GO"))
+				return GO;
+			else if (s.equals("MIGRATE"))
+				return MIGRATE;
+			else if (s.equals("OFFLOAD"))
+				return OFFLOAD;
+			else throw new IllegalArgumentException();
+		}
+		
+		@Override
+		public String toString() {
+			switch (this) {
+				case BACK: return "BACK";
+				case COPY: return "COPY";
+				case GO: return "GO";
+				case MIGRATE: return "MIGRATE";
+				case OFFLOAD: return "OFFLOAD";
+				default: throw new IllegalArgumentException();
+			}
+		}
 	};
 
 	/**
 	 * The type of the mobility action subject.
 	 */
 	public enum MigrationSubject {
-		FM, SERVICE, DEPENDENCY
+		FM, SERVICE, DEPENDENCY;
+		
+		public static MigrationSubject toMigrationSubject(String s) {
+			if (s.equals("FM"))
+				return FM;
+			else if (s.equals("SERVICE"))
+				return SERVICE;
+			else if (s.equals("DEPENDENCY"))
+				return DEPENDENCY;
+			else throw new IllegalArgumentException();
+		}
+		
+		@Override
+		public String toString() {
+			switch (this) {
+				case FM: return "FM";
+				case SERVICE: return "SERVICE";
+				case DEPENDENCY: return "DEPENDENCY";
+				default: throw new IllegalArgumentException();
+			}
+		}
 	};
 
 	/**
@@ -173,9 +237,7 @@ public abstract class NetworkedAutonomicMachine implements
 	 * @param trials
 	 *            the number of times a client tries to connect to a server
 	 */
-	public NetworkedAutonomicMachine(int poolSize, String migrationStorePath,
-			int trials) {
-
+	public NetworkedAutonomicMachine(int poolSize, String migrationStorePath, int trials) {
 		setPoolSize(poolSize);
 		setMigrationStore(migrationStorePath);
 		setTrialsNumber(trials);
@@ -191,11 +253,11 @@ public abstract class NetworkedAutonomicMachine implements
 	 * Sets the address of the server to which the migration requests should be
 	 * sent.
 	 * 
-	 * @param addr
+	 * @param address
 	 *            a String identifying the address of the server for migration
 	 */
-	public void setServerAddress(String addr) {
-		this.serverAddress = addr;
+	public void setServerAddress(String address) {
+		this.serverAddress = address;
 	}
 
 	/**
@@ -616,12 +678,21 @@ public abstract class NetworkedAutonomicMachine implements
 	 *            null if you need to copy only a FM)
 	 * @param clientType
 	 *            (ANDROID or DESKTOP)
+	 * 
+	 * @param ml
+	 *            The object that wants to get notified; null if notification is
+	 *            not requested
 	 */
 	public void startCopyAction(String functionalModule, String[] service,
-			String[] serviceId, Platform clientType) {
+			String[] serviceId, Platform clientType, IMigrationListener ml) {
 
 		ClientCopyActionManager clientCopyActionManager = new ClientCopyActionManager(this,
 				functionalModule, service, serviceId, clientType, Action.COPY);
+		
+		// If requested, the object can subscribe to notifications
+		if(ml != null)
+			clientCopyActionManager.addMigrationListener(ml);
+		
 		poolForClientMobilityAction.execute(clientCopyActionManager);
 	}
 

@@ -1,7 +1,9 @@
 package it.unipr.ce.dsg.nam4j.impl.service;
 
+import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -28,6 +30,7 @@ public class Service implements IService {
 
 	String id = "service";
 	String name = "Service";
+	FunctionalModule functionalModule = null;
 	
 	HashMap<String,Parameter> inputs = new HashMap<String,Parameter>();
 	HashMap<String,Parameter> outputs = new HashMap<String,Parameter>();
@@ -35,13 +38,23 @@ public class Service implements IService {
 	HashMap<String,Precondition> preconditions = new HashMap<String,Precondition>();
 	
 	/**
-     * constructor
+     * Default constructor.
      */
-	public Service() {
+	public Service() {}
+	
+	/**
+	 * Class constructor.
+	 * 
+	 * @param functionalModule
+	 *            The {@link FunctionalModule} to which the Service is
+	 *            associated
+	 */
+	public Service(FunctionalModule functionalModule) {
+		this.functionalModule = functionalModule;
 	}
 	
 	/**
-     * get the service name
+     * Method to get the service name.
      *
      * @return the name of the service
      */
@@ -50,7 +63,7 @@ public class Service implements IService {
 	}
 
 	/**
-     * set the service id
+     * Method to set the service id.
      *
      * @param id
      */
@@ -59,7 +72,7 @@ public class Service implements IService {
 	}
 
 	/**
-     * get the service id
+     * Method to get the service id.
      *
      * @return the id of the service
      */
@@ -77,151 +90,266 @@ public class Service implements IService {
 	}
 
 	/**
-     * get the input list of the service
-     *
-     * @return the list of inputs
-     */
+	 * Method to get the input list of the service.
+	 *
+	 * @return the list of inputs
+	 */
 	public HashMap<String,Parameter> getInputs() {
 		return inputs;
 	}
 
 	/**
-     * get the input of the service by id
-     *
-     * @param id
-     * @return the input
-     */
+	 * Method to get the input of the service by id.
+	 *
+	 * @param id
+	 *            The id of the service
+	 * 
+	 * @return the input of the service
+	 */
 	public Parameter getInput(String id) {
 		return inputs.get(inputs.get(id));
 	}
 
 	/**
-     * add an input to the service
-     *
-     *@param input
-     */
+	 * Method to add an input to the service.
+	 *
+	 * @param input
+	 *            The input to add to the service
+	 */
 	public void addInput(Parameter input) {
 		inputs.put(input.getId(),input);
 	}
 
 	/**
-     * remove input from service by id
-     *
-     *@param id
-     */
+	 * Method to remove an input from service by id.
+	 *
+	 * @param id
+	 *            The id of the input to be removed
+	 */
 	public void removeInput(String id) {
 		inputs.remove(id);
 	}
 
 	/**
-     * get the output list of the service
-     *
-     * @return the list of outputs
-     */
+	 * Method to get the list of outputs of the service.
+	 *
+	 * @return the list of outputs
+	 */
 	public HashMap<String,Parameter> getOutputs() {
 		return outputs;
 	}
 
 	/**
-     * get the output of the service by id
-     *
-     * @param id
-     * @return the output
-     */
+	 * Method to get the output of the service by id.
+	 *
+	 * @param id
+	 *            The id of the output
+	 * 
+	 * @return the output
+	 */
 	public Parameter getOutput(String id) {
 		return outputs.get(id);
 	}
 
 	/**
-     * add output to service
-     *
-     *@param output
-     */
+	 * Method to add an output to the service.
+	 *
+	 * @param output
+	 *            The output to be added
+	 */
 	public void addOutput(Parameter output) {
 		outputs.put(output.getId(),output);
 	}
 
 	/**
-     * remove output from service by id
-     *
-     *@param id
-     */
+	 * Method to remove the output from a service by id.
+	 *
+	 * @param id
+	 *            The id of the output to be removed
+	 */
 	public void removeOutput(String id) {
 		outputs.remove(id);
 	}
 
 	/**
-     * get the precondition list of the service
-     *
-     * @return the list of preconditions
-     */
+	 * Method get the list of preconditions of the service.
+	 *
+	 * @return the list of preconditions
+	 */
 	public HashMap<String,Precondition> getPreconditions() {
 		return preconditions;
 	}
 
 	/**
-     * get a precondition of the service by id
-     *
-     * @param id
-     * @return the precondition
-     */
+	 * Method to get a precondition of the service by id.
+	 *
+	 * @param id
+	 *            The id of the precondition
+	 * 
+	 * @return the precondition
+	 */
 	public Precondition getPrecondition(String id) {
 		return preconditions.get(id);
 	}
 
 	/**
-     * add a precondition to the service
-     *
-     *@param precondition
-     */
+	 * Method to add a precondition to the service.
+	 *
+	 * @param precondition
+	 *            The precondition to be added
+	 */
 	public void addPrecondition(Precondition precondition) {
 		preconditions.put(precondition.getId(),precondition);
 	}
 
 	/**
-     * remove a precondition from the service by id
-     *
-     *@param id
-     */
+	 * Method to remove a precondition from the service by id.
+	 *
+	 * @param id
+	 *            The id of the precondition to be removed
+	 */
 	public void removePrecondition(String id) {
 		preconditions.remove(id);
 	}
 
 	/**
-     * get the effect list of the service
-     *
-     * @return the list of effects
-     */
+	 * Method to get the list of effects of the service.
+	 *
+	 * @return the list of effects
+	 */
 	public HashMap<String,Effect> getEffects() {
 		return effects;
 	}
 
 	/**
-     * get an effect of the service by id
-     *
-     * @param id
-     * @return the effect
-     */
+	 * Method to get an effect of the service by id.
+	 *
+	 * @param id
+	 *            The id of the effect
+	 * 
+	 * @return the effect
+	 */
 	public Effect getEffect(String id) {
 		return effects.get(id);
 	}
 
 	/**
-     * add an effect to the service
-     *
-     *@param effect
-     */
+	 * Method to add an effect to the service.
+	 *
+	 * @param effect
+	 *            The effect to be added
+	 */
 	public void addEffect(Effect effect) {
 		effects.put(effect.getId(),effect);
 	}
 
 	/**
-     * remove an effect from the service by id
-     *
-     *@param id
-     */
+	 * Method to remove an effect from the service by id.
+	 *
+	 * @param id
+	 *            The id of the effect to be removed
+	 */
 	public void removeEffect(String id) {
 		effects.remove(id);
 	}
+	
+	
+	// XXX The following items are used for migration
+	
+	/**
+	 * The method has to be overridden so that it returns the
+	 * {@link ServiceRunnable} object whose code is executed by the
+	 * Functional Module.
+	 * 
+	 * @return the {@link Runnable} object whose code is executed by the
+	 *         Functional Module
+	 */
+	public ServiceRunnable getServiceRunnable() {
+		return null;
+	}
+	
+	/**
+	 * The {@link Runnable} object whose code is executed by the Service and can
+	 * be migrated.
+	 */
+	public abstract class ServiceRunnable implements Runnable, Serializable {
+		private static final long serialVersionUID = -4617371070752993784L;
+		
+		// Java Threads cannot be serialized, so it is declared as transient
+		transient private Thread thread;
+		
+		private boolean suspended = false;
+		
+		/** Start the execution of the {@link Service} main thread */
+		public void start() {
+			if (thread == null) {
+				System.out.println("Starting execution...");
+				thread = new Thread(this);
+				thread.start();
+			}
+		}
+		
+		/** Suspend the execution of the {@link Service} main thread */
+		public void suspend() {
+			System.out.println("Suspending execution...");
+			this.suspended = true;
+		}
+
+		/** Resume the execution of the {@link Service} main thread after suspension */
+		public synchronized void resume() {
+			System.out.println("Resuming execution...");
+			
+			suspended = false;
+			
+			// If the Runnable has been migrated, a new thread has to be created
+			if (thread == null) {
+				thread = new Thread(this);
+				thread.start();
+			}
+			// Else, resume the already existing thread
+			else {		
+				notify();
+			}
+		}
+		
+		/** Stop the execution of the {@link Service} main thread */
+		@SuppressWarnings("deprecation")
+		public void stop() {
+			if (thread != null) {
+				System.out.println("Execution stopped");
+				thread.stop();
+			}
+		}
+		
+		/**
+		 * Save the state of the {@link Service} main thread. Such a method is
+		 * intended to be overridden to save the state of non-serializable
+		 * attributes (e.g. FileReader, BufferReader, FileInputStream,
+		 * files...). The other attributes do not need to be managed by this
+		 * method.
+		 */
+		public void saveState() {}
+		
+		/**
+		 * Restore the state of the {@link Service} main thread. Such a method
+		 * is intended to be overridden to restore the state of non-serializable
+		 * attributes (e.g. FileReader, BufferReader, FileInputStream,
+		 * files...). The other attributes do not need to be managed by this
+		 * method.
+		 */
+		public void restoreState() {}
+		
+		public ServiceRunnable() {}
+
+		public boolean isSuspended() {
+			return suspended;
+		}
+
+		public void setSuspended(boolean suspended) {
+			this.suspended = suspended;
+		}
+	}
+	
+	// XXX End of items used for migration
 	
 }

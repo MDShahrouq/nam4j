@@ -1,14 +1,11 @@
 package it.unipr.ce.dsg.nam4j.impl.messages;
 
-import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
-
-import java.util.Set;
-
 import com.google.gson.Gson;
 
 /**
  * <p>
- * This class represents a message including a list of peer descriptors.
+ * This class represents a message to inform that an error occurred during the
+ * mobility operation.
  * </p>
  * 
  * <p>
@@ -24,16 +21,17 @@ import com.google.gson.Gson;
  * 
  */
 
-public class PeerListMessage {
-	
-	public static final String MSG_KEY = "PEER_LIST"; 
-	
-	private Set<PeerDescriptor> peers;
+public class MigrationFailedMessage {
+
+	public static final String MSG_KEY = "MIGRATION_FAILED";
 	private String type;
+	private String conversationKey;
+	private String errorDescription;
 	
-	public PeerListMessage(Set<PeerDescriptor> peers) {
+	public MigrationFailedMessage(String conversationKey, String errorDescription) {
 		setType(MSG_KEY);
-		setPeers(peers);
+		setConversationKey(conversationKey);
+		setErrorDescription(errorDescription);
 	}
 	
 	public String getType() {
@@ -44,18 +42,26 @@ public class PeerListMessage {
 		this.type = type;
 	}
 
-	public Set<PeerDescriptor> getPeers() {
-		return peers;
+	public String getConversationKey() {
+		return conversationKey;
 	}
 
-	public void setPeers(Set<PeerDescriptor> peers) {
-		this.peers = peers;
+	public void setConversationKey(String conversationKey) {
+		this.conversationKey = conversationKey;
 	}
 	
+	public String getErrorDescription() {
+		return errorDescription;
+	}
+
+	public void setErrorDescription(String errorDescription) {
+		this.errorDescription = errorDescription;
+	}
+
 	/**
-	 * Method to obtain a JSON representation of this {@link PeerListMessage}.
+	 * Method to obtain a JSON representation of this {@link CopyItemMessage}.
 	 * 
-	 * @return a JSON representation of this {@link PeerListMessage}
+	 * @return a JSON representation of this {@link CopyItemMessage}
 	 */
 	public String getJSONString() {
 		Gson gson = new Gson();

@@ -27,7 +27,6 @@ import com.google.gson.JsonObject;
  * license is included in the section entitled "GNU Free Documentation License".
  * </p>
  * 
- * @author Michele Amoretti (michele.amoretti@unipr.it)
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */
@@ -58,9 +57,7 @@ public abstract class NamPeer extends Peer implements IPeer {
 	 */
 	public NamPeer(String configFilePath, String key, String name, int port) {
 		super(configFilePath, key, name, port);
-		
 		this.peerConfig = new PeerConfig(configFilePath, key, name, port);
-		
 		init();
 	}
 	
@@ -76,7 +73,6 @@ public abstract class NamPeer extends Peer implements IPeer {
 	 */
 	public NamPeer(String pathConfig, String key) {
 		super(pathConfig, key);
-		
 		init();
 	}
 	

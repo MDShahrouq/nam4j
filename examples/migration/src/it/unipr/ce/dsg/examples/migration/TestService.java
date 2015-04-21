@@ -1,82 +1,192 @@
 package it.unipr.ce.dsg.examples.migration;
 
+import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
-public class TestService extends Service {
+/**
+ * <p>
+ * This class represents an example of a service with a thread providing methods
+ * to get started, suspended, resumed and stopped.
+ * </p>
+ * 
+ * <p>
+ * Copyright (c) 2011, Distributed Systems Group, University of Parma, Italy.
+ * Permission is granted to copy, distribute and/or modify this document under
+ * the terms of the GNU Free Documentation License, Version 1.3 or any later
+ * version published by the Free Software Foundation; with no Invariant
+ * Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the
+ * license is included in the section entitled "GNU Free Documentation License".
+ * </p>
+ * 
+ * @author Alessandro Grazioli (grazioli@ce.unipr.it)
+ * 
+ */
 
-	String id = "TestService";
-	String name = "TestService";
+public class TestService extends Service implements Serializable {
 
-	public TestService() {
+	private static final long serialVersionUID = -2513137456274951312L;
+	private ServiceRunnableImplementation serviceRunnableImplementation = null;
 
-		this.setId(id);
-		this.setName(name);
+	public TestService(FunctionalModule functionalModule) {
+		super(functionalModule);
+		this.setId("TestService");
+		this.setName("TestService");
 
-		Thread t = new Thread(new TestServiceRunnable(this),
-				"TestService thread");
-		t.start();
-
-	}
-}
-
-class TestServiceRunnable implements Runnable {
-
-	public TestServiceRunnable(TestService ts) {
+		System.out.println("I am TestService");
 		
+		serviceRunnableImplementation = new ServiceRunnableImplementation();
+	}
+	
+	@Override
+	public ServiceRunnableImplementation getServiceRunnable() {
+		return serviceRunnableImplementation;
 	}
 
-	public void run() {
+	public class ServiceRunnableImplementation extends ServiceRunnable {
+		private static final long serialVersionUID = -1764242477267769580L;
+		private int sleepingTime = 1000;
+		private File file = null;
+		private String filePath = "examples/migration/";
+		private String fileName = "divina_commedia.txt";
+		private String inputLine = null;
+		private TreeMap<String, Integer> map = new TreeMap<String, Integer>();
+		private int parsedLines = 0;
+		
+		// BufferedReader and FileReader are not serializable and therefore have
+		// to be declared as transient
+		transient private BufferedReader bufferedReader = null;
+		transient private FileReader fileReader = null;
+		
+		// Saving execution state
+		transient private FileInputStream fileInputStream = null;
+		private byte[] bFile = null;
+		
+		@Override
+		public void saveState() {
+			try {
+				// Convert the file into an array of bytes
+				bFile = new byte[(int) file.length()];
+				fileInputStream = new FileInputStream(file);
+				fileInputStream.read(bFile);
+				fileInputStream.close();
+				
+				System.out.println("State saved");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		@Override
+		public void restoreState() {
+			try {
+				// Convert array of bytes into file
+				file = new File(filePath + fileName);
+				if (!file.exists()) {
+					file.createNewFile();
+				}
+				FileOutputStream fileOuputStream = new FileOutputStream(file);
+				fileOuputStream.write(bFile);
+				fileOuputStream.close();
+				
+				// FileReader and BufferedReader cannot be serialized and therefore have to be redefined
+				try {
+		        	fileReader = new FileReader(file);
+					bufferedReader = new BufferedReader(fileReader);
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+				
+				// A counter is used to skip the already scanned lines
+				int j = 0;
+				
+				while ((inputLine = bufferedReader.readLine()) != null && ++j < parsedLines);
 
-		Date date = new Date();
-		Calendar calendar = GregorianCalendar.getInstance();
-		calendar.setTime(date);
-		int hour = calendar.get(Calendar.HOUR_OF_DAY);
-		int minutes = calendar.get(Calendar.MINUTE);
-		int seconds = calendar.get(Calendar.SECOND);
-		int day = calendar.get(Calendar.DAY_OF_MONTH);
-		int month = calendar.get(Calendar.MONTH) + 1; // The month is 0-based
-		int year = calendar.get(Calendar.YEAR);
+				System.out.println("State restored");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 
-		System.out.println("\nSERVICE STARTED\n\n" + month + "/" + day + "/"
-				+ year + " - " + hour + ":" + minutes + ":" + seconds + "\n");
-		System.out.println("	Reading Temperature ...");
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		public ServiceRunnableImplementation() {
+			file = new File(filePath + fileName);
+			
+			try {
+	        	fileReader = new FileReader(file);
+				bufferedReader = new BufferedReader(fileReader);
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+		public int getSleepingTime() {
+			return sleepingTime;
 		}
 
-		System.out.println("	Accessing Microphone ...");
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		public void setSleepingTime(int sleepingTime) {
+			this.sleepingTime = sleepingTime;
 		}
 
-		System.out.println("	Getting accelerometer data ...");
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		public void run() {
+			
+			try {
+					
+	            while ((inputLine = bufferedReader.readLine()) != null) {
+	            
+	            	System.out.print("Examining line " + ++parsedLines + ": \"" + inputLine + "\"\r");
+	            	
+	            	String[] words = inputLine.split("[ \n\t\r.,;:!?(){}]");
+	 
+	                for (int counter = 0; counter < words.length; counter++) {
+	                    String key = words[counter].toLowerCase(); // remove .toLowerCase for Case Sensitive result.
+	                    if (key.length() > 0) {
+	                        if (map.get(key) == null) {
+	                            map.put(key, 1);
+	                        }
+	                        else {
+	                            int value = map.get(key).intValue();
+	                            value++;
+	                            map.put(key, value);
+	                        }
+	                    }
+	                 }
+	                
+	                synchronized (this) {
+						while (isSuspended()) {
+							wait();
+						}
+					}
+	            }
+	            
+	            bufferedReader.close();
+	            
+	            Set<Map.Entry<String, Integer>> entrySet = map.entrySet();
+	            System.out.println("--- The five most used words ---\n\n" + "Word" + "\t\t" + "number of occurances");
+	            int i = 1;
+	            for (Map.Entry<String, Integer> entry : entrySet) {
+	                System.out.println(entry.getKey() + "\t\t" + entry.getValue());
+	                if ((i++) == 5)
+	                	break;
+	            }
+				
+			} catch (InterruptedException e) {
+				 System.out.println("Thread interrupted.");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-
-		System.out.println("	Getting position ...");
-
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		System.out.println("	Evaluating User Context ...");
-
 	}
-
+	
 }

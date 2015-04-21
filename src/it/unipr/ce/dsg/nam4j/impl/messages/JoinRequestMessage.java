@@ -18,7 +18,6 @@ import com.google.gson.Gson;
  * license is included in the section entitled "GNU Free Documentation License".
  * </p>
  * 
- * @author Michele Amoretti (michele.amoretti@unipr.it)
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  * 
  */

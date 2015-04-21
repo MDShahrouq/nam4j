@@ -1,13 +1,15 @@
 package it.unipr.ce.dsg.nam4j.impl.messages;
 
-import it.unipr.ce.dsg.s2p.message.BasicMessage;
-import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
-
 import com.google.gson.Gson;
+
+import it.unipr.ce.dsg.nam4j.impl.mobility.utils.StateChunk;
+import it.unipr.ce.dsg.s2p.message.BasicMessage;
+import it.unipr.ce.dsg.s2p.message.Payload;
+import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
 
 /**
  * <p>
- * This class represents a message to request a list of peer descriptors.
+ * This class represents a message to send a state chunk.
  * </p>
  * 
  * <p>
@@ -23,41 +25,26 @@ import com.google.gson.Gson;
  * 
  */
 
-public class PeerListRequestMessage extends BasicMessage{
-	
-	public static final String MSG_KEY = "PEER_LIST_REQUEST"; 
-	private String type;
-	private PeerDescriptor peer;
-	
-	public PeerListRequestMessage(PeerDescriptor peer) {
-		setType(MSG_KEY);
-		setPeer(peer);
-	}
-	
-	public String getType() {
-		return type;
-	}
+public class StateChunkTransferMessage extends BasicMessage {
 
-	public void setType(String type) {
-		this.type = type;
-	}
+	public static final String MSG_KEY = "STATE_CHUNK_MSG";
 
-	public PeerDescriptor getPeer() {
-		return peer;
-	}
-
-	public void setPeer(PeerDescriptor peer) {
-		this.peer = peer;
+	public StateChunkTransferMessage(PeerDescriptor peerDesc, StateChunk chunk) {
+		super();
+		this.setType(MSG_KEY);
+		Payload peerLoad = new Payload(peerDesc);
+		peerLoad.getParams().put("peerDesc", peerDesc);
+		peerLoad.getParams().put("chunk", chunk);
+		this.setPayload(peerLoad);
 	}
 	
 	/**
-	 * Method to obtain a JSON representation of this {@link PeerListRequestMessage}.
+	 * Method to obtain a JSON representation of this {@link StateChunkTransferMessage}.
 	 * 
-	 * @return a JSON representation of this {@link PeerListRequestMessage}
+	 * @return a JSON representation of this {@link StateChunkTransferMessage}
 	 */
 	public String getJSONString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
-
 }

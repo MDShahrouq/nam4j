@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * license is included in the section entitled "GNU Free Documentation License".
  * </p>
  *
- * @author Michele Amoretti (michele.amoretti@unipr.it)
  * @author Alessandro Grazioli (grazioli@ce.unipr.it)
  *
  */
@@ -239,7 +238,7 @@ public class PeerList implements Iterable<PeerDescriptor>, IPeerList {
 		
 		for(int i = 0; i < numberOfPeerDescriptors; i++) {
 			
-			// Generate a random int between 1 and the number of known peers
+			// Generate a random integer between 1 and the number of known peers
 			int randomNum = rand.nextInt((this.size() - 1) + 1) + 1;
 			int j = 1;
 			
