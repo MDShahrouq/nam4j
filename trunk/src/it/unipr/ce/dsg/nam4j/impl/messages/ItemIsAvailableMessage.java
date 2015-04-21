@@ -1,14 +1,12 @@
 package it.unipr.ce.dsg.nam4j.impl.messages;
 
-import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
-
-import java.util.Set;
-
 import com.google.gson.Gson;
 
 /**
  * <p>
- * This class represents a message including a list of peer descriptors.
+ * This class represents a message to inform that an item and all of its
+ * dependencies were successfully migrated (or were already available on the
+ * node). State migration may happen, if required.
  * </p>
  * 
  * <p>
@@ -24,16 +22,15 @@ import com.google.gson.Gson;
  * 
  */
 
-public class PeerListMessage {
-	
-	public static final String MSG_KEY = "PEER_LIST"; 
-	
-	private Set<PeerDescriptor> peers;
+public class ItemIsAvailableMessage {
+
+	public static final String MSG_KEY = "RECEIVED_ITEM";
 	private String type;
+	private String conversationKey;
 	
-	public PeerListMessage(Set<PeerDescriptor> peers) {
+	public ItemIsAvailableMessage(String conversationKey) {
 		setType(MSG_KEY);
-		setPeers(peers);
+		setConversationKey(conversationKey);
 	}
 	
 	public String getType() {
@@ -44,21 +41,22 @@ public class PeerListMessage {
 		this.type = type;
 	}
 
-	public Set<PeerDescriptor> getPeers() {
-		return peers;
+	public String getConversationKey() {
+		return conversationKey;
 	}
 
-	public void setPeers(Set<PeerDescriptor> peers) {
-		this.peers = peers;
+	public void setConversationKey(String conversationKey) {
+		this.conversationKey = conversationKey;
 	}
 	
 	/**
-	 * Method to obtain a JSON representation of this {@link PeerListMessage}.
+	 * Method to obtain a JSON representation of this {@link CopyItemMessage}.
 	 * 
-	 * @return a JSON representation of this {@link PeerListMessage}
+	 * @return a JSON representation of this {@link CopyItemMessage}
 	 */
 	public String getJSONString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
+			
 }

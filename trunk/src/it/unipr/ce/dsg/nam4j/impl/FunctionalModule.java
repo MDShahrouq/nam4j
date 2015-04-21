@@ -5,6 +5,7 @@ import it.unipr.ce.dsg.nam4j.impl.service.Service;
 import it.unipr.ce.dsg.nam4j.interfaces.IFunctionalModule;
 import it.unipr.ce.dsg.nam4j.interfaces.IService;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
@@ -39,9 +40,16 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	HashMap<String,IService> providedServices = new HashMap<String,IService>();
 	
 	/**
+	 * Default constructor.
+	 */
+	public FunctionalModule() {}
+	
+	/**
 	 * Class constructor.
 	 * 
-	 * @param nam a reference to the NAM whose the functional module has been added
+	 * @param nam
+	 *            a reference to the {@link NetworkedAutonomicMachine} to which
+	 *            the functional module has been added
 	 */
 	public FunctionalModule(NetworkedAutonomicMachine nam) {
 		this.nam = nam;
@@ -281,14 +289,115 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	 * @param requestedService a String identifying the requested service
 	 * @param parameters
 	 */
-	public void execute(String requestorId, String requestedService, String parameters) {
-	}
+	public void execute(String requestorId, String requestedService, String parameters) {}
 
 	/**
 	 * ContextEvent reception method
 	 * 
 	 * @param contextEvent a ContextEvent
 	 */
-	public void receive(ContextEvent contextEvent) {
+	public void receive(ContextEvent contextEvent) {}
+	
+	
+	// XXX The following items are used for migration
+	
+	/**
+	 * The method has to be overridden so that it returns the
+	 * {@link FunctionalModuleRunnable} object whose code is executed by the
+	 * Functional Module.
+	 * 
+	 * @return the {@link Runnable} object whose code is executed by the
+	 *         Functional Module
+	 */
+	public FunctionalModuleRunnable getFunctionalModuleRunnable() {
+		return null;
 	}
+	
+	/**
+	 * The {@link Runnable} object whose code is executed by the Functional
+	 * Module and can be migrated.
+	 */
+	public abstract class FunctionalModuleRunnable implements Runnable, Serializable {
+		private static final long serialVersionUID = -711883225894269699L;
+		
+		/**
+		 * Threads are not serializable, so the one executing the
+		 * {@link FunctionalModule}'s code is declared as transient
+		 */
+		transient private Thread thread;
+		
+		/** It is set to true to suspend the thread's execution */
+		private boolean suspended = false;
+		
+		/** Start the execution of the {@link FunctionalModule} main thread */
+		public void start() {
+			if (thread == null) {
+				System.out.println("Starting execution...");
+				thread = new Thread(this);
+				thread.start();
+			}
+		}
+		
+		/** Suspend the execution of the {@link FunctionalModule} main thread */
+		public void suspend() {
+			System.out.println("Suspending execution...");
+			this.suspended = true;
+		}
+		
+		/** Resume the execution of the {@link FunctionalModule} main thread after suspension */
+		public synchronized void resume() {
+			System.out.println("Resuming execution...");
+			
+			suspended = false;
+			
+			// If the Runnable has been migrated, a new thread has to be created
+			if (thread == null) {
+				thread = new Thread(this);
+				thread.start();
+			}
+			// Else, resume the already existing thread
+			else {		
+				notify();
+			}
+		}
+		
+		/** Stop the execution of the {@link FunctionalModule} main thread */
+		@SuppressWarnings("deprecation")
+		public void stop() {
+			if (thread != null) {
+				System.out.println("Execution stopped");
+				thread.stop();
+			}
+		}
+		
+		/**
+		 * Save the state of the {@link FunctionalModule} main thread. Such a
+		 * method is intended to be overridden to save the state of
+		 * non-serializable attributes (e.g. FileReader, BufferReader,
+		 * FileInputStream, files...). The other attributes do not need to be
+		 * managed by this method.
+		 */
+		public void saveState() {}
+		
+		/**
+		 * Restore the state of the {@link FunctionalModule} main thread. Such a
+		 * method is intended to be overridden to restore the state of
+		 * non-serializable attributes (e.g. FileReader, BufferReader,
+		 * FileInputStream, files...). The other attributes do not need to be
+		 * managed by this method.
+		 */
+		public void restoreState() {}
+		
+		public FunctionalModuleRunnable() {}
+
+		public boolean isSuspended() {
+			return suspended;
+		}
+
+		public void setSuspended(boolean suspended) {
+			this.suspended = suspended;
+		}
+	}
+	
+	// XXX End of items used for migration
 }
