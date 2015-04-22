@@ -71,9 +71,9 @@ public class MeshContextPeer extends NamPeer implements IContextEventSubject {
 		
 		fileHandler = new FileHandler();
 		
-		if(nodeConfig.log_path != null){
+		if (nodeConfig.log_path != null){
 			
-			if(!fileHandler.isDirectoryExists(nodeConfig.log_path))
+			if (!fileHandler.isDirectoryExists(nodeConfig.log_path))
 				fileHandler.createDirectory(nodeConfig.log_path);
 
 			log = new Log(nodeConfig.log_path + "info_" + peerDescriptor.getAddress() + ".log", Log.LEVEL_MEDIUM);
@@ -227,7 +227,7 @@ public class MeshContextPeer extends NamPeer implements IContextEventSubject {
 			// whenever a peer asks for it. In the first case, a thread
 			// monitoring the number of known peers gets started.
 			
-			if(!joined) {
+			if (!joined) {
 				
 				System.out.println("Joined the network");
 				
@@ -249,7 +249,7 @@ public class MeshContextPeer extends NamPeer implements IContextEventSubject {
 			// First, the already included peers get removed from the received list
 			for(PeerDescriptor pd : this.getPeerList()) {
 				for(PeerDescriptor receivedPd : peerSet) {
-					if(pd.getContactAddress().equalsIgnoreCase(receivedPd.getContactAddress())) {
+					if (pd.getContactAddress().equalsIgnoreCase(receivedPd.getContactAddress())) {
 						peerSet.remove(receivedPd);
 						break;
 					}
@@ -263,7 +263,7 @@ public class MeshContextPeer extends NamPeer implements IContextEventSubject {
 			
 			// Received a request message (subscribe or unsubscribe)
 			
-			if(peerMsg.get("infoType") != null) {
+			if (peerMsg.get("infoType") != null) {
 				System.out.println(peerMsg.get("infoType").getAsString() + " request received");
 			}
 			
@@ -307,7 +307,7 @@ public class MeshContextPeer extends NamPeer implements IContextEventSubject {
 		System.out.println("Could not deliver message to " + receiver);
 		
 		for(PeerDescriptor pd : this.getPeerList()) {
-			if(pd.getContactAddress().equalsIgnoreCase(receiver.getURL())) {
+			if (pd.getContactAddress().equalsIgnoreCase(receiver.getURL())) {
 				
 				System.out.println("Removing the peer from the peer list.");
 				
@@ -355,7 +355,7 @@ public class MeshContextPeer extends NamPeer implements IContextEventSubject {
 			while (!stopThread) {
 				
 				if (peer.getPeerList().size() < Utils.MINIMUM_NUMBER_OF_PEERS) {
-					if(peer.getPeerConfig().getBootstrapContactAddress() != null) {
+					if (peer.getPeerConfig().getBootstrapContactAddress() != null) {
 						
 						System.out.println("--- The peer list size is below the threshold. Asking for new peers...");
 						

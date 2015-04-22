@@ -133,13 +133,13 @@ public class MobilityUtils {
 
 			String ext = null;
 			
-			if(platform == Platform.DESKTOP) {
+			if (platform == Platform.DESKTOP) {
 				ext = MobilityUtils.DESKTOP_FILE_EXTENSION;
-			} else if(platform == Platform.ANDROID) {
+			} else if (platform == Platform.ANDROID) {
 				ext = MobilityUtils.ANDROID_FILE_EXTENSION;
 			}
 			
-			if(ext == null)
+			if (ext == null)
 				return null;
 			
 			if (listOfFiles[i].isFile() && listOfFiles[i].getName().endsWith(ext)) {
@@ -147,7 +147,7 @@ public class MobilityUtils {
 				
 				System.out.println("------- Comparing " + listOfFiles[i].getName() + " with " + requestedClassname);
 				
-				if(filename.contains(requestedClassname)) {
+				if (filename.contains(requestedClassname)) {
 					System.out.println("Found requested file: \"" + listOfFiles[i].getName() + "\"");
 					return new File(listOfFiles[i].getAbsolutePath());
 				}
@@ -546,7 +546,7 @@ public class MobilityUtils {
 		}
 		
 		// Check if it has to instantiate an object of the main class
-		if(completeClassName != null) {
+		if (completeClassName != null) {
 			if (nam.getClientPlatform(0) == Platform.DESKTOP) {
 				
 				try {

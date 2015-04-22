@@ -99,7 +99,7 @@ public class BuildingLookupActivity extends ListActivity implements ResourceList
 		titleTv = (TextView) findViewById(R.id.BuildingText);
 		
 		String addressToShow = address;
-		if(addressToShow.length() > 28) addressToShow = addressToShow.substring(0, 28) + "...";
+		if (addressToShow.length() > 28) addressToShow = addressToShow.substring(0, 28) + "...";
 		
 		titleTv.setText(address);
 		titleTv.setTextSize(18);

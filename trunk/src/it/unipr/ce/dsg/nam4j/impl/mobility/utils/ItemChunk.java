@@ -100,7 +100,7 @@ public class ItemChunk {
 	public boolean equals(Object arg0) {
 		ItemChunk chunkObj = (ItemChunk) arg0;
 		
-		if(this.conversationId.equals(chunkObj.getConversationId()) && chunkObj.getChunkId() == this.chunkId && chunkObj.getChunkNumber() == this.chunkNumber)
+		if (this.conversationId.equals(chunkObj.getConversationId()) && chunkObj.getChunkId() == this.chunkId && chunkObj.getChunkNumber() == this.chunkNumber)
 			return true;
 		else
 			return false;

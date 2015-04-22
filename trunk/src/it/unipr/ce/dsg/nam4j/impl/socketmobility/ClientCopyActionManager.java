@@ -397,7 +397,7 @@ public class ClientCopyActionManager implements Runnable {
 				requiredFmClass, clientType, MigrationSubject.FM, action);
 
 		// Adding the FM to the NAM FM HashMap on a DESKTOP node
-		if(fm != null)
+		if (fm != null)
 			nam.addFunctionalModule(fm);
 
 		// Check if the client asked for one or more services of the FM to get
@@ -422,7 +422,7 @@ public class ClientCopyActionManager implements Runnable {
 
 					// Adding the Service to the FM
 					if (serv != null)
-						if(fm != null)
+						if (fm != null)
 							fm.addProvidedService(currentServiceId, serv);
 					else
 						System.out

@@ -58,11 +58,11 @@ public class ContextBusBootstrap extends NamPeer {
 		
 		currentPeerDescriptor = this.peerDescriptor;
 		
-		if(nodeConfig.log_path != null) {
+		if (nodeConfig.log_path != null) {
 
 			fileHandler = new FileHandler();
 			
-			if(!fileHandler.isDirectoryExists(nodeConfig.log_path))
+			if (!fileHandler.isDirectoryExists(nodeConfig.log_path))
 				fileHandler.createDirectory(nodeConfig.log_path);
 
 			log = new Log(nodeConfig.log_path + "info_" + peerDescriptor.getAddress()+".log", Log.LEVEL_MEDIUM);
@@ -137,7 +137,7 @@ public class ContextBusBootstrap extends NamPeer {
 
 				this.getPeerList().add(senderPeerDescriptor);
 				
-				if(networkStructure.equalsIgnoreCase(Utils.FULL_MESH)) {
+				if (networkStructure.equalsIgnoreCase(Utils.FULL_MESH)) {
 					
 					// Send the whole updated peer list to all peers
 					
@@ -150,7 +150,7 @@ public class ContextBusBootstrap extends NamPeer {
 						PeerListMessage newPLMsg = new PeerListMessage(peerDescriptors);
 						sendMessage(new Address(pd.getAddress()), new Address(pd.getContactAddress()), this.getAddress(), newPLMsg.getJSONString(), Utils.JSON_MESSAGE_FORMAT);
 					}
-				} else if(networkStructure.equalsIgnoreCase(Utils.RANDOM_GRAPH)) {
+				} else if (networkStructure.equalsIgnoreCase(Utils.RANDOM_GRAPH)) {
 					
 					// Send a list of peers to the new peer - Utils.PEER_LIST_SIZE random nodes are chosen and sent
 					
@@ -164,9 +164,9 @@ public class ContextBusBootstrap extends NamPeer {
 				
 				int numPeer = this.getPeerList().size();
 				
-				if(numPeer >= 0) {
-					if(nodeConfig.list_path!=null){
-						if(!fileHandler.isDirectoryExists(nodeConfig.list_path)) {
+				if (numPeer >= 0) {
+					if (nodeConfig.list_path!=null){
+						if (!fileHandler.isDirectoryExists(nodeConfig.list_path)) {
 							fileHandler.createDirectory(nodeConfig.list_path);
 						}
 						peerList.writeList(fileHandler.openFileToWrite(nodeConfig.list_path + peerDescriptor.getAddress() + ".json"));
@@ -174,7 +174,7 @@ public class ContextBusBootstrap extends NamPeer {
 				}
 			}
 			
-		} else if(messageType.equalsIgnoreCase(PeerListRequestMessage.MSG_KEY)) {
+		} else if (messageType.equalsIgnoreCase(PeerListRequestMessage.MSG_KEY)) {
 			
 			// A node requested a list of peers
 			
@@ -184,9 +184,9 @@ public class ContextBusBootstrap extends NamPeer {
 			PeerListMessage newPLMsg = new PeerListMessage(peerDescriptors);
 			sendMessage(new Address(senderPeerDescriptor.getAddress()), new Address(senderPeerDescriptor.getContactAddress()), this.getAddress(), newPLMsg.getJSONString(), Utils.JSON_MESSAGE_FORMAT);
 			
-		} else if(messageType.equalsIgnoreCase(LeaveRequestMessage.MSG_KEY)) {
+		} else if (messageType.equalsIgnoreCase(LeaveRequestMessage.MSG_KEY)) {
 			
-			if(this.getPeerList().contains(senderPeerDescriptor)) {
+			if (this.getPeerList().contains(senderPeerDescriptor)) {
 				
 				System.out.println("--- Peer " + senderPeerDescriptor.getContactAddress() + " left the network");
 				
@@ -212,7 +212,7 @@ public class ContextBusBootstrap extends NamPeer {
 		System.out.println("Could not deliver message to " + receiver);
 		
 		for(PeerDescriptor pd : this.getPeerList()) {
-			if(pd.getContactAddress().equalsIgnoreCase(receiver.getURL())) {
+			if (pd.getContactAddress().equalsIgnoreCase(receiver.getURL())) {
 				
 				System.out.println("Removing the peer from the peer list.");
 				
@@ -248,7 +248,7 @@ public class ContextBusBootstrap extends NamPeer {
 	 */
 	public static void main(String[] args) {
 		
-		if(args.length == 3) {
+		if (args.length == 3) {
 			ContextBusBootstrap contextBusBootstrap = new ContextBusBootstrap(args[0], args[1], args[2]);
 			
 			ManageInputRunnable manageInputRunnable = new ManageInputRunnable(contextBusBootstrap);

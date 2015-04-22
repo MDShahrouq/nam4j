@@ -70,13 +70,13 @@ public class NamCentralizedPeer extends CentralizedPeer implements IEventListene
 					try {
 						String choice = br.readLine().trim();
 
-						if(choice.equals("ping")) {
+						if (choice.equals("ping")) {
 							System.out.print("Peer contact address: ");
 							String contactAddress = br.readLine().trim();
 							namCentralizedPeer.pingToPeer(contactAddress);
-						} else if(choice.equals("k")) {
+						} else if (choice.equals("k")) {
 							namCentralizedPeer.printKnownPeers();
-						} else if(choice.equals("p")) {
+						} else if (choice.equals("p")) {
 							System.out.print("Resource name: ");
 							String resourceName = br.readLine().trim();
 							System.out.print("Resource value: ");
@@ -88,17 +88,17 @@ public class NamCentralizedPeer extends CentralizedPeer implements IEventListene
 
 							namCentralizedPeer.publishResource(resource);
 
-						} else if(choice.equals("r")) {
+						} else if (choice.equals("r")) {
 							namCentralizedPeer.printResources();
-						} else if(choice.equals("d")) {
+						} else if (choice.equals("d")) {
 							System.out.print("Resource name: ");
 							String resourceName = br.readLine().trim();
 							namCentralizedPeer.removeResource(resourceName);
-						} else if(choice.equals("f")) {
+						} else if (choice.equals("f")) {
 							System.out.print("Find resource having name: ");
 							String resourceName = br.readLine().trim();
 							namCentralizedPeer.searchResource(resourceName);
-						} else if(choice.equals("q")) {
+						} else if (choice.equals("q")) {
 							namCentralizedPeer.leave(bootstrapPeerAddress);
 							br.close();
 							System.exit(0);
@@ -148,7 +148,7 @@ public class NamCentralizedPeer extends CentralizedPeer implements IEventListene
 		
 		System.out.println("I am NamCentralizedPeer and I have received a message: " + messageType);
 		
-		if(messageType.equalsIgnoreCase(JoinResponseMessage.MSG_KEY)) {
+		if (messageType.equalsIgnoreCase(JoinResponseMessage.MSG_KEY)) {
 			
 			/* Looking for available resources by asking to the peers received from the bootstrap */
 			
@@ -163,7 +163,7 @@ public class NamCentralizedPeer extends CentralizedPeer implements IEventListene
 		}
 		
 		/* Received a SearchResourceByType message */
-		else if(messageType.equals(SearchResourceByLocation.MSG_KEY)) {
+		else if (messageType.equals(SearchResourceByLocation.MSG_KEY)) {
 			Gson gson = new Gson();
 			
 			/* The requestor peer */
@@ -225,7 +225,7 @@ public class NamCentralizedPeer extends CentralizedPeer implements IEventListene
 					
 					/* If current resource is in the requested range (centered in requestor's location)
 					 * the resource is added to the set to be returned */
-					if(requestorLocation.distanceFrom(currentResourceLocation) < distance) {
+					if (requestorLocation.distanceFrom(currentResourceLocation) < distance) {
 						matchingResources.add(resource);
 					}
 				}
@@ -233,14 +233,14 @@ public class NamCentralizedPeer extends CentralizedPeer implements IEventListene
 			
 			System.out.println("----- I have " + matchingResources.size() + " resources near the requestor peer");
 			
-			if(matchingResources.size() > 0) {
+			if (matchingResources.size() > 0) {
 				SearchResourceResponse searchResourceByTypeResponse = new SearchResourceResponse(namCentralizedPeer.peerDescriptor, matchingResources);
 				namCentralizedPeer.sendMessage(new Address(peer.getAddress()), new Address(peer.getContactAddress()), namCentralizedPeer.getAddress(), searchResourceByTypeResponse.getJSONString(), "application/json");
 			}
 		}
 		
 		/* Received a SearchResourceByTypeResponse message */
-		else if(messageType.equals(SearchResourceResponse.MSG_KEY)) {
+		else if (messageType.equals(SearchResourceResponse.MSG_KEY)) {
 			Gson gson = new Gson();
 			
 			Type type = new TypeToken<Collection<Resource>>(){}.getType();

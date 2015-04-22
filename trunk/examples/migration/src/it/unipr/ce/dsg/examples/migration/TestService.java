@@ -95,7 +95,7 @@ public class TestService extends Service implements Serializable {
 			
 			filePath = service.getFunctionalModule().getNam().getMigrationStore();
 			
-			if(filePath != null) {
+			if (filePath != null) {
 				try {
 					// Convert array of bytes into file
 					file = new File(filePath + fileName);
@@ -141,7 +141,7 @@ public class TestService extends Service implements Serializable {
 			
 			filePath = service.getFunctionalModule().getNam().getMigrationStore();
 			
-			if(filePath != null) {
+			if (filePath != null) {
 				try {
 					file = new File(filePath + fileName);
 					fileReader = new FileReader(file);

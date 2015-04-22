@@ -81,7 +81,7 @@ public class MeshContextBus extends ContextBus {
 	 */
 	public void subscribe(String contextEventName, String functionalModuleId, String sender, MeshContextPeer peer, PeerList list, int hops) {
 		
-		if(hops < 0) {
+		if (hops < 0) {
 			
 			// Full mesh structure in use
 			
@@ -91,7 +91,7 @@ public class MeshContextBus extends ContextBus {
 			logger.log("Added " + eventModule + " to eventModuleList");
 			
 			for(PeerDescriptor pd : list) {
-				if(!pd.getContactAddress().equals(peer.getPeerDescriptor().getContactAddress())){
+				if (!pd.getContactAddress().equals(peer.getPeerDescriptor().getContactAddress())){
 					
 					ContextEventActionRequestMessage contextMsg = new ContextEventActionRequestMessage(null, eventModule, Utils.SUBSCRIBE_REQUEST, -1, null);
 					
@@ -106,9 +106,9 @@ public class MeshContextBus extends ContextBus {
 			ContextEventActionRequestMessage contextMsg;
 			
 			for(PeerDescriptor s : list) {			
-				if(!s.getContactAddress().equals(peer.getPeerDescriptor().getContactAddress())){
+				if (!s.getContactAddress().equals(peer.getPeerDescriptor().getContactAddress())){
 					
-					if(hops == Utils.HOPS_NUMBER) {
+					if (hops == Utils.HOPS_NUMBER) {
 						
 						String eventModule = contextEventName + ":" + functionalModuleId;
 						
@@ -156,7 +156,7 @@ public class MeshContextBus extends ContextBus {
 	 */
 	public void unsubscribe(String contextEventName, String functionalModuleId, String sender, MeshContextPeer peer, PeerList list, int hops) {
 
-		if(hops < 0) {
+		if (hops < 0) {
 			
 			// Full Mesh structure
 			
@@ -167,7 +167,7 @@ public class MeshContextBus extends ContextBus {
 			
 			for(PeerDescriptor pd : list) {
 				
-				if(!pd.getContactAddress().equals(peer.getPeerDescriptor().getContactAddress())){
+				if (!pd.getContactAddress().equals(peer.getPeerDescriptor().getContactAddress())){
 					
 					ContextEventActionRequestMessage contextMsg = new ContextEventActionRequestMessage(null, eventModule, Utils.UNSUBSCRIBE_REQUEST, -1, null);
 					
@@ -182,9 +182,9 @@ public class MeshContextBus extends ContextBus {
 			ContextEventActionRequestMessage contextMsg;
 					
 			for(PeerDescriptor s : list){			
-				if(!s.getContactAddress().equals(peer.getPeerDescriptor().getContactAddress())) {
+				if (!s.getContactAddress().equals(peer.getPeerDescriptor().getContactAddress())) {
 								
-					if(hops == Utils.HOPS_NUMBER){
+					if (hops == Utils.HOPS_NUMBER){
 						
 						String eventModule = contextEventName + ":" + functionalModuleId;
 						
@@ -219,8 +219,8 @@ public class MeshContextBus extends ContextBus {
 		System.out.println("Generated event: " + peer.getContextEventName());
 		
 		for (String s : eventModuleList) {
-			if(s.startsWith(peer.getContextEventName())) {
-				if(!s.substring(s.indexOf("/") + 1).equals(peer.getPeerDescriptor().getContactAddress())) {
+			if (s.startsWith(peer.getContextEventName())) {
+				if (!s.substring(s.indexOf("/") + 1).equals(peer.getPeerDescriptor().getContactAddress())) {
 					interestedNam.add(s.substring(s.indexOf("/") + 1));
 				}
 			}
@@ -258,23 +258,23 @@ public class MeshContextBus extends ContextBus {
 		String name = peerMsg.get("info").getAsString();
 		String type = peerMsg.get("infoType").getAsString();
 		
-		if(peerMsg.get("sender") == null) {
+		if (peerMsg.get("sender") == null) {
 			
 			// Full mesh structure is in use
 			
 			String receivedName = name.substring(0, name.indexOf(":"));
 			
-			if(type.equals(Utils.SUBSCRIBE_REQUEST)){
+			if (type.equals(Utils.SUBSCRIBE_REQUEST)){
 				
-				if(!eventModuleList.contains(name)){
+				if (!eventModuleList.contains(name)){
 					
 					eventModuleList.add(name);
 					logger.log("Added " + name + " to eventModuleList");
 				}					
 			}
-			else if(type.equals(Utils.UNSUBSCRIBE_REQUEST)) {
+			else if (type.equals(Utils.UNSUBSCRIBE_REQUEST)) {
 				
-				if(eventModuleList.contains(name)) {
+				if (eventModuleList.contains(name)) {
 					
 					eventModuleList.remove(name);
 					logger.log("Removed " + name + " from eventModuleList");
@@ -292,9 +292,9 @@ public class MeshContextBus extends ContextBus {
 			
 			String infoReceived = name + "/" + sender;
 	
-			if(type.equals(Utils.SUBSCRIBE_REQUEST)) {
+			if (type.equals(Utils.SUBSCRIBE_REQUEST)) {
 								
-				if(!eventModuleList.contains(infoReceived)) {
+				if (!eventModuleList.contains(infoReceived)) {
 					eventModuleList.add(infoReceived);
 					
 					System.out.println("--- Added subscription request for event " + name + ", from peer " + sender);
@@ -304,7 +304,7 @@ public class MeshContextBus extends ContextBus {
 					System.out.println("--- The subscription has already been recorded");
 				}
 				
-				if(hops > 0) {
+				if (hops > 0) {
 					
 					// The message has to be forwarded hops more times
 					
@@ -319,9 +319,9 @@ public class MeshContextBus extends ContextBus {
 					System.out.println("************************************************************\n");
 				}			
 			}
-			else if(type.equals(Utils.UNSUBSCRIBE_REQUEST)) {
+			else if (type.equals(Utils.UNSUBSCRIBE_REQUEST)) {
 								
-				if(eventModuleList.contains(infoReceived)){
+				if (eventModuleList.contains(infoReceived)){
 					eventModuleList.remove(infoReceived);
 					
 					System.out.println("--- Removed subscription request for event " + name + ", from peer " + sender);
@@ -331,7 +331,7 @@ public class MeshContextBus extends ContextBus {
 					System.out.println("--- The specified subscription is not recorded");
 				}
 				
-				if(hops > 0) {
+				if (hops > 0) {
 					
 					// The message has to be forwarded hops more times
 					

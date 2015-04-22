@@ -1439,7 +1439,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 						 * Creating the marker whose color is set based on the
 						 * reason for which the resource has been received
 						 */
-						if(reason.equalsIgnoreCase(Constants.reasonResearched)) {
+						if (reason.equalsIgnoreCase(Constants.reasonResearched)) {
 							
 							/* Researched resources have a red marker */
 							
@@ -1447,7 +1447,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 							.position(p).icon(bitmapDescriptorRed)
 							.title(address).snippet(""));
 							
-						} else if(reason.equalsIgnoreCase(Constants.reasonAssigned)) {
+						} else if (reason.equalsIgnoreCase(Constants.reasonAssigned)) {
 							
 							/* Assigned resources have a blue marker */
 							
@@ -1457,7 +1457,7 @@ public class NAM4JAndroidActivity extends FragmentActivity implements
 							
 						}
 
-						if(marker != null) {
+						if (marker != null) {
 							ml.put(address, marker);
 						}
 

@@ -87,7 +87,7 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 	
 	private ContextEvent setContextEvent(MeshContextPeer peer) {
 		
-		if(peer.getContextEventName().equals("TemperatureNotification")) {
+		if (peer.getContextEventName().equals("TemperatureNotification")) {
 			
 			Temperature temperature = new Temperature();
 			temperature.setId("i21");
@@ -103,7 +103,7 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 			
 			return tempNotif;
 		}
-		else if(peer.getContextEventName().equals("LightNotification")) {
+		else if (peer.getContextEventName().equals("LightNotification")) {
 			
 			Light light = new Light();
 			light.setId("i21");
@@ -139,7 +139,7 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 	 */
 	public static void main(String[] args) {
 		
-		if(args.length < 5 || args.length > 6) {
+		if (args.length < 5 || args.length > 6) {
 			System.out
 					.println("To publish context events specify six parameters:\n- the path to the config file\n- a string describing the network structure (e.g. full_mesh or random_graph)\n- the action (i.e. publish)\n- the mame of the event\n- the location of the event\n- the value of the event");
 			System.out
@@ -165,7 +165,7 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 			Thread manageInput = new Thread(manageInputRunnable);
 			manageInput.start();
 								
-			if(args[2].equalsIgnoreCase(Utils.SUBSCRIBE_REQUEST)) {
+			if (args[2].equalsIgnoreCase(Utils.SUBSCRIBE_REQUEST)) {
 				
 				try {
 					Thread.sleep(Utils.THREAD_SLEEP_TIME);
@@ -173,7 +173,7 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 					e.printStackTrace();
 				}
 				
-				if(args[1].equalsIgnoreCase(Utils.FULL_MESH)) {
+				if (args[1].equalsIgnoreCase(Utils.FULL_MESH)) {
 					
 					// Full mesh structure
 					
@@ -190,7 +190,7 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 					// If a full mesh structure is in use, the number of hops is set to -1
 					contextBus.unsubscribe(peer.getContextEventName(), cBusNam.reasonerFunctionalModule.getId(), null, peer, peer.getPeerList(), -1);
 					
-				} else if(args[1].equalsIgnoreCase( Utils.RANDOM_GRAPH)) {
+				} else if (args[1].equalsIgnoreCase( Utils.RANDOM_GRAPH)) {
 					
 					// Random graph structure
 					
@@ -207,7 +207,7 @@ public class ContextBusTestNam extends NetworkedAutonomicMachine {
 				}
 			}
 			
-			if(args[2].equalsIgnoreCase(Utils.PUBLISH_REQUEST)) {
+			if (args[2].equalsIgnoreCase(Utils.PUBLISH_REQUEST)) {
 				
 				while(true) {
 	
