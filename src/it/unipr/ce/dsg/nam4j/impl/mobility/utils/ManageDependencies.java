@@ -4,6 +4,7 @@ import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine.MigrationSubject;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine.Platform;
 import it.unipr.ce.dsg.nam4j.impl.messages.RequestItemAnswerMessage;
+import it.unipr.ce.dsg.nam4j.impl.mobility.peer.MccNamPeer;
 import it.unipr.ce.dsg.nam4j.impl.mobility.xmlparser.Dependency;
 import it.unipr.ce.dsg.nam4j.impl.mobility.xmlparser.SAXHandler;
 import it.unipr.ce.dsg.s2p.peer.PeerDescriptor;
@@ -174,7 +175,7 @@ public class ManageDependencies {
 	 * 
 	 * @return the list of missing dependencies as pairs (library_id, library_version)
 	 */
-	public HashMap<String, String> getMissingDependenciesList(Platform p, HashMap<String, String> dependencies, MigrationSubject r) {
+	public HashMap<String, String> getMissingDependenciesList(Platform p, HashMap<String, String> dependencies, MigrationSubject r, MccNamPeer mccNamPeer) {
 		
 		System.out.println("Received the list of dependencies for the requested item (size = " + dependencies.size() + ")");
 		
@@ -205,7 +206,7 @@ public class ManageDependencies {
 				
 				try {
 					File infoFile = new File(this.getMigrationStore() + dependencyId + MobilityUtils.INFO_FILE_EXTENSION);
-					if(infoFile.exists()) {
+					if (infoFile.exists()) {
 						System.out.println((this.getMigrationStore() + dependencyId + MobilityUtils.INFO_FILE_EXTENSION) + " exists");
 						
 						// If the xml info file exists, then check for its version
@@ -218,22 +219,42 @@ public class ManageDependencies {
 					
 						libVersion = handler.getLibraryInformation().getVersion();
 						
-						if(Float.compare(Float.parseFloat(libVersion), Float.parseFloat(dependencyMinVersion)) < 0) {
+						if (Float.compare(Float.parseFloat(libVersion), Float.parseFloat(dependencyMinVersion)) < 0) {
 							// An older version of the item is available; request the updated version
 							System.out.println("An older version (" + libVersion + ") of dependency " + dependencyId + " is available; requesting the updated version (" + dependencyMinVersion + ")");
 							missingItems.put(dependencyId, dependencyMinVersion);
 						} else {
 							System.out.println(MobilityUtils.CLIENT_DEPENDENCY_AVAILABLE + dependencyId);
+								
+							// Add dependency to classpath
+							if (mccNamPeer.getNam().getClientPlatform(0) == Platform.DESKTOP) {
+								MobilityUtils.addToClassPath(mccNamPeer.getNam(), this.getMigrationStore() + dependencyId + MobilityUtils.DESKTOP_FILE_EXTENSION, null, null);
+							} else if (mccNamPeer.getNam().getClientPlatform(0) == Platform.ANDROID) {
+								
+								// Use observer pattern to add dependency to classpath for Android
+								mccNamPeer.notifyObservers(this.getMigrationStore() + dependencyId + MobilityUtils.ANDROID_FILE_EXTENSION, null, null, null, null);
+							}
 						}
 					} else {
-						System.out.print((this.getMigrationStore() + dependencyId + MobilityUtils.INFO_FILE_EXTENSION) + " is not available");
+						System.out.print((this.getMigrationStore() + dependencyId + MobilityUtils.INFO_FILE_EXTENSION) + " is not available.");
+						
 						// If the xml info file does not exist, the dependency is not a FM so just check for its availability
+						
 						File f = MobilityUtils.getRequestedItem(pairs.getKey(), p, getMigrationStore());
-						if(f == null || !f.exists()) {
+						if (f == null || !f.exists()) {
 							missingItems.put(pairs.getKey(), dependencyMinVersion);
-							System.out.print(". I do not have such a dependency, so I am requesting it.\n");
+							System.out.print("I do not have such a dependency, so I am requesting it.\n");
 						} else {
-							System.out.println(". I already have the library, so I will not request it.");
+							System.out.println("I already have the library, so I will not request it.");
+							
+							// Add dependency to classpath
+							if (mccNamPeer.getNam().getClientPlatform(0) == Platform.DESKTOP) {
+								MobilityUtils.addToClassPath(mccNamPeer.getNam(), this.getMigrationStore() + dependencyId + MobilityUtils.DESKTOP_FILE_EXTENSION, null, null);
+							} else if (mccNamPeer.getNam().getClientPlatform(0) == Platform.ANDROID) {
+								
+								// Use observer pattern to add dependency to classpath for Android
+								mccNamPeer.notifyObservers(this.getMigrationStore() + dependencyId + MobilityUtils.ANDROID_FILE_EXTENSION, null, null, null, null);
+							}
 						}
 					}
 					

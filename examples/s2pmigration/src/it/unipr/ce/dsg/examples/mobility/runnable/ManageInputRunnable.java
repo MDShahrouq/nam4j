@@ -115,7 +115,9 @@ public class ManageInputRunnable implements Runnable {
 				// System.out.print("Please provide the service id: ");
 				// String sId = scanner.nextLine().trim();
 				
-				TestService ts = new TestService(null);
+				TestFunctionalModule tfm = new TestFunctionalModule(s2PMigrationTestNam);
+				TestService ts = new TestService();
+				ts.setFunctionalModule(tfm);
 				ts.getServiceRunnable().start();
 				try {
 					Thread.sleep(10);
@@ -125,7 +127,7 @@ public class ManageInputRunnable implements Runnable {
 				
 				String sId = "TestService";
 				
-				peer.migrateService(ca, sId, Platform.DESKTOP, Action.MIGRATE, ts, MigrationSubject.SERVICE, "1.0");
+				peer.migrateService(ca, sId, Platform.ANDROID, Action.MIGRATE, ts, MigrationSubject.SERVICE, "1.0");
 			}
 
 			else if(choice.equals("q")) {
