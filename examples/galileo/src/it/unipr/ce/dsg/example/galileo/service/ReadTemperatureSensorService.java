@@ -103,7 +103,7 @@ public class ReadTemperatureSensorService extends Service {
 					
 					FileReader fr = new FileReader(fileToRead);
 					
-					if(fr != null) {
+					if (fr != null) {
 
 						br = new BufferedReader(fr);
 */	

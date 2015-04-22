@@ -690,7 +690,7 @@ public abstract class NetworkedAutonomicMachine implements
 				functionalModule, service, serviceId, clientType, Action.COPY);
 		
 		// If requested, the object can subscribe to notifications
-		if(ml != null)
+		if (ml != null)
 			clientCopyActionManager.addMigrationListener(ml);
 		
 		poolForClientMobilityAction.execute(clientCopyActionManager);

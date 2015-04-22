@@ -73,11 +73,11 @@ public class RoomActivity extends ListActivity implements ResourceListener, IEve
         room = b.getString( "Room" );
         
         String buildingToShow = building;
-		if(buildingToShow.length() > 28) buildingToShow = buildingToShow.substring(0, 28) + "...";
+		if (buildingToShow.length() > 28) buildingToShow = buildingToShow.substring(0, 28) + "...";
 		String floorToShow = getResources().getString(R.string.floor) + floor;
-		if(floorToShow.length() > 28) floorToShow = floorToShow.substring(0, 28) + "...";
+		if (floorToShow.length() > 28) floorToShow = floorToShow.substring(0, 28) + "...";
 		String roomToShow = room;
-		if(roomToShow.length() > 28) roomToShow = roomToShow.substring(0, 28) + "...";
+		if (roomToShow.length() > 28) roomToShow = roomToShow.substring(0, 28) + "...";
         
         titleTv = (TextView) findViewById(R.id.BuildingText);
         titleTv.setText(buildingToShow + "\n" + floorToShow + "\n" + roomToShow);
@@ -173,12 +173,12 @@ public class RoomActivity extends ListActivity implements ResourceListener, IEve
 				
 				for(int f = 0; f < floors.size(); f++) {
 					
-					if(floors.get(f).getName().equalsIgnoreCase(floor)) {
+					if (floors.get(f).getName().equalsIgnoreCase(floor)) {
 						selectedFloor = floors.get(f);
 					}
 				}
 				
-				if(selectedFloor != null) {
+				if (selectedFloor != null) {
 					
 					List<RoomStruct> rooms = selectedFloor.getRooms();
 					
@@ -186,12 +186,12 @@ public class RoomActivity extends ListActivity implements ResourceListener, IEve
 					
 					for(int h = 0; h < rooms.size(); h++) {
 						
-						if(rooms.get(h).getName().equalsIgnoreCase(room)) {
+						if (rooms.get(h).getName().equalsIgnoreCase(room)) {
 							selectedRoom = rooms.get(h);
 						}
 					}
 					
-					if(selectedRoom != null) {
+					if (selectedRoom != null) {
 					
 						String sensorsInRoom = gson.toJson(selectedRoom.getSensors());
 						

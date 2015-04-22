@@ -38,7 +38,7 @@ public class Conversations implements Iterable<ConversationItem> {
 	}
 	
 	public boolean add(ConversationItem conversationItem) {
-		if(contains(conversationItem)) {
+		if (contains(conversationItem)) {
 			return true;
 		} else {
 			return conversations.add(conversationItem);
@@ -47,7 +47,7 @@ public class Conversations implements Iterable<ConversationItem> {
 	
 	public boolean contains(ConversationItem conversationItem) {
 		for(ConversationItem ci : conversations) {
-			if(ci.getId().equalsIgnoreCase(conversationItem.getId())) {
+			if (ci.getId().equalsIgnoreCase(conversationItem.getId())) {
 				return true;
 			}
 		}
@@ -65,7 +65,7 @@ public class Conversations implements Iterable<ConversationItem> {
 	 */
 	public ConversationItem getConversationItem(String id) {
 		for(ConversationItem ci : conversations) {
-			if(ci.getId().equalsIgnoreCase(id)) {
+			if (ci.getId().equalsIgnoreCase(id)) {
 				return ci;
 			}
 		}
@@ -84,12 +84,12 @@ public class Conversations implements Iterable<ConversationItem> {
 	public boolean remove(String id) {
 		ConversationItem conversationItemToRemove = null;
 		for(ConversationItem ci : conversations) {
-			if(ci.getId().equalsIgnoreCase(id)) {
+			if (ci.getId().equalsIgnoreCase(id)) {
 				conversationItemToRemove = ci;
 				break;
 			}
 		}
-		if(conversationItemToRemove != null) {
+		if (conversationItemToRemove != null) {
 			return conversations.remove(conversationItemToRemove);
 		} else {
 			return false;
@@ -133,7 +133,7 @@ public class Conversations implements Iterable<ConversationItem> {
 	}
 	
 	public void printConversations() {
-		if(!conversations.isEmpty()) {
+		if (!conversations.isEmpty()) {
 			System.out.println("\n********** Ongoing conversations **********");
 
 			int i = 1;

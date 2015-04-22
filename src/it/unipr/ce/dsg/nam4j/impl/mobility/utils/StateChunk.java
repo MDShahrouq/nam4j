@@ -70,7 +70,7 @@ public class StateChunk {
 	public boolean equals(Object arg0) {
 		StateChunk chunkObj = (StateChunk) arg0;
 		
-		if(this.conversationId.equals(chunkObj.getConversationId()) && chunkObj.getChunkId() == this.chunkId && chunkObj.getChunkNumber() == this.chunkNumber)
+		if (this.conversationId.equals(chunkObj.getConversationId()) && chunkObj.getChunkId() == this.chunkId && chunkObj.getChunkNumber() == this.chunkNumber)
 			return true;
 		else
 			return false;

@@ -121,19 +121,19 @@ public class CopyActionImplementation extends CopyActionHandler {
 			
 			File dependency = null;
 			
-			if(!pairs.getValue().equals("-1")) {
+			if (!pairs.getValue().equals("-1")) {
 				dependency = MobilityUtils.getRequestedItem(pairs.getKey(), p, getMigrationStore());
 			} else {
 				// The file is a xml info file for a dependency
 				File f = new File(this.getMigrationStore() + pairs.getKey());
-				if(f.exists()) {
+				if (f.exists()) {
 					dependency = f;
 				} else {
 					dependency = null;
 				}
 			}
 			
-			if(dependency != null) {
+			if (dependency != null) {
 				FileInputStream dependencyFileInputStream = null;
 				byte[] bDependencyFile = new byte[(int) dependency.length()];
 
@@ -190,7 +190,7 @@ public class CopyActionImplementation extends CopyActionHandler {
 		// Check if the requested item is available
 		file = MobilityUtils.getRequestedItem(itemId, p, getMigrationStore());
 		
-		if(file != null) {
+		if (file != null) {
 			
 			String mainClass = "";
 			
@@ -199,7 +199,7 @@ public class CopyActionImplementation extends CopyActionHandler {
 			
 			try {
 				File infoFile = new File(this.getMigrationStore() + itemId + MobilityUtils.INFO_FILE_EXTENSION);
-				if(infoFile.exists()) {
+				if (infoFile.exists()) {
 					FileInputStream infoFis = new FileInputStream(infoFile);
 					
 					SAXParserFactory parserFactor = SAXParserFactory.newInstance();
@@ -207,13 +207,13 @@ public class CopyActionImplementation extends CopyActionHandler {
 					SAXHandler handler = new SAXHandler();
 					parser.parse(infoFis, handler);
 				
-					if(handler.getLibraryInformation() != null) {
+					if (handler.getLibraryInformation() != null) {
 						mainClass = handler.getLibraryInformation().getMainClass();
 					
 						// Object FunctionalModuleIdForService only exists if the XML
 						// info file describes a Service and its associated FM (i.e.,
 						// includes <functional_module> element)
-						if(handler.getFunctionalModuleForService() != null)
+						if (handler.getFunctionalModuleForService() != null)
 							functionalModuleIdForService = handler.getFunctionalModuleForService().getId();
 						
 						FileInputStream fileInputStream = null;
@@ -291,7 +291,7 @@ public class CopyActionImplementation extends CopyActionHandler {
 		try {
 			File infoFile = new File(this.getMigrationStore() + itemId + MobilityUtils.INFO_FILE_EXTENSION);
 				
-			if(infoFile.exists()) {
+			if (infoFile.exists()) {
 				// Convert file into an array of bytes
 				FileInputStream infoFileInputStream = new FileInputStream(infoFile);
 				byte[] bInfoFile = new byte[(int) infoFile.length()];

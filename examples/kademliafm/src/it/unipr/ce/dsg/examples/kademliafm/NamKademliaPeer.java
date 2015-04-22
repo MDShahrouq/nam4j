@@ -61,19 +61,19 @@ KademliaEventListener {
 					try {
 						String choice = br.readLine().trim();
 						System.out.println();
-						if(choice.equals("p")) {
+						if (choice.equals("p")) {
 							System.out.print("Enter contact address: ");
 							String ca = br.readLine().trim();
 							kademliaPeer.pingToPeer(ca);				
 						}
 
-						if(choice.equals("f")) {
+						if (choice.equals("f")) {
 							System.out.print("Node to find: ");
 							String key = br.readLine().trim();
 							kademliaPeer.findNodeOrValue(new KademliaKey(key, 0), 'n');
 						}
 
-						if(choice.equals("s")) {
+						if (choice.equals("s")) {
 							System.out.print("Enter the file name: ");
 							String fileName = br.readLine().trim();
 							KademliaResource kr = new KademliaResource("", fileName);
@@ -83,7 +83,7 @@ KademliaEventListener {
 							kademliaPeer.publishResource(kr);
 						}
 
-						if(choice.equals("k")) {
+						if (choice.equals("k")) {
 							System.out.println("This peer knows " + kademliaPeer.getKnownNodesNumber() + " nodes:");
 							KBucket[] buckets = kademliaPeer.getBuckets();
 							for(KBucket b : buckets) {
@@ -94,7 +94,7 @@ KademliaEventListener {
 							}
 						}
 
-						if(choice.equals("r")) {
+						if (choice.equals("r")) {
 							Iterator<KademliaKey> iter = kademliaPeer.getResourceIterator();
 							while(iter.hasNext()) {
 								KademliaKey key = iter.next();
@@ -103,7 +103,7 @@ KademliaEventListener {
 							}
 						}
 
-						if(choice.equals("e")) {
+						if (choice.equals("e")) {
 							System.out.println("Choose the resource to export as a file: ");
 							int i=0;
 							Iterator<KademliaKey> iter = kademliaPeer.getResourceIterator();
@@ -127,14 +127,14 @@ KademliaEventListener {
 							System.out.println("The resource has been exported.");
 						}
 
-						if(choice.equals("v")) {
+						if (choice.equals("v")) {
 							System.out.print("Resource key: ");
 							String bitString = br.readLine().trim();
 							KademliaKey key = new KademliaKey(bitString, 0);
 							kademliaPeer.findNodeOrValue(key, 'v');
 						}
 
-						if(choice.equals("q")) {
+						if (choice.equals("q")) {
 							br.close();
 							System.exit(0);
 						}

@@ -153,8 +153,8 @@ public class MccNamPeer extends NamPeer {
 		
 		this.listeners = new ArrayList<IMobilityItemAvailability>();
 		
-		if(nodeConfig.log_path != null){
-			if(!fileHandler.isDirectoryExists(nodeConfig.log_path))
+		if (nodeConfig.log_path != null){
+			if (!fileHandler.isDirectoryExists(nodeConfig.log_path))
 				fileHandler.createDirectory(nodeConfig.log_path);
 
 			log = new Log(nodeConfig.log_path + "info_" + peerDescriptor.getAddress() + ".log", Log.LEVEL_MEDIUM);
@@ -208,7 +208,7 @@ public class MccNamPeer extends NamPeer {
 	 *            the version of the {@link FunctionalModule} to be migrated
 	 */
 	public void migrateFM(String peerToBeContactedAddress, String fmId, Platform platform, Action action, Object object, MigrationSubject r, String version) {
-		if(migrateActionImplementation == null) {
+		if (migrateActionImplementation == null) {
 			migrateActionImplementation = new MigrateActionImplementation(this.nam.getMigrationStore(), this);
 		}
 		
@@ -217,12 +217,12 @@ public class MccNamPeer extends NamPeer {
 		ConversationItem conversationItem = new ConversationItem(conversationKey, peerToBeContactedAddress, fmId, object, version, action, MigrationSubject.FM, platform);
 		this.conversations.add(conversationItem);
 		
-		if(manageDependencies == null) {
+		if (manageDependencies == null) {
 			manageDependencies = new ManageDependencies(this.nam.getMigrationStore());
 		}
 		HashMap<String, String> items = manageDependencies.getDependenciesForItem(r, fmId, platform);
 		
-		if(items != null) {
+		if (items != null) {
 			RequestMigrateMessage peerMsg = new RequestMigrateMessage(conversationKey, peerDescriptor, platform, fmId, MigrationSubject.FM, action, items, version);
 			sendMessage(new Address(peerToBeContactedAddress), new Address(peerToBeContactedAddress), this.getAddress(), peerMsg.getJSONString(), MobilityUtils.JSON_MESSAGE_FORMAT);
 		} else {
@@ -258,7 +258,7 @@ public class MccNamPeer extends NamPeer {
 	 *            the version of the {@link Service} to be migrated
 	 */
 	public void migrateService(String peerToBeContactedAddress, String serviceId, Platform platform, Action action, Object object, MigrationSubject r, String version) {
-		if(migrateActionImplementation == null) {
+		if (migrateActionImplementation == null) {
 			migrateActionImplementation = new MigrateActionImplementation(this.nam.getMigrationStore(), this);
 		}
 		
@@ -267,12 +267,12 @@ public class MccNamPeer extends NamPeer {
 		ConversationItem conversationItem = new ConversationItem(conversationKey, peerToBeContactedAddress, serviceId, object, version, action, MigrationSubject.SERVICE, platform);
 		this.conversations.add(conversationItem);
 		
-		if(manageDependencies == null) {
+		if (manageDependencies == null) {
 			manageDependencies = new ManageDependencies(this.nam.getMigrationStore());
 		}
 		HashMap<String, String> items = manageDependencies.getDependenciesForItem(r, serviceId, platform);
 		
-		if(items != null) {
+		if (items != null) {
 			RequestMigrateMessage peerMsg = new RequestMigrateMessage(conversationKey, peerDescriptor, platform, serviceId, MigrationSubject.SERVICE, action, items, version);
 			sendMessage(new Address(peerToBeContactedAddress), new Address(peerToBeContactedAddress), this.getAddress(), peerMsg.getJSONString(), MobilityUtils.JSON_MESSAGE_FORMAT);
 		}  else {
@@ -472,7 +472,7 @@ public class MccNamPeer extends NamPeer {
 			// Check if the requested item is available
 			file = MobilityUtils.getRequestedItem(itemId, p, this.nam.getMigrationStore());
 			
-			if(file != null) {
+			if (file != null) {
 				SAXHandler handler = MobilityUtils.parseXMLFile(itemId, this.nam);
 				String libVersion = handler.getLibraryInformation().getVersion();
 				
@@ -480,7 +480,7 @@ public class MccNamPeer extends NamPeer {
 				// with the version of the available one. If the latter is
 				// lower, than an ItemNotAvailableMessage is sent, otherwise the
 				// list of dependencies is.
-				if(Float.compare(Float.parseFloat(libVersion), Float.parseFloat(requiredLibVersion)) < 0) {
+				if (Float.compare(Float.parseFloat(libVersion), Float.parseFloat(requiredLibVersion)) < 0) {
 					System.err.println(MobilityUtils.SERVER_OLD_ITEM_AVAILABLE);
 					
 					ItemNotAvailableMessage itemNotAvailable = new ItemNotAvailableMessage(conversationItemId);
@@ -492,12 +492,12 @@ public class MccNamPeer extends NamPeer {
 				} else {
 					System.out.println(MobilityUtils.REQUESTED_ITEM_IS_AVAILABLE_SENDING_DEPENDENCIES);
 
-					if(manageDependencies == null) {
+					if (manageDependencies == null) {
 						manageDependencies = new ManageDependencies(this.nam.getMigrationStore());
 					}
 					String jsonMessage = manageDependencies.answerToCopyRequest(conversationItemId, itemId, p, r, this.getPeerDescriptor(), senderPeerDescriptor);
 					
-					if(jsonMessage != null) {
+					if (jsonMessage != null) {
 						sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), jsonMessage, MobilityUtils.JSON_MESSAGE_FORMAT);
 					} else {
 						System.out.println(MobilityUtils.ERROR_REQUEST_COPY_MESSAGE);
@@ -540,7 +540,7 @@ public class MccNamPeer extends NamPeer {
 			Type type = new TypeToken<HashMap<String, String>>(){}.getType();
 			HashMap<String, String> dependencies = gson.fromJson(peerMsg.get("items").toString(), type);
 	
-			if(manageDependencies == null) {
+			if (manageDependencies == null) {
 				manageDependencies = new ManageDependencies(this.nam.getMigrationStore());
 			}
 			
@@ -558,7 +558,7 @@ public class MccNamPeer extends NamPeer {
 				}
 				String jsonMessage = dependencyMessage.getJSONString();
 				
-				if(jsonMessage != null) {
+				if (jsonMessage != null) {
 					sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), jsonMessage, MobilityUtils.JSON_MESSAGE_FORMAT);
 				} else {
 					System.err.println(MobilityUtils.ERROR_REQUEST_ITEM_ANSWER_MESSAGE);
@@ -573,13 +573,13 @@ public class MccNamPeer extends NamPeer {
 				System.out.println(MobilityUtils.CLIENT_ALL_DEPENDENCIES_AVAILABLE);
 				
 				boolean infoFileIsAvailable = (new File(this.nam.getMigrationStore() + conversationItem.getItemId() + MobilityUtils.INFO_FILE_EXTENSION)).exists();
-				if(infoFileIsAvailable) {
+				if (infoFileIsAvailable) {
 					// The info file is available
 					System.out.println(MobilityUtils.INFO_FILE_AVAILABLE);
 				
 					File itemFile = MobilityUtils.getRequestedItem(conversationItem.getItemId(), p, this.nam.getMigrationStore());
 					
-					if(itemFile != null && itemFile.exists()) {
+					if (itemFile != null && itemFile.exists()) {
 						
 						SAXHandler handler = MobilityUtils.parseXMLFile(conversationItem.getItemId(), this.nam);
 						String libVersion = handler.getLibraryInformation().getVersion();
@@ -594,7 +594,7 @@ public class MccNamPeer extends NamPeer {
 						// AllDependenciesAreAvailableMessage message is sent to
 						// inform that all dependencies are available but not
 						// the item.
-						if(Float.compare(Float.parseFloat(libVersion), Float.parseFloat(requiredLibVersion)) < 0) {
+						if (Float.compare(Float.parseFloat(libVersion), Float.parseFloat(requiredLibVersion)) < 0) {
 							AllDependenciesAreAvailableMessage receivedAllDependencies = new AllDependenciesAreAvailableMessage(conversationId);
 							sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), receivedAllDependencies.getJSONString(), MobilityUtils.JSON_MESSAGE_FORMAT);
 							System.out.println(MobilityUtils.OLD_ITEM_AVAILABLE);
@@ -603,7 +603,7 @@ public class MccNamPeer extends NamPeer {
 							ItemIsAvailableMessage itemIsAvailable = new ItemIsAvailableMessage(conversationId);
 							sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), itemIsAvailable.getJSONString(), MobilityUtils.JSON_MESSAGE_FORMAT);
 							
-							if(conversationItem.getAction().equals(Action.COPY)) {
+							if (conversationItem.getAction().equals(Action.COPY)) {
 								String mainClassName = handler.getLibraryInformation().getMainClass();
 								MigrationSubject role = conversationItem.getRole();
 								
@@ -627,7 +627,7 @@ public class MccNamPeer extends NamPeer {
 										Service s = (Service) obj;
 										
 										boolean fmInfoFileIsAvailable = (new File(nam.getMigrationStore() + functionalModuleId + MobilityUtils.INFO_FILE_EXTENSION)).exists();
-										if(fmInfoFileIsAvailable) {
+										if (fmInfoFileIsAvailable) {
 											SAXHandler infoFmHandler = MobilityUtils.parseXMLFile(functionalModuleId, this.nam);
 											String fmCompleteMainClassName = infoFmHandler.getLibraryInformation().getMainClass();
 											
@@ -711,7 +711,7 @@ public class MccNamPeer extends NamPeer {
 		    }
 			System.out.print("\n");
 			
-			if(manageDependencies == null) {
+			if (manageDependencies == null) {
 				manageDependencies = new ManageDependencies(this.nam.getMigrationStore());
 			}
 			
@@ -732,7 +732,7 @@ public class MccNamPeer extends NamPeer {
 				}
 				String jsonMessage = dependencyMessage.getJSONString();
 				
-				if(jsonMessage != null) {
+				if (jsonMessage != null) {
 					sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), jsonMessage, MobilityUtils.JSON_MESSAGE_FORMAT);
 				} else {
 					System.err.println(MobilityUtils.ERROR_REQUEST_MIGRATE_MESSAGE);
@@ -747,12 +747,12 @@ public class MccNamPeer extends NamPeer {
 				System.out.println(MobilityUtils.CLIENT_ALL_DEPENDENCIES_AVAILABLE);
 				
 				boolean infoFileIsAvailable = (new File(this.nam.getMigrationStore() + conversationItem.getItemId() + MobilityUtils.INFO_FILE_EXTENSION)).exists();
-				if(infoFileIsAvailable) {
+				if (infoFileIsAvailable) {
 					System.out.println(MobilityUtils.INFO_FILE_AVAILABLE);
 				
 					File itemFile = MobilityUtils.getRequestedItem(itemId, p, this.nam.getMigrationStore());
 					
-					if(itemFile != null && itemFile.exists()) {
+					if (itemFile != null && itemFile.exists()) {
 						
 						SAXHandler handler = MobilityUtils.parseXMLFile(itemId, this.nam);
 						
@@ -767,7 +767,7 @@ public class MccNamPeer extends NamPeer {
 						// AllDependenciesAreAvailableMessage message is sent to
 						// inform that all dependencies are available but not
 						// the item.
-						if(Float.compare(Float.parseFloat(libVersion), Float.parseFloat(requiredLibVersion)) < 0) {
+						if (Float.compare(Float.parseFloat(libVersion), Float.parseFloat(requiredLibVersion)) < 0) {
 							// Requesting the updated info file
 							AllDependenciesAreAvailableMessage receivedAllDependencies = new AllDependenciesAreAvailableMessage(conversationId);
 							sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), receivedAllDependencies.getJSONString(), MobilityUtils.JSON_MESSAGE_FORMAT);
@@ -776,7 +776,7 @@ public class MccNamPeer extends NamPeer {
 							System.out.println(MobilityUtils.ITEM_AVAILABLE_WAITING_FOR_STATE);
 							
 							// Adding the item to the classpath before receiving the state
-							if(p == Platform.DESKTOP) {
+							if (p == Platform.DESKTOP) {
 								System.out.println(MobilityUtils.ADDING_ITEM_TO_CP_BEFORE_RECEIVING_STATE);
 								MobilityUtils.addToClassPath(this.nam, itemFile.getAbsolutePath(), null, null);
 							}
@@ -813,7 +813,7 @@ public class MccNamPeer extends NamPeer {
 			HashMap<String, String> dependencies = gson.fromJson(peerMsg.get("dependencies").toString(), type);
 			
 			// The item get copied in spite of the mobility action, so a CopyActionImplementation method is used
-			if(copyActionImplementation == null) {
+			if (copyActionImplementation == null) {
 				copyActionImplementation = new CopyActionImplementation(this.nam.getMigrationStore(), this);
 			}
 			copyActionImplementation.copyDependencyItems(conversationId, itemId, platform, dependencies, this.getPeerDescriptor(), senderContactAddress);
@@ -859,7 +859,7 @@ public class MccNamPeer extends NamPeer {
 
 				File userDirectory = new File(dirPath);
 
-				if(!userDirectory.exists())
+				if (!userDirectory.exists())
 					userDirectory.mkdirs();
 
 				// Creating the dependency file
@@ -879,7 +879,7 @@ public class MccNamPeer extends NamPeer {
 				this.receivedDependencyChunkList.remove(chunk.getFileName());
 				
 				// Add dependency to classpath only if it is not an xml info file
-				if(chunk.getFileName().indexOf(MobilityUtils.INFO_FILE_EXTENSION) == -1) {
+				if (chunk.getFileName().indexOf(MobilityUtils.INFO_FILE_EXTENSION) == -1) {
 					if (nam.getClientPlatform(0) == Platform.DESKTOP) {
 						MobilityUtils.addToClassPath(this.nam, dirPath + chunk.getFileName(), null, null);
 					} else if (nam.getClientPlatform(0) == Platform.ANDROID) {
@@ -895,7 +895,7 @@ public class MccNamPeer extends NamPeer {
 				conversationItem.removeMissingDependency(chunk.getDependencyId());
 				
 				// If no more dependencies are missing, ask for the item
-				if(conversationItem.getMissingDependenciesSize() == 0) {
+				if (conversationItem.getMissingDependenciesSize() == 0) {
 					System.out.println(MobilityUtils.CLIENT_ALL_DEPENDENCIES_AVAILABLE);
 					
 					String senderContactAddress = conversationItem.getPartnerContactAddress();
@@ -903,16 +903,16 @@ public class MccNamPeer extends NamPeer {
 					File infoFile = new File(this.nam.getMigrationStore() + conversationItem.getItemId() + MobilityUtils.INFO_FILE_EXTENSION);
 					
 					boolean infoFileIsAvailable = infoFile.exists();
-					if(infoFileIsAvailable) {
+					if (infoFileIsAvailable) {
 						System.out.println("The information file is available");
 					
 						File itemFile = MobilityUtils.getRequestedItem(conversationItem.getItemId(), conversationItem.getPlatform(), this.nam.getMigrationStore());
 						
-						if(itemFile != null && itemFile.exists()) {
+						if (itemFile != null && itemFile.exists()) {
 							ItemIsAvailableMessage receivedItem = new ItemIsAvailableMessage(chunk.getConversationId());
 							sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), receivedItem.getJSONString(), MobilityUtils.JSON_MESSAGE_FORMAT);
 						
-							if(conversationItem.getAction().equals(Action.COPY)) {
+							if (conversationItem.getAction().equals(Action.COPY)) {
 								SAXHandler handler = null;
 								try {
 									FileInputStream infoFis = new FileInputStream(infoFile);
@@ -953,7 +953,7 @@ public class MccNamPeer extends NamPeer {
 										Service s = (Service) obj;
 										
 										boolean fmInfoFileIsAvailable = (new File(nam.getMigrationStore() + functionalModuleId + MobilityUtils.INFO_FILE_EXTENSION)).exists();
-										if(fmInfoFileIsAvailable) {
+										if (fmInfoFileIsAvailable) {
 											SAXHandler infoFmHandler = MobilityUtils.parseXMLFile(functionalModuleId, this.nam);
 											String fmCompleteMainClassName = infoFmHandler.getLibraryInformation().getMainClass();
 											
@@ -976,7 +976,7 @@ public class MccNamPeer extends NamPeer {
 									notifyObservers(this.nam.getMigrationStore() + itemFile.getName(), mainClassName, role, conversationItem.getAction(), null);
 								}
 								
-							} else if(conversationItem.getAction().equals(Action.MIGRATE)) {
+							} else if (conversationItem.getAction().equals(Action.MIGRATE)) {
 								System.out.println(MobilityUtils.ITEM_AVAILABLE_WAITING_FOR_STATE);
 								
 								// The class is added to the class path, but not instantiated (the second argument is null)
@@ -1002,7 +1002,7 @@ public class MccNamPeer extends NamPeer {
 				}
 			}
 			
-		} else if(messageType.equals(InfoFileChunkTransferMessage.MSG_KEY)) {
+		} else if (messageType.equals(InfoFileChunkTransferMessage.MSG_KEY)) {
 			
 			JsonObject params = peerMsg.getAsJsonObject("payload").getAsJsonObject("params");
 			InfoFileChunk chunk = (InfoFileChunk) gson.fromJson(params.get("chunk").toString(), InfoFileChunk.class);
@@ -1043,7 +1043,7 @@ public class MccNamPeer extends NamPeer {
 
 				File userDirectory = new File(dirPath);
 
-				if(!userDirectory.exists())
+				if (!userDirectory.exists())
 					userDirectory.mkdirs();
 
 				// Creating the info file
@@ -1067,7 +1067,7 @@ public class MccNamPeer extends NamPeer {
 				sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), infoFileIsAvailableMessage.getJSONString(), MobilityUtils.JSON_MESSAGE_FORMAT);
 			}
 			
-		} else if(messageType.equals(AllDependenciesAreAvailableMessage.MSG_KEY)) {
+		} else if (messageType.equals(AllDependenciesAreAvailableMessage.MSG_KEY)) {
 			
 			System.out.println(MobilityUtils.SENDING_INFO_FILE);
 			
@@ -1078,12 +1078,12 @@ public class MccNamPeer extends NamPeer {
 			String senderContactAddress = conversationItem.getPartnerContactAddress();
 			
 			// The item get copied in spite of the mobility action, so a CopyActionImplementation method is used
-			if(copyActionImplementation == null) {
+			if (copyActionImplementation == null) {
 				copyActionImplementation = new CopyActionImplementation(this.nam.getMigrationStore(), this);
 			}
 			int result = copyActionImplementation.copyInfoFile(conversationId, itemId, this.getPeerDescriptor(), senderContactAddress);
 			
-			if(result == -1) {
+			if (result == -1) {
 				System.err.println("An error occurred during a " + conversationItem.getAction().toString() + " mobility action with peer " + conversationItem.getPartnerContactAddress());
 			}
 			
@@ -1099,12 +1099,12 @@ public class MccNamPeer extends NamPeer {
 			String senderContactAddress = conversationItem.getPartnerContactAddress();
 			
 			// The item get copied in spite of the mobility action, so a CopyActionImplementation method is used
-			if(copyActionImplementation == null) {
+			if (copyActionImplementation == null) {
 				copyActionImplementation = new CopyActionImplementation(this.nam.getMigrationStore(), this);
 			}
 			int result = copyActionImplementation.copyItem(conversationId, itemId, p, this.getPeerDescriptor(), senderContactAddress);
 			
-			if(result == -1) {
+			if (result == -1) {
 				System.err.println("An error occurred during a " + conversationItem.getAction().toString() + " mobility action with peer " + conversationItem.getPartnerContactAddress());
 			}
 
@@ -1149,7 +1149,7 @@ public class MccNamPeer extends NamPeer {
 
 				File userDirectory = new File(dirPath);
 
-				if(!userDirectory.exists())
+				if (!userDirectory.exists())
 					userDirectory.mkdirs();
 
 				// Creating the item file
@@ -1198,7 +1198,7 @@ public class MccNamPeer extends NamPeer {
 							Service s = (Service) obj;
 							
 							boolean fmInfoFileIsAvailable = (new File(nam.getMigrationStore() + functionalModuleId + MobilityUtils.INFO_FILE_EXTENSION)).exists();
-							if(fmInfoFileIsAvailable) {
+							if (fmInfoFileIsAvailable) {
 								SAXHandler infoFmHandler = MobilityUtils.parseXMLFile(functionalModuleId, this.nam);
 								String fmCompleteMainClassName = infoFmHandler.getLibraryInformation().getMainClass();
 								
@@ -1347,7 +1347,7 @@ public class MccNamPeer extends NamPeer {
 							Service s = (Service) state;
 							
 							boolean fmInfoFileIsAvailable = (new File(nam.getMigrationStore() + functionalModuleId + MobilityUtils.INFO_FILE_EXTENSION)).exists();
-							if(fmInfoFileIsAvailable) {
+							if (fmInfoFileIsAvailable) {
 								SAXHandler infoFmHandler = MobilityUtils.parseXMLFile(functionalModuleId, this.nam);
 								String fmCompleteMainClassName = infoFmHandler.getLibraryInformation().getMainClass();
 								
@@ -1414,12 +1414,12 @@ public class MccNamPeer extends NamPeer {
 				String senderContactAddress = conversationItem.getPartnerContactAddress();
 				Object object = conversationItem.getObject();
 				
-				if(migrateActionImplementation == null) {
+				if (migrateActionImplementation == null) {
 					migrateActionImplementation = new MigrateActionImplementation(this.nam.getMigrationStore(), this);
 				}
 				ArrayList<StateChunk> chunkList = migrateActionImplementation.generateStateChunks(conversationId, object);
 				
-				if(chunkList == null) {
+				if (chunkList == null) {
 					System.err.println(MobilityUtils.ERROR_GENERATING_STATE_CHUNKS);
 					
 					// Notify sender that the mobility action failed
@@ -1474,7 +1474,7 @@ public class MccNamPeer extends NamPeer {
 		System.out.println("Could not deliver message to " + receiver);
 		
 		for(PeerDescriptor pd : this.getPeerList()) {
-			if(pd.getContactAddress().equalsIgnoreCase(receiver.getURL())) {
+			if (pd.getContactAddress().equalsIgnoreCase(receiver.getURL())) {
 				
 				System.out.println("Removing the peer from the peer list.");
 				

@@ -61,21 +61,21 @@ public class ManageInputRunnable implements Runnable {
 			
 			String choice = scanner.nextLine().trim();
 
-			if(choice.equals("pd")) {
+			if (choice.equals("pd")) {
 				System.out.println(peer.getPeerDescriptor());				
 			}
 			
-			else if(choice.equals("p")) {
+			else if (choice.equals("p")) {
 				System.out.print("Enter contact address: ");
 				String ca = scanner.nextLine().trim();
 				peer.ping(ca);				
 			}
 
-			else if(choice.equals("k")) {
+			else if (choice.equals("k")) {
 				peer.getPeerList().printPeerList();
 			}
 			
-			else if(choice.equals("rfm")) {
+			else if (choice.equals("rfm")) {
 				System.out.print("Please provide the contact address of the peer to which the request has to be sent: ");
 				String ca = scanner.nextLine().trim();
 				System.out.print("Please provide the FM id: ");
@@ -83,7 +83,7 @@ public class ManageInputRunnable implements Runnable {
 				peer.requestFM(ca, fmId, Platform.DESKTOP, Action.COPY, "1.0");
 			}
 			
-			else if(choice.equals("rs")) {
+			else if (choice.equals("rs")) {
 				System.out.print("Please provide the contact address of the peer to which the request has to be sent: ");
 				String ca = scanner.nextLine().trim();
 				System.out.print("Please provide the service id: ");
@@ -91,7 +91,7 @@ public class ManageInputRunnable implements Runnable {
 				peer.requestService(ca, sId, Platform.DESKTOP, Action.COPY, "1.0");
 			}
 			
-			else if(choice.equals("sfm")) {
+			else if (choice.equals("sfm")) {
 				System.out.print("Please provide the contact address of the peer to which the request has to be sent: ");
 				String ca = scanner.nextLine().trim();
 				// System.out.print("Please provide the FM id: ");
@@ -109,7 +109,7 @@ public class ManageInputRunnable implements Runnable {
 				peer.migrateFM(ca, fmId, Platform.ANDROID, Action.MIGRATE, tfm, MigrationSubject.FM, "1.0");
 			}
 			
-			else if(choice.equals("ss")) {
+			else if (choice.equals("ss")) {
 				System.out.print("Please provide the contact address of the peer to which the request has to be sent: ");
 				String ca = scanner.nextLine().trim();
 				// System.out.print("Please provide the service id: ");
@@ -130,7 +130,7 @@ public class ManageInputRunnable implements Runnable {
 				peer.migrateService(ca, sId, Platform.ANDROID, Action.MIGRATE, ts, MigrationSubject.SERVICE, "1.0");
 			}
 
-			else if(choice.equals("q")) {
+			else if (choice.equals("q")) {
 				scanner.close();
 				System.exit(0);
 			}

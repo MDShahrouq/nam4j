@@ -52,7 +52,7 @@ public class PeerList implements Iterable<PeerDescriptor>, IPeerList {
 	 */
 	@Override
 	public boolean add(PeerDescriptor peerDescriptor) {
-		if(contains(peerDescriptor)) {
+		if (contains(peerDescriptor)) {
 			return true;
 		} else {
 			return peerDescriptors.add(peerDescriptor);
@@ -73,7 +73,7 @@ public class PeerList implements Iterable<PeerDescriptor>, IPeerList {
 	@Override
 	public boolean contains(PeerDescriptor peerDescriptor) {
 		for(PeerDescriptor pd : peerDescriptors) {
-			if(pd.getContactAddress().equalsIgnoreCase(peerDescriptor.getContactAddress())) {
+			if (pd.getContactAddress().equalsIgnoreCase(peerDescriptor.getContactAddress())) {
 				return true;
 			}
 		}
@@ -98,12 +98,12 @@ public class PeerList implements Iterable<PeerDescriptor>, IPeerList {
 	public boolean remove(PeerDescriptor peerDescriptor) {
 		PeerDescriptor peerDescriptorToRemove = null;
 		for(PeerDescriptor pd : peerDescriptors) {
-			if(pd.getContactAddress().equalsIgnoreCase(peerDescriptor.getContactAddress())) {
+			if (pd.getContactAddress().equalsIgnoreCase(peerDescriptor.getContactAddress())) {
 				peerDescriptorToRemove = pd;
 				break;
 			}
 		}
-		if(peerDescriptorToRemove != null) {
+		if (peerDescriptorToRemove != null) {
 			return peerDescriptors.remove(peerDescriptorToRemove);
 		} else {
 			return false;
@@ -196,7 +196,7 @@ public class PeerList implements Iterable<PeerDescriptor>, IPeerList {
 	@Override
 	public void printPeerList() {
 		
-		if(!peerDescriptors.isEmpty()) {
+		if (!peerDescriptors.isEmpty()) {
 
 			System.out.println("\n********** Known peers **********");
 
@@ -246,7 +246,7 @@ public class PeerList implements Iterable<PeerDescriptor>, IPeerList {
 				if (j == randomNum && !(randomPeerDescriptors.contains(pd)) && !(peerToBeIgnored.getContactAddress().equalsIgnoreCase(pd.getContactAddress()))) {
 					randomPeerDescriptors.add(pd);
 					
-					if(randomPeerDescriptors.contains(pd)) {
+					if (randomPeerDescriptors.contains(pd)) {
 						i--;
 						break;
 					}

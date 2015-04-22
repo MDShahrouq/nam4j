@@ -83,7 +83,7 @@ public class ManageDependencies {
 		
 		HashMap<String, String> items = getDependenciesForItem(r, itemId, p);
 		
-		if(items != null) {
+		if (items != null) {
 			RequestItemAnswerMessage requestMigrationAnswerMessage = new RequestItemAnswerMessage(conversationKey);
 			
 			for(String key : items.keySet()) {
@@ -132,7 +132,7 @@ public class ManageDependencies {
 			// Check if the owned item is of the same type as the one
 			// requested by the client - e.g. the client requested a FM, but
 			// the owned item is a Service
-			if(migrationSubject != null && !migrationSubject.equals(r)) {
+			if (migrationSubject != null && !migrationSubject.equals(r)) {
 				System.err.println(MobilityUtils.ERROR_IN_RESOURCE_TYPE + " (client requested a " + r + ", but I have a " + migrationSubject + ")");
 				return null;
 			}
@@ -189,7 +189,7 @@ public class ManageDependencies {
 			String dependencyId = pairs.getKey();
 			String dependencyMinVersion = pairs.getValue();
 			
-			if(dependencyMinVersion.equals("-1")) {
+			if (dependencyMinVersion.equals("-1")) {
 				// Current file is the xml info file for a dependency, so it must be requested
 				// missingItems.put(dependencyId, dependencyMinVersion);
 				missingXmlFiles.put(dependencyId, dependencyMinVersion);
