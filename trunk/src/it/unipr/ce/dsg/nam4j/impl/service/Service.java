@@ -28,9 +28,9 @@ import java.util.HashMap;
 
 public class Service implements IService {
 
-	String id = "service";
-	String name = "Service";
-	FunctionalModule functionalModule = null;
+	private String id = "service";
+	private String name = "Service";
+	private FunctionalModule functionalModule = null;
 	
 	HashMap<String,Parameter> inputs = new HashMap<String,Parameter>();
 	HashMap<String,Parameter> outputs = new HashMap<String,Parameter>();
@@ -43,13 +43,24 @@ public class Service implements IService {
 	public Service() {}
 	
 	/**
-	 * Class constructor.
+	 * Method to get the {@link FunctionalModule} to which the Service is
+	 * associated.
+	 * 
+	 * @return the {@link FunctionalModule} to which the Service is associated
+	 */
+	public FunctionalModule getFunctionalModule() {
+		return this.functionalModule;
+	}
+
+	/**
+	 * Method to set the {@link FunctionalModule} to which the Service is
+	 * associated.
 	 * 
 	 * @param functionalModule
-	 *            The {@link FunctionalModule} to which the Service is
+	 *            the {@link FunctionalModule} to which the Service is
 	 *            associated
 	 */
-	public Service(FunctionalModule functionalModule) {
+	public void setFunctionalModule(FunctionalModule functionalModule) {
 		this.functionalModule = functionalModule;
 	}
 	
@@ -254,12 +265,12 @@ public class Service implements IService {
 	}
 	
 	
-	// XXX The following items are used for migration
+	// XXX The following items are used for mobility actions
 	
 	/**
 	 * The method has to be overridden so that it returns the
 	 * {@link ServiceRunnable} object whose code is executed by the
-	 * Functional Module.
+	 * Service.
 	 * 
 	 * @return the {@link Runnable} object whose code is executed by the
 	 *         Functional Module
@@ -280,7 +291,7 @@ public class Service implements IService {
 		
 		private boolean suspended = false;
 		
-		/** Start the execution of the {@link Service} main thread */
+		/** Start the execution of the Service main thread */
 		public void start() {
 			if (thread == null) {
 				System.out.println("Starting execution...");
@@ -289,13 +300,13 @@ public class Service implements IService {
 			}
 		}
 		
-		/** Suspend the execution of the {@link Service} main thread */
+		/** Suspend the execution of the Service main thread */
 		public void suspend() {
 			System.out.println("Suspending execution...");
 			this.suspended = true;
 		}
 
-		/** Resume the execution of the {@link Service} main thread after suspension */
+		/** Resume the execution of the Service main thread after suspension */
 		public synchronized void resume() {
 			System.out.println("Resuming execution...");
 			
@@ -312,7 +323,7 @@ public class Service implements IService {
 			}
 		}
 		
-		/** Stop the execution of the {@link Service} main thread */
+		/** Stop the execution of the Service main thread */
 		@SuppressWarnings("deprecation")
 		public void stop() {
 			if (thread != null) {
@@ -322,7 +333,7 @@ public class Service implements IService {
 		}
 		
 		/**
-		 * Save the state of the {@link Service} main thread. Such a method is
+		 * Save the state of the Service main thread. Such a method is
 		 * intended to be overridden to save the state of non-serializable
 		 * attributes (e.g. FileReader, BufferReader, FileInputStream,
 		 * files...). The other attributes do not need to be managed by this
@@ -331,7 +342,7 @@ public class Service implements IService {
 		public void saveState() {}
 		
 		/**
-		 * Restore the state of the {@link Service} main thread. Such a method
+		 * Restore the state of the Service main thread. Such a method
 		 * is intended to be overridden to restore the state of non-serializable
 		 * attributes (e.g. FileReader, BufferReader, FileInputStream,
 		 * files...). The other attributes do not need to be managed by this

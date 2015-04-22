@@ -5,15 +5,26 @@ import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine.MigrationSubject;
 import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine.Platform;
 import it.unipr.ce.dsg.nam4j.impl.mobility.peer.MccNamPeer;
+import it.unipr.ce.dsg.nam4j.impl.mobility.xmlparser.SAXHandler;
+import it.unipr.ce.dsg.nam4j.impl.service.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXException;
 
 /**
  * <p>
@@ -82,6 +93,7 @@ public class MobilityUtils {
 	public static final String STARTING_EXECUTION = "The item is available; starting execution...";
 	public static final String ACTION_SUCCESSFUL = "action succesfully completed";
 	public static final String SERVER_ITEM_NOT_AVAILABLE = "The requested item is not available";
+	public static final String RECEIVED_INFO_FILE = "------ Received an info file for a dependency";
 	
 	/** Error strings */
 	public static final String INFO_FILE_DOES_NOT_INCLUDE_DESCRIPTION = "The info file does not include the item description";
@@ -480,6 +492,9 @@ public class MobilityUtils {
 	 * Method to dynamically add a file to the path and return an object of its
 	 * main class.
 	 * 
+	 * @param nam
+	 *            The {@link NetworkedAutonomicMachine} representing the system
+	 * 
 	 * @param fileToAddToClassPath
 	 *            a String representing the name of the file received from the
 	 *            server
@@ -536,10 +551,8 @@ public class MobilityUtils {
 				
 				try {
 					if (fType == MigrationSubject.SERVICE && completeClassName != null) {
-						// Service's constructor takes as parameter the FM to which the Service is associated
-						// TODO: replace null with an instance of the FM to which the Service is associated
-						Constructor<?> cs = ClassLoader.getSystemClassLoader().loadClass(completeClassName).getConstructor(FunctionalModule.class);
-						obj = cs.newInstance((Object) null);
+						Constructor<?> cs = ClassLoader.getSystemClassLoader().loadClass(completeClassName).getConstructor();
+						obj = cs.newInstance();
 					}
 					if (fType == MigrationSubject.FM && completeClassName != null) {
 						// FM's constructor takes as parameter the NAM to which the FM has to be added
@@ -568,6 +581,90 @@ public class MobilityUtils {
 		}
 	
 		return obj;
+	}
+	
+	/**
+	 * Method to parse the XML file which describes a library.
+	 * 
+	 * @param itemId
+	 *            The id of the xml file to be parsed, corresponding to its name
+	 *            with no extension
+	 * 
+	 * @return an object representing the SAX events handler
+	 */
+	public static SAXHandler parseXMLFile(String itemId, NetworkedAutonomicMachine nam) {
+		try {
+			File infoFile = new File(nam.getMigrationStore() + itemId + INFO_FILE_EXTENSION);
+			FileInputStream infoFis = new FileInputStream(infoFile);
+			SAXParserFactory parserFactor = SAXParserFactory.newInstance();
+			SAXParser parser = parserFactor.newSAXParser();
+			SAXHandler handler = new SAXHandler();
+			parser.parse(infoFis, handler);
+			return handler;
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
+		} catch (FileNotFoundException e) {
+			System.err.println(MISSING_XML_FILE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Method to add a {@link Service} to a {@link FunctionalModule}.
+	 * 
+	 * @param s
+	 *            The {@link Service} that has to be added
+	 * 
+	 * @param fmId
+	 *            The identifier of the {@link FunctionalModule} to which the
+	 *            {@link Service} has to be added
+	 * 
+	 * @param nam
+	 *            The {@link NetworkedAutonomicMachine} to which the
+	 *            {@link FunctionalModule} is associated
+	 * 
+	 * @param fmCompleteMainClassName
+	 *            The {@link FunctionalModule}'s main class name
+	 * 
+	 * @return the {@link FunctionalModule} to which the {@link Service} has
+	 *         been added
+	 */
+	public static FunctionalModule addServiceToFm(Service s, String fmId, NetworkedAutonomicMachine nam, String fmCompleteMainClassName) {
+		
+		System.out.println("--------- The main class name for the FM to which the Service is associated is " + fmCompleteMainClassName + " - instantiating it and adding the Service to such a Functional Module...");
+		
+		try {
+			Constructor<?> cs = ClassLoader.getSystemClassLoader().loadClass(fmCompleteMainClassName).getConstructor(NetworkedAutonomicMachine.class);
+			Object fmObj = cs.newInstance(nam);
+			
+			FunctionalModule fm = (FunctionalModule) fmObj;
+			fm.setNam(nam);
+			fm.addProvidedService(s.getId(), s);
+			return fm;
+			
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 }

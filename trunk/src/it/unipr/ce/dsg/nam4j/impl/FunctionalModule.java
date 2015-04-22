@@ -61,7 +61,7 @@ public abstract class FunctionalModule implements IFunctionalModule {
 	 * @return a reference to the NAM the functional module belongs to
 	 */
 	public NetworkedAutonomicMachine getNam() {
-		return nam;
+		return this.nam;
 	}
 
 	/**

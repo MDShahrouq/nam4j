@@ -27,7 +27,8 @@ import it.unipr.ce.dsg.nam4j.impl.NetworkedAutonomicMachine.MigrationSubject;
 public interface IMobilityItemAvailability {
 
 	/**
-	 * Method that notifies observers that an item is available and has to be added to the classpath.
+	 * Method that notifies observers that an item is available and has to be
+	 * added to the classpath.
 	 * 
 	 * @param fileFullPath
 	 *            The path of the file that has to be added to the classpath,
@@ -41,6 +42,10 @@ public interface IMobilityItemAvailability {
 	 * @param role
 	 *            The {@link MigrationSubject} of the file that has to be added
 	 *            to the classpath.
+	 * 
+	 * @param state
+	 *            The execution state to notify observer it has been received.
+	 *            Null if the notification concerns a file.
 	 */
-	public void onItemIsAvailable(String fileFullPath, String mainClassName, MigrationSubject role, Action action);
+	public void onItemIsAvailable(String fileFullPath, String mainClassName, MigrationSubject role, Action action, Object state);
 }

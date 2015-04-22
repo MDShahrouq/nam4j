@@ -1,6 +1,5 @@
 package it.unipr.ce.dsg.examples.migration;
 
-import it.unipr.ce.dsg.nam4j.impl.FunctionalModule;
 import it.unipr.ce.dsg.nam4j.impl.service.Service;
 
 import java.io.BufferedReader;
@@ -38,14 +37,13 @@ public class TestService extends Service implements Serializable {
 
 	private static final long serialVersionUID = -2513137456274951312L;
 	private ServiceRunnableImplementation serviceRunnableImplementation = null;
+	private Service service; // Reference to the Service used by the Runnable
 
-	public TestService(FunctionalModule functionalModule) {
-		super(functionalModule);
+	public TestService() {
+		super();
 		this.setId("TestService");
 		this.setName("TestService");
-
-		System.out.println("I am TestService");
-		
+		service = this;
 		serviceRunnableImplementation = new ServiceRunnableImplementation();
 	}
 	
@@ -58,7 +56,7 @@ public class TestService extends Service implements Serializable {
 		private static final long serialVersionUID = -1764242477267769580L;
 		private int sleepingTime = 1000;
 		private File file = null;
-		private String filePath = "examples/migration/";
+		private String filePath = null;
 		private String fileName = "divina_commedia.txt";
 		private String inputLine = null;
 		private TreeMap<String, Integer> map = new TreeMap<String, Integer>();
@@ -69,10 +67,14 @@ public class TestService extends Service implements Serializable {
 		transient private BufferedReader bufferedReader = null;
 		transient private FileReader fileReader = null;
 		
-		// Saving execution state
+		// Attributes used for saving the execution state
 		transient private FileInputStream fileInputStream = null;
 		private byte[] bFile = null;
 		
+		/** Class constructor. */
+		public ServiceRunnableImplementation() {}
+		
+		// Saving execution state
 		@Override
 		public void saveState() {
 			try {
@@ -90,45 +92,39 @@ public class TestService extends Service implements Serializable {
 		
 		@Override
 		public void restoreState() {
-			try {
-				// Convert array of bytes into file
-				file = new File(filePath + fileName);
-				if (!file.exists()) {
-					file.createNewFile();
-				}
-				FileOutputStream fileOuputStream = new FileOutputStream(file);
-				fileOuputStream.write(bFile);
-				fileOuputStream.close();
-				
-				// FileReader and BufferedReader cannot be serialized and therefore have to be redefined
-				try {
-		        	fileReader = new FileReader(file);
-					bufferedReader = new BufferedReader(fileReader);
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-				}
-				
-				// A counter is used to skip the already scanned lines
-				int j = 0;
-				
-				while ((inputLine = bufferedReader.readLine()) != null && ++j < parsedLines);
-
-				System.out.println("State restored");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-
-		public ServiceRunnableImplementation() {
-			file = new File(filePath + fileName);
 			
-			try {
-	        	fileReader = new FileReader(file);
-				bufferedReader = new BufferedReader(fileReader);
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			}
+			filePath = service.getFunctionalModule().getNam().getMigrationStore();
+			
+			if(filePath != null) {
+				try {
+					// Convert array of bytes into file
+					file = new File(filePath + fileName);
+					if (!file.exists()) {
+						file.createNewFile();
+					}
+					FileOutputStream fileOuputStream = new FileOutputStream(file);
+					fileOuputStream.write(bFile);
+					fileOuputStream.close();
+					
+					// FileReader and BufferedReader cannot be serialized and therefore have to be redefined
+					try {
+			        	fileReader = new FileReader(file);
+						bufferedReader = new BufferedReader(fileReader);
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+					}
+					
+					// A counter is used to skip the already scanned lines
+					int j = 0;
+					
+					while ((inputLine = bufferedReader.readLine()) != null && ++j < parsedLines);
+	
+					System.out.println("State restored");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+			} else System.err.println("The file path retrieved from the associated FM is null");
 		}
 		
 		public int getSleepingTime() {
@@ -141,51 +137,61 @@ public class TestService extends Service implements Serializable {
 
 		public void run() {
 			
-			try {
-					
-	            while ((inputLine = bufferedReader.readLine()) != null) {
-	            
-	            	System.out.print("Examining line " + ++parsedLines + ": \"" + inputLine + "\"\r");
-	            	
-	            	String[] words = inputLine.split("[ \n\t\r.,;:!?(){}]");
-	 
-	                for (int counter = 0; counter < words.length; counter++) {
-	                    String key = words[counter].toLowerCase(); // remove .toLowerCase for Case Sensitive result.
-	                    if (key.length() > 0) {
-	                        if (map.get(key) == null) {
-	                            map.put(key, 1);
-	                        }
-	                        else {
-	                            int value = map.get(key).intValue();
-	                            value++;
-	                            map.put(key, value);
-	                        }
-	                    }
-	                 }
-	                
-	                synchronized (this) {
-						while (isSuspended()) {
-							wait();
+			System.out.println("I am " + service.getId() + " ; I am associated to " + service.getFunctionalModule().getId() + " FM which is associated to " + service.getFunctionalModule().getNam().getId() + " NAM ---");
+			
+			filePath = service.getFunctionalModule().getNam().getMigrationStore();
+			
+			if(filePath != null) {
+				try {
+					file = new File(filePath + fileName);
+					fileReader = new FileReader(file);
+					bufferedReader = new BufferedReader(fileReader);
+						
+		            while ((inputLine = bufferedReader.readLine()) != null) {
+		            
+		            	System.out.print("Examining line " + ++parsedLines + ": \"" + inputLine + "\"\r");
+		            	
+		            	String[] words = inputLine.split("[ \n\t\r.,;:!?(){}]");
+		 
+		                for (int counter = 0; counter < words.length; counter++) {
+		                    String key = words[counter].toLowerCase(); // remove .toLowerCase for Case Sensitive result.
+		                    if (key.length() > 0) {
+		                        if (map.get(key) == null) {
+		                            map.put(key, 1);
+		                        }
+		                        else {
+		                            int value = map.get(key).intValue();
+		                            value++;
+		                            map.put(key, value);
+		                        }
+		                    }
+		                 }
+		                
+		                synchronized (this) {
+							while (isSuspended()) {
+								wait();
+							}
 						}
-					}
-	            }
-	            
-	            bufferedReader.close();
-	            
-	            Set<Map.Entry<String, Integer>> entrySet = map.entrySet();
-	            System.out.println("--- The five most used words ---\n\n" + "Word" + "\t\t" + "number of occurances");
-	            int i = 1;
-	            for (Map.Entry<String, Integer> entry : entrySet) {
-	                System.out.println(entry.getKey() + "\t\t" + entry.getValue());
-	                if ((i++) == 5)
-	                	break;
-	            }
+		            }
+		            
+		            bufferedReader.close();
+		            
+		            Set<Map.Entry<String, Integer>> entrySet = map.entrySet();
+		            System.out.println("--- The five most used words ---\n\n" + "Word" + "\t\t" + "number of occurances");
+		            int i = 1;
+		            for (Map.Entry<String, Integer> entry : entrySet) {
+		                System.out.println(entry.getKey() + "\t\t" + entry.getValue());
+		                if ((i++) == 5)
+		                	break;
+		            }
+					
+				} catch (InterruptedException e) {
+					 System.out.println("Thread interrupted.");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				
-			} catch (InterruptedException e) {
-				 System.out.println("Thread interrupted.");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			} else System.err.println("The file path retrieved from the associated FM is null");
 		}
 	}
 	

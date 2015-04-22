@@ -48,7 +48,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -114,7 +113,7 @@ public class MccNamPeer extends NamPeer {
 	/** An array of classes used for reflection */
 	public static final Class<?>[] parameters = new Class[] { URL.class };
 	
-	/** A list of objects interested in mobility events (mainly used to manage the Android platform) */
+	/** A list of peers interested in mobility events related to file availability (mainly used to manage the Android platform) */
 	private ArrayList<IMobilityItemAvailability> listeners;
 	
 	/**
@@ -160,6 +159,15 @@ public class MccNamPeer extends NamPeer {
 
 			log = new Log(nodeConfig.log_path + "info_" + peerDescriptor.getAddress() + ".log", Log.LEVEL_MEDIUM);
 		}
+	}
+	
+	/**
+	 * Method to get the associated {@link NetworkedAutonomicMachine}.
+	 * 
+	 * @return the associated {@link NetworkedAutonomicMachine}
+	 */
+	public NetworkedAutonomicMachine getNam() {
+		return this.nam;
 	}
 	
 	/**
@@ -360,9 +368,9 @@ public class MccNamPeer extends NamPeer {
 	 *            The {@link MigrationSubject} of the file that has to be added
 	 *            to the classpath.
 	 */
-	private void notifyObservers(String fileFullPath, String mainClassName, MigrationSubject role, Action action) {
+	public void notifyObservers(String fileFullPath, String mainClassName, MigrationSubject role, Action action, Object state) {
 		for (IMobilityItemAvailability listener : listeners) {
-			listener.onItemIsAvailable(fileFullPath, mainClassName, role, action);
+			listener.onItemIsAvailable(fileFullPath, mainClassName, role, action, state);
 		}
 	}
 	
@@ -379,38 +387,6 @@ public class MccNamPeer extends NamPeer {
 		
 		// Remove conversation item from conversations list
 		this.conversations.remove(conversationId);
-	}
-	
-	/**
-	 * Method to parse the XML file which describes a library.
-	 * 
-	 * @param itemId
-	 *            The id of the xl file to be parsed, corresponding to its name
-	 *            with no extension
-	 * 
-	 * @return an object representing the SAX events handler
-	 */
-	private SAXHandler parseXMLFile(String itemId) {
-		try {
-			File infoFile = new File(this.nam.getMigrationStore() + itemId + MobilityUtils.INFO_FILE_EXTENSION);
-			FileInputStream infoFis = new FileInputStream(infoFile);
-			SAXParserFactory parserFactor = SAXParserFactory.newInstance();
-			SAXParser parser = parserFactor.newSAXParser();
-			SAXHandler handler = new SAXHandler();
-			parser.parse(infoFis, handler);
-			return handler;
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-		} catch (FileNotFoundException e) {
-			System.err.println(MobilityUtils.MISSING_XML_FILE);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	/**
@@ -497,7 +473,7 @@ public class MccNamPeer extends NamPeer {
 			file = MobilityUtils.getRequestedItem(itemId, p, this.nam.getMigrationStore());
 			
 			if(file != null) {
-				SAXHandler handler = parseXMLFile(itemId);
+				SAXHandler handler = MobilityUtils.parseXMLFile(itemId, this.nam);
 				String libVersion = handler.getLibraryInformation().getVersion();
 				
 				// Compare the version of the library required for the COPY
@@ -568,7 +544,7 @@ public class MccNamPeer extends NamPeer {
 				manageDependencies = new ManageDependencies(this.nam.getMigrationStore());
 			}
 			
-			HashMap<String, String> missingItems = manageDependencies.getMissingDependenciesList(p, dependencies, r);
+			HashMap<String, String> missingItems = manageDependencies.getMissingDependenciesList(p, dependencies, r, this);
 			
 			if (missingItems.size() > 0) {
 				conversationItem.addMissingDependencies(missingItems);
@@ -605,7 +581,7 @@ public class MccNamPeer extends NamPeer {
 					
 					if(itemFile != null && itemFile.exists()) {
 						
-						SAXHandler handler = parseXMLFile(conversationItem.getItemId());
+						SAXHandler handler = MobilityUtils.parseXMLFile(conversationItem.getItemId(), this.nam);
 						String libVersion = handler.getLibraryInformation().getVersion();
 						
 						String requiredLibVersion = conversationItem.getItemVersion();
@@ -647,19 +623,31 @@ public class MccNamPeer extends NamPeer {
 										
 										System.out.println("------ The id of the FM associated to the received Service is " + functionalModuleId);
 										
-										// TODO: add service to functional module
-										
+										// Adding the service to the associated functional module
 										Service s = (Service) obj;
-										s.getServiceRunnable().start();
+										
+										boolean fmInfoFileIsAvailable = (new File(nam.getMigrationStore() + functionalModuleId + MobilityUtils.INFO_FILE_EXTENSION)).exists();
+										if(fmInfoFileIsAvailable) {
+											SAXHandler infoFmHandler = MobilityUtils.parseXMLFile(functionalModuleId, this.nam);
+											String fmCompleteMainClassName = infoFmHandler.getLibraryInformation().getMainClass();
+											
+											FunctionalModule fm = MobilityUtils.addServiceToFm(s, functionalModuleId, this.nam, fmCompleteMainClassName);
+											s.setFunctionalModule(fm);
+
+											// Starting the service
+											s.getServiceRunnable().start();
+											
+										} else {
+											System.err.println("The info file for the FM to which the Service is associated is not available");
+										}
 									}
 									
 									System.out.println("COPY " + MobilityUtils.ACTION_SUCCESSFUL);
 									
 								} else if (nam.getClientPlatform(0) == Platform.ANDROID) {
-									System.out.println("Android platform is in use");
 									
 									// Use observer pattern for Android
-									notifyObservers(this.nam.getMigrationStore() + itemFile.getName(), mainClassName, role, conversationItem.getAction());
+									notifyObservers(this.nam.getMigrationStore() + itemFile.getName(), mainClassName, role, conversationItem.getAction(), null);
 								}
 								
 							} else if (conversationItem.getAction().equals(Action.MIGRATE)) {
@@ -669,10 +657,9 @@ public class MccNamPeer extends NamPeer {
 								if (nam.getClientPlatform(0) == Platform.DESKTOP) {
 									MobilityUtils.addToClassPath(this.nam, itemFile.getAbsolutePath(), null, conversationItem.getRole());
 								} else if (nam.getClientPlatform(0) == Platform.ANDROID) {
-									System.out.println("Android platform is in use");
 									
 									// Use observer pattern for Android
-									notifyObservers(itemFile.getAbsolutePath(), null, conversationItem.getRole(), conversationItem.getAction());
+									notifyObservers(itemFile.getAbsolutePath(), null, conversationItem.getRole(), conversationItem.getAction(), null);
 								}
 							}
 						}
@@ -730,7 +717,7 @@ public class MccNamPeer extends NamPeer {
 			
 			// TODO: decide whether to accept or not a MIGRATE request
 			
-			HashMap<String, String> missingItems = manageDependencies.getMissingDependenciesList(p, dependencies, r);
+			HashMap<String, String> missingItems = manageDependencies.getMissingDependenciesList(p, dependencies, r, this);
 			
 			if (missingItems.size() > 0) {
 				conversationItem.addMissingDependencies(missingItems);
@@ -767,7 +754,7 @@ public class MccNamPeer extends NamPeer {
 					
 					if(itemFile != null && itemFile.exists()) {
 						
-						SAXHandler handler = parseXMLFile(itemId);
+						SAXHandler handler = MobilityUtils.parseXMLFile(itemId, this.nam);
 						
 						String libVersion = handler.getLibraryInformation().getVersion();
 						String mainClassName = handler.getLibraryInformation().getMainClass();
@@ -794,7 +781,7 @@ public class MccNamPeer extends NamPeer {
 								MobilityUtils.addToClassPath(this.nam, itemFile.getAbsolutePath(), null, null);
 							}
 							
-							notifyObservers(itemFile.getAbsolutePath(), mainClassName, r, a);
+							notifyObservers(itemFile.getAbsolutePath(), mainClassName, r, a, null);
 							
 							ItemIsAvailableMessage itemIsAvailable = new ItemIsAvailableMessage(conversationId);
 							sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), itemIsAvailable.getJSONString(), MobilityUtils.JSON_MESSAGE_FORMAT);
@@ -896,13 +883,12 @@ public class MccNamPeer extends NamPeer {
 					if (nam.getClientPlatform(0) == Platform.DESKTOP) {
 						MobilityUtils.addToClassPath(this.nam, dirPath + chunk.getFileName(), null, null);
 					} else if (nam.getClientPlatform(0) == Platform.ANDROID) {
-						System.out.println("Android platform is in use");
 						
 						// Use observer pattern to add dependency to classpath for Android
-						notifyObservers(dirPath + chunk.getFileName(), null, null, conversationItem.getAction());
+						notifyObservers(dirPath + chunk.getFileName(), null, null, conversationItem.getAction(), null);
 					}
 				} else {
-					System.out.println("------ Received an info file for a dependency!");
+					System.out.println(MobilityUtils.RECEIVED_INFO_FILE);
 				}
 				
 				// Removing the missing dependency from the conversation
@@ -963,19 +949,31 @@ public class MccNamPeer extends NamPeer {
 										
 										System.out.println("------ The id of the FM associated to the received Service is " + functionalModuleId);
 										
-										// TODO: add service to functional module
-										
+										// Adding the service to the associated functional module
 										Service s = (Service) obj;
-										s.getServiceRunnable().start();
+										
+										boolean fmInfoFileIsAvailable = (new File(nam.getMigrationStore() + functionalModuleId + MobilityUtils.INFO_FILE_EXTENSION)).exists();
+										if(fmInfoFileIsAvailable) {
+											SAXHandler infoFmHandler = MobilityUtils.parseXMLFile(functionalModuleId, this.nam);
+											String fmCompleteMainClassName = infoFmHandler.getLibraryInformation().getMainClass();
+											
+											FunctionalModule fm = MobilityUtils.addServiceToFm(s, functionalModuleId, this.nam, fmCompleteMainClassName);
+											s.setFunctionalModule(fm);
+
+											// Starting the service
+											s.getServiceRunnable().start();
+											
+										} else {
+											System.err.println("The info file for the FM to which the Service is associated is not available");
+										}
 									}
 									
 									System.out.println("COPY " + MobilityUtils.ACTION_SUCCESSFUL);
 									
 								} else if (nam.getClientPlatform(0) == Platform.ANDROID) {
-									System.out.println("Android platform is in use");
 									
 									// Use observer pattern for Android
-									notifyObservers(this.nam.getMigrationStore() + itemFile.getName(), mainClassName, role, conversationItem.getAction());
+									notifyObservers(this.nam.getMigrationStore() + itemFile.getName(), mainClassName, role, conversationItem.getAction(), null);
 								}
 								
 							} else if(conversationItem.getAction().equals(Action.MIGRATE)) {
@@ -985,10 +983,9 @@ public class MccNamPeer extends NamPeer {
 								if (nam.getClientPlatform(0) == Platform.DESKTOP) {
 									MobilityUtils.addToClassPath(this.nam, itemFile.getAbsolutePath(), null, conversationItem.getRole());
 								} else if (nam.getClientPlatform(0) == Platform.ANDROID) {
-									System.out.println("Android platform is in use");
 									
 									// Use observer pattern for Android
-									notifyObservers(itemFile.getAbsolutePath(), null, conversationItem.getRole(), conversationItem.getAction());
+									notifyObservers(itemFile.getAbsolutePath(), null, conversationItem.getRole(), conversationItem.getAction(), null);
 								}
 							}
 						
@@ -1197,18 +1194,30 @@ public class MccNamPeer extends NamPeer {
 							
 							System.out.println("------ Functional module id (retrieved from the last chunk) = " + functionalModuleId);
 							
-							// TODO: add service to functional module
-							
+							// Adding the service to the associated functional module
 							Service s = (Service) obj;
-							s.getServiceRunnable().start();
+							
+							boolean fmInfoFileIsAvailable = (new File(nam.getMigrationStore() + functionalModuleId + MobilityUtils.INFO_FILE_EXTENSION)).exists();
+							if(fmInfoFileIsAvailable) {
+								SAXHandler infoFmHandler = MobilityUtils.parseXMLFile(functionalModuleId, this.nam);
+								String fmCompleteMainClassName = infoFmHandler.getLibraryInformation().getMainClass();
+								
+								FunctionalModule fm = MobilityUtils.addServiceToFm(s, functionalModuleId, this.nam, fmCompleteMainClassName);
+								s.setFunctionalModule(fm);
+
+								// Starting the service
+								s.getServiceRunnable().start();
+								
+							} else {
+								System.err.println("The info file for the FM to which the Service is associated is not available");
+							}
 							
 							// TODO: store that the Service has been received from the peer
 						}
 					} else if (nam.getClientPlatform(0) == Platform.ANDROID) {
-						System.out.println("Android platform is in use");
 						
 						// Use observer pattern for Android
-						notifyObservers(this.nam.getMigrationStore() + fileName, mainClassName, role, action);
+						notifyObservers(this.nam.getMigrationStore() + fileName, mainClassName, role, action, null);
 					}
 					
 					System.out.println("COPY " + MobilityUtils.ACTION_SUCCESSFUL);
@@ -1228,10 +1237,9 @@ public class MccNamPeer extends NamPeer {
 					if (nam.getClientPlatform(0) == Platform.DESKTOP) {
 						MobilityUtils.addToClassPath(this.nam, this.nam.getMigrationStore() + fileName, null, role);
 					} else if (nam.getClientPlatform(0) == Platform.ANDROID) {
-						System.out.println("Android platform is in use");
 						
 						// Use observer pattern for Android
-						notifyObservers(this.nam.getMigrationStore() + fileName, null, role, action);
+						notifyObservers(this.nam.getMigrationStore() + fileName, null, role, action, null);
 					}
 
 					ItemIsAvailableMessage receivedItem = new ItemIsAvailableMessage(chunk.getConversationId());
@@ -1260,6 +1268,7 @@ public class MccNamPeer extends NamPeer {
 
 			if (this.receivedStateChunkList.get(chunk.getConversationId()).size() == chunk.getChunkNumber()) {
 				System.out.println("Received all state chunks for conversation " + chunk.getConversationId());
+				
 				System.out.println("Creating object...");
 
 				ArrayList<StateChunk> fileChunks = this.receivedStateChunkList.get(chunk.getConversationId());
@@ -1318,34 +1327,60 @@ public class MccNamPeer extends NamPeer {
 					System.out.println("MIGRATE " + MobilityUtils.ACTION_SUCCESSFUL);
 					
 					conversationItem.setObject(state);
+				
+					if (nam.getClientPlatform(0) == Platform.DESKTOP) {
+						
+						if (conversationItem.getRole().equals(MigrationSubject.FM)) {
+							FunctionalModule tfm = (FunctionalModule) state;
+							tfm.getFunctionalModuleRunnable().restoreState();
+							tfm.getFunctionalModuleRunnable().resume();
+							
+							// TODO: store that the FM has been received from the peer
+						}
+						else if (conversationItem.getRole().equals(MigrationSubject.SERVICE)) {
+							SAXHandler handler = MobilityUtils.parseXMLFile(conversationItem.getItemId(), this.nam);
+							String functionalModuleId = handler.getFunctionalModuleForService().getId();
+							
+							System.out.println("------ The id of the FM associated to the received Service is " + functionalModuleId);
+							
+							// Adding the service to the associated functional module
+							Service s = (Service) state;
+							
+							boolean fmInfoFileIsAvailable = (new File(nam.getMigrationStore() + functionalModuleId + MobilityUtils.INFO_FILE_EXTENSION)).exists();
+							if(fmInfoFileIsAvailable) {
+								SAXHandler infoFmHandler = MobilityUtils.parseXMLFile(functionalModuleId, this.nam);
+								String fmCompleteMainClassName = infoFmHandler.getLibraryInformation().getMainClass();
+								
+								FunctionalModule fm = MobilityUtils.addServiceToFm(s, functionalModuleId, this.nam, fmCompleteMainClassName);
+								s.setFunctionalModule(fm);
+	
+								// Resuming the service execution
+								s.getServiceRunnable().restoreState();
+								s.getServiceRunnable().resume();
+								
+							} else {
+								System.err.println("The info file for the FM to which the Service is associated is not available");
+							}
+							
+							// TODO: store that the Service has been received from the peer
+						}
+						
+						// Remove conversation item from conversations list
+						this.conversations.remove(chunk.getConversationId());
 					
-					if (conversationItem.getRole().equals(MigrationSubject.FM)) {
-						FunctionalModule tfm = (FunctionalModule) state;
-						tfm.getFunctionalModuleRunnable().restoreState();
-						tfm.getFunctionalModuleRunnable().resume();
+					} else if (nam.getClientPlatform(0) == Platform.ANDROID) {
 						
-						// TODO: store that the FM has been received from the peer
+						// Use observer pattern for Android
+						// Notify that the state has been received
+						SAXHandler handler = MobilityUtils.parseXMLFile(conversationItem.getItemId(), this.nam);
+						String mainClassName = handler.getLibraryInformation().getMainClass();
+						notifyObservers(this.nam.getMigrationStore() + conversationItem.getItemId() + MobilityUtils.ANDROID_FILE_EXTENSION, mainClassName, conversationItem.getRole(), conversationItem.getAction(), state);
+						
+						// TODO: remove conversationItem from the list of conversations
 					}
-					else if (conversationItem.getRole().equals(MigrationSubject.SERVICE)) {
-						SAXHandler handler = parseXMLFile(conversationItem.getItemId());
-						String functionalModuleId = handler.getFunctionalModuleForService().getId();
-						
-						System.out.println("------ The id of the FM associated to the received Service is " + functionalModuleId);
-						
-						// TODO: add service to functional module
-						
-						Service s = (Service) state;
-						s.getServiceRunnable().restoreState();
-						s.getServiceRunnable().resume();
-						
-						// TODO: store that the Service has been received from the peer
-					}
-					
+
 					ReceivedStateMessage receivedStateMessage = new ReceivedStateMessage(chunk.getConversationId());
 					sendMessage(new Address(senderContactAddress), new Address(senderContactAddress), this.getAddress(), receivedStateMessage.getJSONString(), MobilityUtils.JSON_MESSAGE_FORMAT);
-					
-					// Remove conversation item from conversations list
-					this.conversations.remove(chunk.getConversationId());
 				}
 			}
 			
