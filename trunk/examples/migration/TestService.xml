@@ -20,7 +20,7 @@
 		<functional_module_id>TestFunctionalModule</functional_module_id>
 	</functional_module>
 	
-	<!-- List of dependencies (do not add the element if no dependency is required) -->
+	<!-- List of dependencies - add a <dependency> element for each one -->
 	<dependency>
 		<dependency_version>1.0</dependency_version>
 		<dependency_id>ChordFunctionalModule</dependency_id>
