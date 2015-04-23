@@ -144,46 +144,49 @@ public class TestService extends Service implements Serializable {
 			if (filePath != null) {
 				try {
 					file = new File(filePath + fileName);
-					fileReader = new FileReader(file);
-					bufferedReader = new BufferedReader(fileReader);
-						
-		            while ((inputLine = bufferedReader.readLine()) != null) {
-		            
-		            	System.out.print("Examining line " + ++parsedLines + ": \"" + inputLine + "\"\r");
-		            	
-		            	String[] words = inputLine.split("[ \n\t\r.,;:!?(){}]");
-		 
-		                for (int counter = 0; counter < words.length; counter++) {
-		                    String key = words[counter].toLowerCase(); // remove .toLowerCase for Case Sensitive result.
-		                    if (key.length() > 0) {
-		                        if (map.get(key) == null) {
-		                            map.put(key, 1);
-		                        }
-		                        else {
-		                            int value = map.get(key).intValue();
-		                            value++;
-		                            map.put(key, value);
-		                        }
-		                    }
-		                 }
-		                
-		                synchronized (this) {
-							while (isSuspended()) {
-								wait();
+					if (file.exists()) {
+						fileReader = new FileReader(file);
+						bufferedReader = new BufferedReader(fileReader);
+							
+			            while ((inputLine = bufferedReader.readLine()) != null) {
+			            
+			            	System.out.print("Examining line " + ++parsedLines + ": \"" + inputLine + "\"\r");
+			            	
+			            	String[] words = inputLine.split("[ \n\t\r.,;:!?(){}]");
+			 
+			                for (int counter = 0; counter < words.length; counter++) {
+			                    String key = words[counter].toLowerCase(); // remove .toLowerCase for Case Sensitive result.
+			                    if (key.length() > 0) {
+			                        if (map.get(key) == null) {
+			                            map.put(key, 1);
+			                        }
+			                        else {
+			                            int value = map.get(key).intValue();
+			                            value++;
+			                            map.put(key, value);
+			                        }
+			                    }
+			                 }
+			                
+			                synchronized (this) {
+								while (isSuspended()) {
+									wait();
+								}
 							}
-						}
-		            }
-		            
-		            bufferedReader.close();
-		            
-		            Set<Map.Entry<String, Integer>> entrySet = map.entrySet();
-		            System.out.println("--- The five most used words ---\n\n" + "Word" + "\t\t" + "number of occurances");
-		            int i = 1;
-		            for (Map.Entry<String, Integer> entry : entrySet) {
-		                System.out.println(entry.getKey() + "\t\t" + entry.getValue());
-		                if ((i++) == 5)
-		                	break;
-		            }
+			            }
+			            
+			            bufferedReader.close();
+			            
+			            Set<Map.Entry<String, Integer>> entrySet = map.entrySet();
+			            System.out.println("--- The five most used words ---\n\n" + "Word" + "\t\t" + "number of occurances");
+			            int i = 1;
+			            for (Map.Entry<String, Integer> entry : entrySet) {
+			                System.out.println(entry.getKey() + "\t\t" + entry.getValue());
+			                if ((i++) == 5)
+			                	break;
+			            }
+			            
+					} else System.out.println("The file to be parsed (" + (filePath + fileName) + " does not exist");
 					
 				} catch (InterruptedException e) {
 					 System.out.println("Thread interrupted.");
